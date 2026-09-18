@@ -1,0 +1,36 @@
+{
+  "suspicious_domains": [
+    "pmkisan-gov.in",
+    "pm-kisan-yojna.org",
+    "ayushmanbharat-card.online",
+    "pmay-status.co",
+    "sarkariyojana-apply.cc",
+    "modi-yojana2026.net",
+    "free-ration-card.info",
+    "pm-vishwakarma-loan.site",
+    "kanya-sumangala.xyz"
+  ],
+  "legitimate_tlds": [
+    ".gov.in",
+    ".nic.in",
+    ".ac.in",
+    ".res.in",
+    ".edu.in"
+  ],
+  "phishing_red_flags": [
+    "Requires registration fee via UPI / QR code",
+    "Asks for Aadhaar OTP directly over WhatsApp / Telegram",
+    "Promises instant cash credit without documentary verification",
+    "Uses non .gov.in / non .nic.in domain posing as government portal",
+    "Claims lottery or prize under PM welfare scheme",
+    "Requests bank debit card PIN or CVV for subsidy disbursement"
+  ],
+  "statutory_rti_exemptions_sec8": [
+    "8(1)(a) - National security and sovereignty",
+    "8(1)(d) - Commercial confidence and trade secrets",
+    "8(1)(e) - Fiduciary relationship",
+    "8(1)(g) - Endangerment of life and physical safety of any person",
+    "8(1)(h) - Impeding investigation or prosecution of offenders",
+    "8(1)(j) - Personal information with no relationship to public activity"
+  ]
+}

@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  PRAAPTI AI - Serverless Civic Intelligence API (AWS SAM Local & LocalStack)
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: python3.11
+    Environment:
+      Variables:
+        LOCALSTACK_HOSTNAME: localhost
+        OPENSEARCH_HOST: localhost
+        OPENSEARCH_PORT: "9200"
+        CEDAR_POLICY_PATH: backend/policies/auth.cedar
+
+Resources:
+  PraaptiApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  MatchSchemesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: app.search_welfare_schemes
+      Description: Matches citizen demographic profiles against 55+ Indian welfare schemes.
+      Events:
+        MatchSchemesPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PraaptiApi
+            Path: /api/schemes/match
+            Method: POST
+        MatchSchemesGet:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PraaptiApi
+            Path: /api/schemes/match
+            Method: GET
+
+  GenerateRTIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: app.draft_rti_application
+      Description: Evaluates Cedar authorization and statutorily formats RTI Tier 1/2/3 appeals.
+      Events:
+        GenerateRTIPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PraaptiApi
+            Path: /api/rti/generate
+            Method: POST
+
+Outputs:
+  PraaptiApiEndpoint:
+    Description: "API Gateway local endpoint URL for Dev environment"
+    Value: !Sub "http://127.0.0.1:3000/dev"

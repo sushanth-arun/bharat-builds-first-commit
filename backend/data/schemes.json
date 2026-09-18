@@ -1,0 +1,200 @@
+[
+  {
+    "scheme_id": "PM-KISAN",
+    "title": "Pradhan Mantri Kisan Samman Nidhi",
+    "short_code": "PM-KISAN",
+    "level": "Central",
+    "ministry": "Ministry of Agriculture & Farmers Welfare",
+    "category": "Agriculture",
+    "description": "Income support of ₹6,000 per year in three equal installments to all landholding farmer families across the country.",
+    "benefits": "₹6,000 per annum credited directly to bank account via DBT in 3 installments of ₹2,000 each.",
+    "eligibility": {
+      "target_group": "Farmers",
+      "max_annual_income": null,
+      "land_holding": "Cultivable landholding in applicant's name",
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 100,
+      "excluded_categories": ["Institutional landholders", "Holding constitutional posts", "Income tax payers", "Pensioners above ₹10,000/month"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Land Ownership Documents (Khatauni/7/12 extract)",
+      "Active Bank Account linked with Aadhaar",
+      "Mobile number"
+    ],
+    "official_portal": "https://pmkisan.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PM-JAY",
+    "title": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana",
+    "short_code": "AB-PMJAY",
+    "level": "Central",
+    "ministry": "Ministry of Health and Family Welfare / NHA",
+    "category": "Healthcare",
+    "description": "Health insurance cover of ₹5 Lakh per family per year for secondary and tertiary hospitalization care to poor and vulnerable families.",
+    "benefits": "Cashless and paperless access to healthcare services up to ₹5,00,000 per family per year across empaneled hospitals.",
+    "eligibility": {
+      "target_group": "Economically vulnerable households",
+      "socio_economic_status": ["SECC 2011 Deprived", "BPL", "Antyodaya Anna Yojana (AAY)"],
+      "max_annual_income": 300000,
+      "gender": "All",
+      "age_min": 0,
+      "age_max": 120
+    },
+    "documents_required": [
+      "Aadhaar Card or Ration Card",
+      "SECC Family ID / Ayushman Card",
+      "Proof of identity and address"
+    ],
+    "official_portal": "https://nha.gov.in/PM-JAY",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PMAY-G",
+    "title": "Pradhan Mantri Awas Yojana - Gramin",
+    "short_code": "PMAY-G",
+    "level": "Central",
+    "ministry": "Ministry of Rural Development",
+    "category": "Housing",
+    "description": "Financial assistance to houseless households and those living in kutcha and dilapidated houses in rural areas to construct pucca houses.",
+    "benefits": "Financial grant of ₹1,20,000 in plain areas and ₹1,30,000 in hilly/difficult/IAP districts, plus 90-95 days of MGNREGS wage employment.",
+    "eligibility": {
+      "target_group": "Rural houseless & kutcha house owners",
+      "socio_economic_status": ["SECC 2011 Rural", "Awaas+ verified list"],
+      "max_annual_income": 250000,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 100
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Bank Account Details",
+      "MGNREGA Job Card Number",
+      "Land Record/House Site Proof"
+    ],
+    "official_portal": "https://pmayg.nic.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PM-VISHWAKARMA",
+    "title": "PM Vishwakarma Scheme",
+    "short_code": "PM-VISHWAKARMA",
+    "level": "Central",
+    "ministry": "Ministry of Micro, Small and Medium Enterprises",
+    "category": "Artisans & Skill Development",
+    "description": "End-to-end holistic support to traditional artisans and craftspeople working with hands and tools across 18 traditional trades.",
+    "benefits": "Skill training with ₹500/day stipend, ₹15,000 tool kit incentive, collateral-free credit support up to ₹3 Lakh at concessional 5% interest rate.",
+    "eligibility": {
+      "target_group": "Traditional artisans and craftspeople",
+      "trades": ["Carpenter", "Blacksmith", "Potter", "Sculptor", "Cobbler", "Mason", "Basket/Mat Weaver", "Tailor", "Barber"],
+      "min_age": 18,
+      "family_limit": "One member per family",
+      "gender": "All"
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Mobile number linked to Aadhaar",
+      "Bank Account details",
+      "Ration Card"
+    ],
+    "official_portal": "https://pmvishwakarma.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "SSY",
+    "title": "Sukanya Samriddhi Yojana",
+    "short_code": "SSY",
+    "level": "Central",
+    "ministry": "Ministry of Finance",
+    "category": "Women & Child Development",
+    "description": "Small deposit savings scheme for the girl child launched under the Beti Bachao Beti Padhao campaign offering attractive interest rates and tax exemptions.",
+    "benefits": "High compound interest (8.2%+ p.a.), Section 80C tax deduction, tax-free maturity amount for girl's higher education and marriage.",
+    "eligibility": {
+      "target_group": "Girl children",
+      "age_min": 0,
+      "age_max": 10,
+      "gender": "Female",
+      "family_limit": "Maximum 2 daughters per family"
+    },
+    "documents_required": [
+      "Birth Certificate of Girl Child",
+      "Identity and Address Proof of Guardian (Aadhaar/PAN)",
+      "Passport size photographs"
+    ],
+    "official_portal": "https://www.nsiindia.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "APY",
+    "title": "Atal Pension Yojana",
+    "short_code": "APY",
+    "level": "Central",
+    "ministry": "Ministry of Finance / PFRDA",
+    "category": "Social Security & Pension",
+    "description": "Guaranteed monthly pension scheme for all unorganized sector workers upon reaching 60 years of age.",
+    "benefits": "Guaranteed pension of ₹1,000, ₹2,000, ₹3,000, ₹4,000 or ₹5,000 per month based on contribution amount.",
+    "eligibility": {
+      "target_group": "Unorganized sector workers",
+      "age_min": 18,
+      "age_max": 40,
+      "income_tax_payer": false,
+      "gender": "All"
+    },
+    "documents_required": [
+      "Savings Bank Account / Post Office Account",
+      "Aadhaar Card",
+      "Mobile Number"
+    ],
+    "official_portal": "https://www.npscra.nsdl.co.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "MGNREGA",
+    "title": "Mahatma Gandhi National Rural Employment Guarantee Scheme",
+    "short_code": "MGNREGA",
+    "level": "Central",
+    "ministry": "Ministry of Rural Development",
+    "category": "Employment & Livelihood",
+    "description": "Legal guarantee for at least 100 days of wage employment in a financial year to every rural household whose adult members volunteer for unskilled manual work.",
+    "benefits": "100 days of guaranteed wage employment at statutory state wage rates; unemployment allowance if work is not provided within 15 days.",
+    "eligibility": {
+      "target_group": "Rural adult citizens",
+      "age_min": 18,
+      "location": "Rural",
+      "gender": "All"
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Job Card application form",
+      "Passport photograph",
+      "Bank Account details"
+    ],
+    "official_portal": "https://nrega.nic.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PMMVY",
+    "title": "Pradhan Mantri Matru Vandana Yojana",
+    "short_code": "PMMVY",
+    "level": "Central",
+    "ministry": "Ministry of Women and Child Development",
+    "category": "Maternal & Child Health",
+    "description": "Direct maternity benefit cash incentive for pregnant women and lactating mothers for first and second living child (if second is girl).",
+    "benefits": "₹5,000 in two installments for first child; ₹6,000 in single installment for second girl child.",
+    "eligibility": {
+      "target_group": "Pregnant Women & Lactating Mothers",
+      "gender": "Female",
+      "age_min": 19,
+      "excluded_categories": ["Regular employees of Central/State Govt or PSUs"]
+    },
+    "documents_required": [
+      "Aadhaar of Mother & Husband",
+      "Mother and Child Protection (MCP) Card",
+      "Bank Account Details of Mother"
+    ],
+    "official_portal": "https://pmmvy.wcd.gov.in",
+    "is_active": true
+  }
+]

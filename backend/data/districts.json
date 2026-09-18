@@ -1,0 +1,44 @@
+{
+  "states": {
+    "Karnataka": [
+      "Bengaluru Urban", "Bengaluru Rural", "Mysuru", "Dharwad", "Belagavi", 
+      "Dakshina Kannada", "Udupi", "Tumakuru", "Shivamogga", "Ballari", "Kalaburagi"
+    ],
+    "Maharashtra": [
+      "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Thane", 
+      "Nashik", "Aurangabad (Chhatrapati Sambhaji Nagar)", "Solapur", "Kolhapur", "Amravati"
+    ],
+    "Uttar Pradesh": [
+      "Lucknow", "Varanasi", "Kanpur Nagar", "Prayagraj", "Agra", 
+      "Gorakhpur", "Noida (Gautam Buddha Nagar)", "Ghaziabad", "Meerut", "Ayodhya"
+    ],
+    "Tamil Nadu": [
+      "Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", 
+      "Tirunelveli", "Kanchipuram", "Vellore", "Erode", "Thanjavur"
+    ],
+    "Rajasthan": [
+      "Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", 
+      "Ajmer", "Alwar", "Bhilwara", "Sikar", "Barmer"
+    ],
+    "Bihar": [
+      "Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga", 
+      "Purnia", "Rohtas", "Samastipur", "Begusarai", "Nalanda"
+    ],
+    "Delhi (NCT)": [
+      "Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", 
+      "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"
+    ],
+    "Telangana": [
+      "Hyderabad", "Rangareddy", "Medchal-Malkajgiri", "Warangal", "Nizamabad", 
+      "Karimnagar", "Khammam", "Mahabubnagar", "Nalgonda", "Siddipet"
+    ],
+    "West Bengal": [
+      "Kolkata", "North 24 Parganas", "South 24 Parganas", "Howrah", "Hooghly", 
+      "Purba Medinipur", "Paschim Medinipur", "Darjeeling", "Murshidabad", "Nadia"
+    ],
+    "Gujarat": [
+      "Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", 
+      "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Kutch"
+    ]
+  }
+}
