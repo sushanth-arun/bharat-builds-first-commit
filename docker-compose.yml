@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # OpenSearch: Distributed search & vector database running locally
   opensearch:

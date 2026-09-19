@@ -1,0 +1,24 @@
+# ==============================================================================
+# PRAAPTI AI - Python Virtual Environment Dependencies
+# Track 1 ("Build It") - WeMakeDevs AWS Hackathon (100% Local / Open Source)
+# ==============================================================================
+
+# Core Application & Data Validation
+pydantic>=2.7.0
+requests>=2.31.0
+python-dotenv>=1.0.1
+
+# Teammate 3: Local OpenSearch & Vector DB Client
+opensearch-py>=2.6.0
+
+# Teammate 2: Cedar Policy Language Engine (Python Bindings)
+cedarpy>=0.3.2
+
+# Teammate 1: Optional Agent Framework (if using Strands / Bedrock Agent SDK)
+# Note: app.py contains built-in fallback stubs so this is optional
+strands-agents>=0.1.0; python_version>='3.10'
+
+# Local API & Utilities (Optional for local server testing)
+uvicorn>=0.30.0
+fastapi>=0.111.0
+pytest>=8.0.0

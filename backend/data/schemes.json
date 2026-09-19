@@ -6,22 +6,22 @@
     "level": "Central",
     "ministry": "Ministry of Agriculture & Farmers Welfare",
     "category": "Agriculture",
-    "description": "Income support of ₹6,000 per year in three equal installments to all landholding farmer families across the country.",
-    "benefits": "₹6,000 per annum credited directly to bank account via DBT in 3 installments of ₹2,000 each.",
+    "description": "Income support of Rs. 6,000 per year in three equal installments to all landholding farmer families across the country.",
+    "benefits": "Rs. 6,000 per annum directly transferred via Aadhaar-linked DBT in 3 installments of Rs. 2,000 each.",
     "eligibility": {
-      "target_group": "Farmers",
+      "target_group": "Farmers, Agricultural Workers, Landholders",
       "max_annual_income": null,
-      "land_holding": "Cultivable landholding in applicant's name",
+      "land_holding_required": true,
       "gender": "All",
       "age_min": 18,
       "age_max": 100,
-      "excluded_categories": ["Institutional landholders", "Holding constitutional posts", "Income tax payers", "Pensioners above ₹10,000/month"]
+      "occupations": ["farmer", "agriculture", "cultivator", "landholder"]
     },
     "documents_required": [
       "Aadhaar Card",
-      "Land Ownership Documents (Khatauni/7/12 extract)",
-      "Active Bank Account linked with Aadhaar",
-      "Mobile number"
+      "Land Ownership Documents (Khatauni / 7/12 Extract)",
+      "Bank Passbook linked with Aadhaar",
+      "Mobile Number"
     ],
     "official_portal": "https://pmkisan.gov.in",
     "is_active": true
@@ -33,20 +33,21 @@
     "level": "Central",
     "ministry": "Ministry of Health and Family Welfare / NHA",
     "category": "Healthcare",
-    "description": "Health insurance cover of ₹5 Lakh per family per year for secondary and tertiary hospitalization care to poor and vulnerable families.",
-    "benefits": "Cashless and paperless access to healthcare services up to ₹5,00,000 per family per year across empaneled hospitals.",
+    "description": "Health insurance cover of Rs. 5 Lakh per family per year for secondary and tertiary hospitalization care to poor and vulnerable families.",
+    "benefits": "Cashless access to secondary and tertiary medical care up to Rs. 5,00,000 per family per year across 27,000+ empaneled hospitals.",
     "eligibility": {
-      "target_group": "Economically vulnerable households",
-      "socio_economic_status": ["SECC 2011 Deprived", "BPL", "Antyodaya Anna Yojana (AAY)"],
+      "target_group": "Low Income, BPL, Economically Vulnerable, Daily Wage Workers",
       "max_annual_income": 300000,
+      "land_holding_required": false,
       "gender": "All",
       "age_min": 0,
-      "age_max": 120
+      "age_max": 120,
+      "occupations": ["all", "farmer", "labourer", "daily wage", "artisan", "driver", "street vendor", "domestic worker", "unemployed"]
     },
     "documents_required": [
       "Aadhaar Card or Ration Card",
-      "SECC Family ID / Ayushman Card",
-      "Proof of identity and address"
+      "SECC / Ration Card / Income Certificate",
+      "Bank Account Details"
     ],
     "official_portal": "https://nha.gov.in/PM-JAY",
     "is_active": true
@@ -58,23 +59,51 @@
     "level": "Central",
     "ministry": "Ministry of Rural Development",
     "category": "Housing",
-    "description": "Financial assistance to houseless households and those living in kutcha and dilapidated houses in rural areas to construct pucca houses.",
-    "benefits": "Financial grant of ₹1,20,000 in plain areas and ₹1,30,000 in hilly/difficult/IAP districts, plus 90-95 days of MGNREGS wage employment.",
+    "description": "Financial assistance to houseless households and those living in kutcha or dilapidated houses in rural areas to construct pucca houses.",
+    "benefits": "Financial grant of Rs. 1,20,000 in plain areas and Rs. 1,30,000 in hilly/difficult districts, plus 90 days MGNREGA wage assistance.",
     "eligibility": {
-      "target_group": "Rural houseless & kutcha house owners",
-      "socio_economic_status": ["SECC 2011 Rural", "Awaas+ verified list"],
+      "target_group": "Rural Houseless, Kutcha House Residents, BPL",
       "max_annual_income": 250000,
+      "land_holding_required": false,
       "gender": "All",
       "age_min": 18,
-      "age_max": 100
+      "age_max": 100,
+      "occupations": ["farmer", "labourer", "daily wage", "artisan", "unemployed", "all"]
     },
     "documents_required": [
       "Aadhaar Card",
       "Bank Account Details",
-      "MGNREGA Job Card Number",
-      "Land Record/House Site Proof"
+      "MGNREGA Job Card",
+      "Proof of Land / House Site"
     ],
     "official_portal": "https://pmayg.nic.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PMAY-U",
+    "title": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+    "short_code": "PMAY-U",
+    "level": "Central",
+    "ministry": "Ministry of Housing and Urban Affairs",
+    "category": "Housing",
+    "description": "Provides all-weather pucca houses to eligible urban families belonging to EWS, LIG, and Middle Income Groups.",
+    "benefits": "Interest subsidy up to Rs. 2.67 Lakh on home loans or direct central grant of Rs. 1.5 Lakh for house construction.",
+    "eligibility": {
+      "target_group": "Urban Poor, EWS, LIG, Private Sector Employees, Self Employed",
+      "max_annual_income": 600000,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 21,
+      "age_max": 75,
+      "occupations": ["all", "salaried", "business", "driver", "retail", "self employed"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Salary Slips / Income Certificate",
+      "Bank Statements (6 months)",
+      "Property / House Allotment Papers"
+    ],
+    "official_portal": "https://pmay-urban.gov.in",
     "is_active": true
   },
   {
@@ -83,23 +112,51 @@
     "short_code": "PM-VISHWAKARMA",
     "level": "Central",
     "ministry": "Ministry of Micro, Small and Medium Enterprises",
-    "category": "Artisans & Skill Development",
+    "category": "Artisans & MSME",
     "description": "End-to-end holistic support to traditional artisans and craftspeople working with hands and tools across 18 traditional trades.",
-    "benefits": "Skill training with ₹500/day stipend, ₹15,000 tool kit incentive, collateral-free credit support up to ₹3 Lakh at concessional 5% interest rate.",
+    "benefits": "Skill training with Rs. 500/day stipend, Rs. 15,000 tool kit incentive, collateral-free credit up to Rs. 3 Lakh at concessional 5% interest rate.",
     "eligibility": {
-      "target_group": "Traditional artisans and craftspeople",
-      "trades": ["Carpenter", "Blacksmith", "Potter", "Sculptor", "Cobbler", "Mason", "Basket/Mat Weaver", "Tailor", "Barber"],
-      "min_age": 18,
-      "family_limit": "One member per family",
-      "gender": "All"
+      "target_group": "Traditional Artisans, Craftspeople, Carpenters, Blacksmiths, Potters, Masons, Tailors, Barbers",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 80,
+      "occupations": ["artisan", "craftsperson", "carpenter", "blacksmith", "potter", "mason", "tailor", "barber", "cobbler", "weaver", "sculptor", "mechanic"]
     },
     "documents_required": [
       "Aadhaar Card",
-      "Mobile number linked to Aadhaar",
-      "Bank Account details",
-      "Ration Card"
+      "Mobile Number linked to Aadhaar",
+      "Bank Account Details",
+      "Artisan / Trade Verification Certificate"
     ],
     "official_portal": "https://pmvishwakarma.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PM-SVANIDHI",
+    "title": "PM Street Vendor's AtmaNirbhar Nidhi",
+    "short_code": "PM-SVANIDHI",
+    "level": "Central",
+    "ministry": "Ministry of Housing and Urban Affairs",
+    "category": "Financial Inclusion & MSME",
+    "description": "Micro-credit facility for urban street vendors to resume livelihoods with affordable working capital loans.",
+    "benefits": "Collateral-free working capital loan of Rs. 10,000 (1st tranche), Rs. 20,000 (2nd tranche), and Rs. 50,000 (3rd tranche) with 7% interest subsidy.",
+    "eligibility": {
+      "target_group": "Street Vendors, Hawkers, Small Roadside Sellers, Urban Informal Workers",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 75,
+      "occupations": ["street vendor", "hawker", "vendor", "retailer", "vegetable seller", "tea vendor", "food stall", "small business"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Vending Certificate / Letter of Recommendation from Urban Local Body (ULB)",
+      "Bank Account Details"
+    ],
+    "official_portal": "https://pmsvanidhi.mohua.gov.in",
     "is_active": true
   },
   {
@@ -109,21 +166,50 @@
     "level": "Central",
     "ministry": "Ministry of Finance",
     "category": "Women & Child Development",
-    "description": "Small deposit savings scheme for the girl child launched under the Beti Bachao Beti Padhao campaign offering attractive interest rates and tax exemptions.",
-    "benefits": "High compound interest (8.2%+ p.a.), Section 80C tax deduction, tax-free maturity amount for girl's higher education and marriage.",
+    "description": "Small deposit savings scheme for girl children offering high compound interest and complete tax exemptions under Beti Bachao Beti Padhao.",
+    "benefits": "8.2%+ compound interest p.a., Section 80C tax deduction, tax-free maturity amount for girl's higher education and marriage.",
     "eligibility": {
-      "target_group": "Girl children",
+      "target_group": "Parents of Girl Children (Age 0-10 years)",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "Female",
       "age_min": 0,
       "age_max": 10,
-      "gender": "Female",
-      "family_limit": "Maximum 2 daughters per family"
+      "occupations": ["all", "student", "child", "infant"]
     },
     "documents_required": [
       "Birth Certificate of Girl Child",
-      "Identity and Address Proof of Guardian (Aadhaar/PAN)",
-      "Passport size photographs"
+      "Aadhaar Card / Identity Proof of Guardian",
+      "Address Proof",
+      "Passport Size Photographs"
     ],
     "official_portal": "https://www.nsiindia.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PMMVY",
+    "title": "Pradhan Mantri Matru Vandana Yojana",
+    "short_code": "PMMVY",
+    "level": "Central",
+    "ministry": "Ministry of Women and Child Development",
+    "category": "Women & Health",
+    "description": "Direct cash maternity benefit to pregnant women and lactating mothers for health checkups and nutritional support.",
+    "benefits": "Rs. 5,000 in two installments for the first living child; Rs. 6,000 for second child if girl child.",
+    "eligibility": {
+      "target_group": "Pregnant Women, Lactating Mothers",
+      "max_annual_income": 800000,
+      "land_holding_required": false,
+      "gender": "Female",
+      "age_min": 19,
+      "age_max": 45,
+      "occupations": ["all", "homemaker", "labourer", "worker", "farmer", "salaried"]
+    },
+    "documents_required": [
+      "Aadhaar Card of Mother and Husband",
+      "Mother and Child Protection (MCP) Card",
+      "Aadhaar-linked Bank Account Details"
+    ],
+    "official_portal": "https://pmmvy.wcd.gov.in",
     "is_active": true
   },
   {
@@ -132,15 +218,17 @@
     "short_code": "APY",
     "level": "Central",
     "ministry": "Ministry of Finance / PFRDA",
-    "category": "Social Security & Pension",
-    "description": "Guaranteed monthly pension scheme for all unorganized sector workers upon reaching 60 years of age.",
-    "benefits": "Guaranteed pension of ₹1,000, ₹2,000, ₹3,000, ₹4,000 or ₹5,000 per month based on contribution amount.",
+    "category": "Pension & Social Security",
+    "description": "Guaranteed monthly pension for all unorganized sector workers upon reaching 60 years of age.",
+    "benefits": "Guaranteed monthly pension of Rs. 1,000 to Rs. 5,000 per month for life after age 60.",
     "eligibility": {
-      "target_group": "Unorganized sector workers",
+      "target_group": "Unorganized Sector Workers, Non-Tax Payers, Self Employed",
+      "max_annual_income": 500000,
+      "land_holding_required": false,
+      "gender": "All",
       "age_min": 18,
       "age_max": 40,
-      "income_tax_payer": false,
-      "gender": "All"
+      "occupations": ["all", "farmer", "labourer", "driver", "artisan", "self employed", "maid", "carpenter"]
     },
     "documents_required": [
       "Savings Bank Account / Post Office Account",
@@ -160,41 +248,154 @@
     "description": "Legal guarantee for at least 100 days of wage employment in a financial year to every rural household whose adult members volunteer for unskilled manual work.",
     "benefits": "100 days of guaranteed wage employment at statutory state wage rates; unemployment allowance if work is not provided within 15 days.",
     "eligibility": {
-      "target_group": "Rural adult citizens",
+      "target_group": "Rural Adult Citizens, Unskilled Workers, BPL",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
       "age_min": 18,
-      "location": "Rural",
-      "gender": "All"
+      "age_max": 75,
+      "occupations": ["labourer", "farmer", "unemployed", "daily wage", "all"]
     },
     "documents_required": [
       "Aadhaar Card",
-      "Job Card application form",
-      "Passport photograph",
-      "Bank Account details"
+      "MGNREGA Job Card Application",
+      "Bank Account Details",
+      "Passport Photograph"
     ],
     "official_portal": "https://nrega.nic.in",
     "is_active": true
   },
   {
-    "scheme_id": "PMMVY",
-    "title": "Pradhan Mantri Matru Vandana Yojana",
-    "short_code": "PMMVY",
+    "scheme_id": "MUDRA-SHISHU",
+    "title": "Pradhan Mantri MUDRA Yojana (Shishu / Kishore / Tarun)",
+    "short_code": "PMMY-MUDRA",
     "level": "Central",
-    "ministry": "Ministry of Women and Child Development",
-    "category": "Maternal & Child Health",
-    "description": "Direct maternity benefit cash incentive for pregnant women and lactating mothers for first and second living child (if second is girl).",
-    "benefits": "₹5,000 in two installments for first child; ₹6,000 in single installment for second girl child.",
+    "ministry": "Ministry of Finance",
+    "category": "Financial Inclusion & MSME",
+    "description": "Collateral-free business loans up to Rs. 20 Lakh to non-corporate, non-farm small and micro enterprises.",
+    "benefits": "Loans up to Rs. 50,000 (Shishu), Rs. 5 Lakh (Kishore), and up to Rs. 20 Lakh (Tarun) without collateral at competitive interest rates.",
     "eligibility": {
-      "target_group": "Pregnant Women & Lactating Mothers",
-      "gender": "Female",
-      "age_min": 19,
-      "excluded_categories": ["Regular employees of Central/State Govt or PSUs"]
+      "target_group": "Micro Entrepreneurs, Shopkeepers, Artisans, Small Business Owners, Women Entrepreneurs",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 70,
+      "occupations": ["business", "shopkeeper", "artisan", "self employed", "trader", "manufacturer", "service provider"]
     },
     "documents_required": [
-      "Aadhaar of Mother & Husband",
-      "Mother and Child Protection (MCP) Card",
-      "Bank Account Details of Mother"
+      "Aadhaar Card / PAN Card",
+      "Business Address Proof / Udyam Registration",
+      "Bank Statement (Last 6 months)",
+      "Quotation of Machinery / Items to be purchased"
     ],
-    "official_portal": "https://pmmvy.wcd.gov.in",
+    "official_portal": "https://www.mudra.org.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "POST-MATRIC-SCHOLARSHIP",
+    "title": "Post-Matric Scholarship for SC/ST/OBC Students",
+    "short_code": "PMS-SC-ST",
+    "level": "Central & State",
+    "ministry": "Ministry of Social Justice and Empowerment / Tribal Affairs",
+    "category": "Education & Scholarships",
+    "description": "Financial assistance to students belonging to SC, ST, OBC and EBC categories pursuing post-matriculation or post-secondary education.",
+    "benefits": "Complete reimbursement of non-refundable tuition fees plus monthly maintenance allowance up to Rs. 13,500/year.",
+    "eligibility": {
+      "target_group": "Students, SC, ST, OBC, EBC, Minority",
+      "max_annual_income": 250000,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 15,
+      "age_max": 35,
+      "occupations": ["student", "scholar", "unemployed"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Caste Certificate (SC/ST/OBC)",
+      "Income Certificate issued by Revenue Officer",
+      "Fee Receipt and College Admission Letter",
+      "Marksheets of Previous Exam"
+    ],
+    "official_portal": "https://scholarships.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "KCC",
+    "title": "Kisan Credit Card (KCC) Scheme",
+    "short_code": "KCC",
+    "level": "Central",
+    "ministry": "Ministry of Agriculture & Farmers Welfare / RBI",
+    "category": "Agriculture & Credit",
+    "description": "Adequate and timely credit support from the banking system for agricultural crop cultivation and animal husbandry.",
+    "benefits": "Revolving credit limit up to Rs. 3 Lakh at an effective subsidized interest rate of 4% p.a. with prompt repayment incentive.",
+    "eligibility": {
+      "target_group": "Farmers, Cultivators, Dairy Farmers, Fishermen, Tenant Farmers",
+      "max_annual_income": null,
+      "land_holding_required": true,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 75,
+      "occupations": ["farmer", "cultivator", "dairy farmer", "fisherman", "agriculture"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Land Record Documents (Pattadar Passbook / 7/12)",
+      "Crop Sowing Certificate",
+      "Passport Photograph"
+    ],
+    "official_portal": "https://agricoop.nic.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PM-VAY-VANDANA",
+    "title": "Ayushman Vay Vandana Card (Senior Citizens 70+)",
+    "short_code": "AB-VAY-VANDANA",
+    "level": "Central",
+    "ministry": "Ministry of Health and Family Welfare",
+    "category": "Healthcare & Senior Citizens",
+    "description": "Universal health insurance cover of Rs. 5 Lakh per year for ALL senior citizens aged 70 years and above, irrespective of income status.",
+    "benefits": "Free cashless secondary and tertiary hospitalization cover of Rs. 5,00,000 per year specifically for individuals aged 70+.",
+    "eligibility": {
+      "target_group": "All Senior Citizens aged 70 and above",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 70,
+      "age_max": 120,
+      "occupations": ["all", "senior citizen", "retired", "pensioner", "elderly"]
+    },
+    "documents_required": [
+      "Aadhaar Card (Aadhaar based e-KYC is mandatory)"
+    ],
+    "official_portal": "https://beneficiary.nha.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "STAND-UP-INDIA",
+    "title": "Stand-Up India Scheme for SC/ST and Women Entrepreneurs",
+    "short_code": "STAND-UP-INDIA",
+    "level": "Central",
+    "ministry": "Ministry of Finance / SIDBI",
+    "category": "Entrepreneurship & Social Inclusion",
+    "description": "Bank loans between Rs. 10 Lakh and Rs. 1 Crore to at least one SC or ST borrower and at least one woman borrower per bank branch for greenfield enterprise.",
+    "benefits": "Composite loan (term loan and working capital) between Rs. 10 Lakh to Rs. 1 Crore at lowest applicable interest rates.",
+    "eligibility": {
+      "target_group": "SC, ST, and Women Entrepreneurs",
+      "max_annual_income": null,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 75,
+      "occupations": ["entrepreneur", "business", "self employed", "startup", "manufacturer", "trader"]
+    },
+    "documents_required": [
+      "Aadhaar Card and PAN Card",
+      "Caste Certificate (for SC/ST)",
+      "Detailed Project Report (DPR)",
+      "Proof of Enterprise Address and Incorporation"
+    ],
+    "official_portal": "https://www.standupmitra.in",
     "is_active": true
   }
 ]

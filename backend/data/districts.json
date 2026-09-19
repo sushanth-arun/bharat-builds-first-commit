@@ -1,44 +1,26 @@
 {
   "states": {
-    "Karnataka": [
-      "Bengaluru Urban", "Bengaluru Rural", "Mysuru", "Dharwad", "Belagavi", 
-      "Dakshina Kannada", "Udupi", "Tumakuru", "Shivamogga", "Ballari", "Kalaburagi"
-    ],
-    "Maharashtra": [
-      "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Thane", 
-      "Nashik", "Aurangabad (Chhatrapati Sambhaji Nagar)", "Solapur", "Kolhapur", "Amravati"
-    ],
-    "Uttar Pradesh": [
-      "Lucknow", "Varanasi", "Kanpur Nagar", "Prayagraj", "Agra", 
-      "Gorakhpur", "Noida (Gautam Buddha Nagar)", "Ghaziabad", "Meerut", "Ayodhya"
-    ],
-    "Tamil Nadu": [
-      "Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", 
-      "Tirunelveli", "Kanchipuram", "Vellore", "Erode", "Thanjavur"
-    ],
-    "Rajasthan": [
-      "Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", 
-      "Ajmer", "Alwar", "Bhilwara", "Sikar", "Barmer"
-    ],
-    "Bihar": [
-      "Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga", 
-      "Purnia", "Rohtas", "Samastipur", "Begusarai", "Nalanda"
-    ],
-    "Delhi (NCT)": [
-      "Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", 
-      "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"
-    ],
-    "Telangana": [
-      "Hyderabad", "Rangareddy", "Medchal-Malkajgiri", "Warangal", "Nizamabad", 
-      "Karimnagar", "Khammam", "Mahabubnagar", "Nalgonda", "Siddipet"
-    ],
-    "West Bengal": [
-      "Kolkata", "North 24 Parganas", "South 24 Parganas", "Howrah", "Hooghly", 
-      "Purba Medinipur", "Paschim Medinipur", "Darjeeling", "Murshidabad", "Nadia"
-    ],
-    "Gujarat": [
-      "Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", 
-      "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Kutch"
-    ]
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada (NTR)", "Guntur", "Tirupati", "Kurnool", "Kakinada", "Nellore", "Anantapur", "Kadapa", "Eluru", "Srikakulam"],
+    "Assam": ["Kamrup Metropolitan (Guwahati)", "Dibrugarh", "Silchar (Cachar)", "Jorhat", "Nagaon", "Tinsukia", "Sonitpur (Tezpur)", "Barpeta"],
+    "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga", "Purnia", "Rohtas", "Samastipur", "Begusarai", "Nalanda", "Vaishali"],
+    "Chhattisgarh": ["Raipur", "Bilaspur", "Durg", "Bhilai", "Korba", "Rajnandgaon", "Jagdalpur (Bastar)", "Ambikapur (Surguja)"],
+    "Delhi (NCT)": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+    "Goa": ["North Goa (Panaji)", "South Goa (Margao)"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Kutch (Bhuj)", "Mehsana"],
+    "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal", "Hisar", "Rohtak", "Sonipat", "Panchkula", "Yamunanagar"],
+    "Himachal Pradesh": ["Shimla", "Kangra (Dharamshala)", "Mandi", "Solan", "Kullu", "Sirmaur", "Hamirpur", "Una", "Bilaspur", "Chamba"],
+    "Jharkhand": ["Ranchi", "East Singhbhum (Jamshedpur)", "Dhanbad", "Bokaro", "Hazaribagh", "Deoghar", "Giridih", "Palamu"],
+    "Karnataka": ["Bengaluru Urban", "Bengaluru Rural", "Mysuru", "Dharwad (Hubballi)", "Belagavi", "Dakshina Kannada (Mangaluru)", "Udupi", "Tumakuru", "Shivamogga", "Ballari", "Kalaburagi", "Vijayapura"],
+    "Kerala": ["Thiruvananthapuram", "Ernakulam (Kochi)", "Kozhikode", "Thrissur", "Kollam", "Kannur", "Palakkad", "Kottayam", "Malappuram", "Alappuzha"],
+    "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa"],
+    "Maharashtra": ["Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Thane", "Nashik", "Chhatrapati Sambhajinagar (Aurangabad)", "Solapur", "Kolhapur", "Amravati", "Nanded"],
+    "Odisha": ["Khordha (Bhubaneswar)", "Cuttack", "Ganjam (Berhampur)", "Sundargarh (Rourkela)", "Puri", "Sambalpur", "Balasore", "Bhadrak"],
+    "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "SAS Nagar (Mohali)", "Bathinda", "Hoshiarpur", "Pathankot"],
+    "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", "Ajmer", "Alwar", "Bhilwara", "Sikar", "Barmer", "Sri Ganganagar"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Kanchipuram", "Vellore", "Erode", "Thanjavur", "Dindigul"],
+    "Telangana": ["Hyderabad", "Rangareddy", "Medchal-Malkajgiri", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Mahabubnagar", "Nalgonda", "Siddipet"],
+    "Uttar Pradesh": ["Lucknow", "Varanasi", "Kanpur Nagar", "Prayagraj", "Agra", "Gorakhpur", "Gautam Buddha Nagar (Noida)", "Ghaziabad", "Meerut", "Ayodhya", "Bareilly", "Aligarh", "Mathura"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital (Haldwani)", "Udham Singh Nagar", "Pauri Garhwal", "Almora", "Rishikesh"],
+    "West Bengal": ["Kolkata", "North 24 Parganas", "South 24 Parganas", "Howrah", "Hooghly", "Purba Medinipur", "Paschim Medinipur", "Darjeeling", "Murshidabad", "Nadia", "Malda"]
   }
 }
