@@ -1,6 +1,7 @@
 """
 ========================================================================================
 PRAAPTI AI - Civic Intelligence Local Web & API Server
+Subsystem: Teammate 2 (Sanjay) - Civic Dashboard UI & Real-Time Visualization Server
 Serves the modern accessible civic dashboard on http://localhost:8080 and handles
 dynamic agent workflow requests via /api/workflow.
 ========================================================================================

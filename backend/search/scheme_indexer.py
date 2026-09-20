@@ -1,5 +1,6 @@
 """
-PRAAPTI AI - OpenSearch Scheme Indexer & Hybrid Retrieval Client
+PRAAPTI AI - OpenSearch Scheme Indexer & Dynamic Knowledgebase Client
+Subsystem: Teammate 4 (Harsh) - OpenSearch Multi-Parameter & Vector Retrieval Engine
 Handles OpenSearch index creation, vector/BM25 scheme ingestion, and profile-based filtering.
 """
 

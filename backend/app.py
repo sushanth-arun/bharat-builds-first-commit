@@ -5,11 +5,11 @@ Pradhanmantri & Rajya Assistance Application, Probability, and Transparency Inte
 Civic Intelligence Platform & Statutory RTI Engine
 ========================================================================================
 
-TEAM REPOSITORY DIVISION & SECTION OWNERSHIP:
-  - LAPTOP 1 (Teammate 1): Agent Core, Strands Agents SDK, & Dynamic Orchestration Workflow
-  - LAPTOP 2 (Teammate 2): Cedar Authorization Engine & Zero-Trust Policy Wrapper
-  - LAPTOP 3 (Teammate 3): OpenSearch Hybrid & Vector Retrieval Client (with Fallback Engine)
-  - LAPTOP 4 (Teammate 4): AWS SAM CLI Lambda Handler & Local API Gateway Routing
+TEAM REPOSITORY DIVISION & SUBSYSTEM OWNERSHIP:
+  - Teammate 1 (Sushanth): Strands SDK Agent Core, Custom @tools, Dynamic Orchestration Workflow & AI Assistant
+  - Teammate 2 (Sanjay): Modern Civic Dashboard UI, Real-time Visualizer & Interactive Workflow Templates
+  - Teammate 3 (Ratheeswar): Cedar Zero-Trust Authorization Engine & Statutory Access Policies (auth.cedar)
+  - Teammate 4 (Harsh): OpenSearch Scheme Indexing & Dynamic Multi-Parameter Retrieval Engine (scheme_indexer.py)
 ========================================================================================
 """
 
@@ -107,7 +107,7 @@ class PraaptiWorkflowResponse(BaseModel):
 
 
 # ======================================================================================
-# LAPTOP 1 SECTION: Teammate 1 (Agent Core & Strands SDK Orchestration)
+# SECTION 1: Teammate 1 (Sushanth) - Strands SDK Agent Core & Orchestration
 # ======================================================================================
 
 # Fallback wrapper for Strands Agents SDK if package is installing in venv
@@ -128,7 +128,7 @@ except ImportError:
             self.name = name
             self.description = description
             self.tools = {t.__name__: t for t in tools}
-            logger.info(f"[LAPTOP 1] Initialized Agent '{self.name}' with {len(self.tools)} tools.")
+            logger.info(f"[Teammate 1 - Strands] Initialized Agent '{self.name}' with {len(self.tools)} tools.")
 
         def run(self, action: str, **kwargs):
             if action in self.tools:
@@ -136,10 +136,10 @@ except ImportError:
             raise ValueError(f"Action '{action}' not registered with Agent.")
 
 
-# Teammate 1: Custom Strands Agent Tool Definitions
+# Teammate 1 (Sushanth): Custom Strands Agent Tool Definitions
 @tool
 def search_schemes_tool(profile_dict: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Wraps Laptop 3's OpenSearch vector & metadata query client."""
+    """Wraps Teammate 4's OpenSearch vector & metadata query client."""
     profile = CitizenProfile(**profile_dict)
     return query_opensearch_schemes(profile)
 
@@ -477,10 +477,11 @@ Date: {curr_date}
 Appellant: {payload.applicant_name}"""
 
 
-# Teammate 1 Main Workflow Orchestrator
+# Teammate 1 (Sushanth): Main Strands Workflow Orchestrator
 def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowResponse:
     """
-    Main orchestration logic connecting Laptop 2 (Cedar) and Laptop 3 (OpenSearch).
+    Main orchestration logic connecting Cedar Zero-Trust Authorization (Teammate 3 - Ratheeswar)
+    and OpenSearch Dynamic Knowledgebase Retrieval (Teammate 4 - Harsh).
     Calculates scheme eligibility, computes approval probability, and drafts RTI notices.
     """
     audit_trail: List[str] = []
@@ -873,7 +874,7 @@ def process_strands_chatbot_query(
 
 
 # ======================================================================================
-# LAPTOP 2 SECTION: Teammate 2 (Cedar Authorization Engine & Policies)
+# SECTION 3: Teammate 3 (Ratheeswar) - Cedar Zero-Trust Policy & Authorization Engine
 # ======================================================================================
 
 def check_cedar_policy(
@@ -957,7 +958,7 @@ def check_cedar_policy(
 
 
 # ======================================================================================
-# LAPTOP 3 SECTION: Teammate 3 (OpenSearch Vector & Dynamic Retrieval Engine)
+# SECTION 4: Teammate 4 (Harsh) - OpenSearch Scheme Indexing & Dynamic Knowledgebase Engine
 # ======================================================================================
 
 def query_opensearch_schemes(profile: CitizenProfile, limit: int = 20) -> List[Dict[str, Any]]:
@@ -1013,7 +1014,7 @@ def query_opensearch_schemes(profile: CitizenProfile, limit: int = 20) -> List[D
 
 
 # ======================================================================================
-# LAPTOP 4 SECTION: Teammate 4 (Unified Local API Gateway & Web Service Dispatcher)
+# UNIFIED LOCAL API GATEWAY & WEB SERVICE DISPATCHER
 # ======================================================================================
 
 def process_api_request(endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any]:

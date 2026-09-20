@@ -1,5 +1,6 @@
 """
 PRAAPTI AI - Local Cedar Policy Evaluation Engine
+Subsystem: Teammate 3 (Ratheeswar) - Cedar Zero-Trust Authorization & Policies
 Evaluates statutory RTI drafting & scheme access permissions using Cedar policy language.
 """
 

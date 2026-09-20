@@ -10,11 +10,10 @@ Built for **Track 1 ("Build It")** of the **WeMakeDevs AWS Hackathon**. Runs **1
  
 | Subsystem | Technology | Teammate Role |
 | :--- | :--- | :--- |
-| **Agent Core & Orchestration** | Strands Agents SDK (Python) | Teammate 1 |
-| **Modern Civic Dashboard & Chatbot** | Accessible Vanilla Responsive UI & Agent Tools | Teammate 1 |
-| **Authorization & Policy Engine** | Cedar Zero-Trust Policy Engine (`auth.cedar`) | Teammate 2 |
-| **Knowledge Base & Vector Search** | OpenSearch & Dynamic Scheme Knowledgebase | Teammate 3 |
-| **Unified Local API Dispatcher** | Pure Python & JSON API Server | Teammate 4 |
+| **Agent Core & Dynamic Orchestration** | Strands Agents SDK & Custom `@tool` Workflows | **Teammate 1 (Sushanth)** |
+| **Civic Dashboard, Real-Time AI UI & Workflows** | Accessible Responsive UI, Live Chat & Results Portal | **Teammate 2 (Sanjay)** |
+| **Zero-Trust Authorization & Policy Engine** | AWS Cedar Engine (`auth.cedar` & `cedar_engine.py`) | **Teammate 3 (Ratheeswar)** |
+| **Dynamic Welfare Knowledgebase & Vector Search** | OpenSearch Indexing & Scheme Retrieval (`scheme_indexer.py`) | **Teammate 4 (Harsh)** |
 
 ---
 
