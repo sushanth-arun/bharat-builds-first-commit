@@ -147,9 +147,31 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
         super().do_POST()
 
     def do_GET(self):
-        """Serves UI index.html on root or static requests."""
+        """Serves UI index.html on root or static requests with zero cache."""
         if self.path == "/" or self.path == "":
             self.path = "/index.html"
+        self.send_response(200)
+        if self.path.endswith(".html"):
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+        elif self.path.endswith(".css"):
+            self.send_header("Content-Type", "text/css; charset=utf-8")
+        elif self.path.endswith(".js"):
+            self.send_header("Content-Type", "application/javascript; charset=utf-8")
+        elif self.path.endswith(".json"):
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
+        
+        file_path = os.path.join(TEMPLATES_DIR, self.path.lstrip("/"))
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            with open(file_path, "rb") as f:
+                content = f.read()
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+            return
+        
         return super().do_GET()
 
 
