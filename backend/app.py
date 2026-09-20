@@ -1013,136 +1013,60 @@ def query_opensearch_schemes(profile: CitizenProfile, limit: int = 20) -> List[D
 
 
 # ======================================================================================
-# LAPTOP 4 SECTION: Teammate 4 (AWS SAM CLI & Local API Gateway Handler)
+# LAPTOP 4 SECTION: Teammate 4 (Unified Local API Gateway & Web Service Dispatcher)
 # ======================================================================================
 
-def get_aws_session() -> Optional[Any]:
-    """Initializes a boto3 Session connecting to local LocalStack or standard AWS environment."""
-    try:
-        import boto3
-        region = os.getenv("AWS_DEFAULT_REGION", "ap-south-1")
-        endpoint_url = os.getenv("LOCALSTACK_ENDPOINT", "http://localhost:4566")
-        session = boto3.Session(
-            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID", "test"),
-            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY", "test"),
-            region_name=region
+def process_api_request(endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Unified API Dispatcher serving dynamic JSON endpoints for PRAAPTI AI:
+      - /api/schemes/match : Executes complete Civic Agent workflow
+      - /api/rti/generate  : Validates Cedar policy and generates statutory RTI draft
+      - /api/chat          : Real-time Strands AI Civic Assistant
+      - /api/fraud-scan    : Real-time DNS & Anti-Scam Verification
+    """
+    if endpoint in ["/api/workflow", "/api/schemes/match"]:
+        profile = CitizenProfile(**payload)
+        res = run_praapti_agent_workflow(profile)
+        return json.loads(res.model_dump_json())
+
+    elif endpoint == "/api/rti/generate":
+        rti_payload = RTIApplicationPayload(**payload)
+        auth = check_cedar_policy(
+            user_role="Citizen",
+            action=f"Draft{rti_payload.tier.upper()}RTI",
+            resource_tier=rti_payload.tier,
+            is_verified=rti_payload.is_verified,
+            kyc_level=rti_payload.kyc_level
         )
-        return session
-    except ImportError:
-        logger.info("boto3 not installed. Operating in local in-memory session mode.")
-        return None
-    except Exception as e:
-        logger.warning(f"Could not initialize boto3 session: {e}")
-        return None
-
-def persist_audit_event_localstack(event_type: str, data: Dict[str, Any]) -> bool:
-    """Optionally records audit events to LocalStack DynamoDB/S3 if available."""
-    session = get_aws_session()
-    if not session:
-        return False
-    try:
-        endpoint_url = os.getenv("LOCALSTACK_ENDPOINT", "http://localhost:4566")
-        # Attempt to write to LocalStack S3 or DynamoDB
-        s3 = session.client("s3", endpoint_url=endpoint_url, timeout=1)
-        # Ping/check if LocalStack is responsive
-        return True
-    except Exception:
-        return False
-
-def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
-    """
-    AWS SAM CLI & Lambda entrypoint for local execution via `sam local start-api`.
-    Endpoints handled:
-      - POST /api/schemes/match : Matches citizen profile and runs agent workflow
-      - POST /api/rti/generate  : Generates RTI statutory application notice
-      - GET  /api/health        : Health check endpoint
-    """
-    cors_headers = {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-    }
-
-    # Handle HTTP OPTIONS for CORS pre-flight
-    http_method = event.get("httpMethod", "GET")
-    if http_method == "OPTIONS":
-        return {"statusCode": 200, "headers": cors_headers, "body": json.dumps({"status": "ok"})}
-
-    path = event.get("path", "/api/schemes/match")
-
-    try:
-        # Parse Request Body
-        raw_body = event.get("body")
-        body = json.loads(raw_body) if raw_body and isinstance(raw_body, str) else (raw_body or {})
-
-        # Route 1: Health Check
-        if path == "/api/health" or http_method == "GET":
+        if auth.get("decision") != "ALLOW":
             return {
-                "statusCode": 200,
-                "headers": cors_headers,
-                "body": json.dumps({
-                    "status": "healthy",
-                    "system": "PRAAPTI AI Civic Intelligence Agent Core",
-                    "timestamp": datetime.now().isoformat()
-                })
+                "status": "DENIED",
+                "reason": auth.get("reason"),
+                "cedar_status": auth
             }
-
-        # Route 2: RTI Draft Generation
-        if "/api/rti/generate" in path:
-            rti_payload = RTIApplicationPayload(**body)
-            # Evaluate Cedar
-            auth = check_cedar_policy(
-                user_role="Citizen",
-                action=f"Draft{rti_payload.tier.upper()}RTI",
-                resource_tier=rti_payload.tier,
-                is_verified=rti_payload.is_verified,
-                kyc_level=rti_payload.kyc_level
-            )
-            if auth.get("decision") != "ALLOW":
-                return {
-                    "statusCode": 403,
-                    "headers": cors_headers,
-                    "body": json.dumps({
-                        "status": "FORBIDDEN",
-                        "message": auth.get("reason"),
-                        "cedar_evaluation": auth
-                    })
-                }
-
-            draft = generate_statutory_rti_text(rti_payload)
-            return {
-                "statusCode": 200,
-                "headers": cors_headers,
-                "body": json.dumps({
-                    "status": "SUCCESS",
-                    "tier": rti_payload.tier,
-                    "draft_content": draft,
-                    "cedar_evaluation": auth
-                })
-            }
-
-        # Route 3: Full Dynamic PRAAPTI Agent Workflow (Default)
-        profile = CitizenProfile(**body)
-        workflow_result = run_praapti_agent_workflow(profile)
-
+        draft = generate_statutory_rti_text(rti_payload)
         return {
-            "statusCode": 200,
-            "headers": cors_headers,
-            "body": workflow_result.model_dump_json()
+            "status": "SUCCESS",
+            "tier": rti_payload.tier,
+            "draft_content": draft,
+            "cedar_status": auth
         }
 
-    except Exception as e:
-        logger.error(f"[LAPTOP 4] API Gateway error: {str(e)}", exc_info=True)
-        return {
-            "statusCode": 400,
-            "headers": cors_headers,
-            "body": json.dumps({
-                "status": "ERROR",
-                "error_message": str(e),
-                "timestamp": datetime.now().isoformat()
-            })
-        }
+    elif endpoint == "/api/chat":
+        user_query = str(payload.get("message", "")).strip()
+        context_profile = payload.get("profile", {})
+        matched_schemes = payload.get("matched_schemes", [])
+        return civic_chat_assistant_tool(
+            user_query=user_query,
+            context_profile=context_profile,
+            matched_schemes=matched_schemes
+        )
+
+    elif endpoint == "/api/fraud-scan":
+        input_text = str(payload.get("url_or_text", "")).strip()
+        return verify_portal_authenticity_tool(input_text)
+
+    return {"status": "ERROR", "message": f"Unknown endpoint '{endpoint}'"}
 
 
 # ======================================================================================

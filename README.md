@@ -7,14 +7,14 @@ Built for **Track 1 ("Build It")** of the **WeMakeDevs AWS Hackathon**. Runs **1
 ---
 
 ## 🏗️ Architecture & Component Mapping
-
+ 
 | Subsystem | Technology | Teammate Role |
 | :--- | :--- | :--- |
 | **Agent Core & Orchestration** | Strands Agents SDK (Python) | Teammate 1 |
-| **UI Prototyping** | PartyRock & Next.js 14 App Router | Teammate 1 |
-| **Authorization & Policy Engine** | Cedar Policy Language (`auth.cedar`) | Teammate 2 |
-| **Knowledge Base & Vector Search** | OpenSearch (Docker single-node) | Teammate 3 |
-| **Serverless Local API** | AWS SAM CLI + LocalStack | Teammate 4 |
+| **Modern Civic Dashboard & Chatbot** | Accessible Vanilla Responsive UI & Agent Tools | Teammate 1 |
+| **Authorization & Policy Engine** | Cedar Zero-Trust Policy Engine (`auth.cedar`) | Teammate 2 |
+| **Knowledge Base & Vector Search** | OpenSearch & Dynamic Scheme Knowledgebase | Teammate 3 |
+| **Unified Local API Dispatcher** | Pure Python & JSON API Server | Teammate 4 |
 
 ---
 
@@ -23,19 +23,20 @@ Built for **Track 1 ("Build It")** of the **WeMakeDevs AWS Hackathon**. Runs **1
 ```text
 praapti-ai/
 ├── backend/
-│   ├── app.py                     # Main Strands Agent Entrypoint & Custom @tools
-│   ├── templates/                 # Prompt templates & UI artifacts
+│   ├── app.py                     # Main Strands Agent Entrypoint, Custom @tools & Workflows
+│   ├── templates/
+│   │   ├── index.html             # Citizen Intake Form & Dashboard
+│   │   ├── results.html           # Scheme Evaluations & Real-time AI Assistant
+│   │   └── serve_ui.py            # Local HTTP & Agent API Web Server (Port 8080)
 │   ├── policies/
 │   │   ├── auth.cedar             # Cedar Authorization Rules (Tier 1/2/3 RTI)
 │   │   └── cedar_engine.py        # Local Cedar Evaluation Wrapper
 │   ├── search/
 │   │   └── scheme_indexer.py      # OpenSearch Ingestion & Query Client
 │   └── data/
-│       ├── schemes.json           # Master DB (55+ Indian Welfare Schemes)
-│       ├── districts.json         # 700+ Mapped Indian Districts
-│       └── fraud_patterns.json    # Scam Patterns & Phishing Domain Check
-├── template.yaml                  # AWS SAM Local Configuration
-├── docker-compose.yml             # Local OpenSearch & LocalStack Containers
+│       ├── schemes.json           # Master DB (Central & State Welfare Schemes)
+│       └── districts.json         # 700+ Mapped Indian Districts
+├── docker-compose.yml             # Local OpenSearch Single-Node Container
 ├── .env.example                   # Local environment variable blueprint
 └── README.md
 ```
@@ -44,13 +45,7 @@ praapti-ai/
 
 ## 🚀 Quickstart (100% Local Development)
 
-### 1. Start OpenSearch & LocalStack Containers
-```bash
-docker compose up -d
-```
-Verify OpenSearch is running on `http://localhost:9200` and LocalStack on `http://localhost:4566`.
-
-### 2. Configure Python Environment
+### 1. Configure Python Environment
 ```bash
 python -m venv venv
 # Windows:
@@ -58,32 +53,24 @@ python -m venv venv
 # Linux/macOS:
 source venv/bin/activate
 
-pip install opensearch-py requests
-# Optional: pip install cedarpy strands-agents
+pip install -r requirements.txt
 ```
 
-### 3. Initialize OpenSearch Index & Seed Data
+### 2. Run PRAAPTI AI Dashboard & Civic Intelligence Server
 ```bash
-python backend/search/scheme_indexer.py
+python backend/templates/serve_ui.py
 ```
+Open `http://localhost:8080` in your web browser.
 
-### 4. Test Cedar Policy Authorization Engine
+### 3. Test Cedar Policy Authorization Engine
 ```bash
 python backend/policies/cedar_engine.py
 ```
 
-### 5. Run Strands Agent Core
+### 4. Run Strands Agent Core in CLI
 ```bash
 python backend/app.py
 ```
-
-### 6. Run Serverless APIs Locally via AWS SAM
-```bash
-sam local start-api
-```
-The endpoints will be live locally:
-- `POST http://127.0.0.1:3000/api/schemes/match`
-- `POST http://127.0.0.1:3000/api/rti/generate`
 
 ---
 
