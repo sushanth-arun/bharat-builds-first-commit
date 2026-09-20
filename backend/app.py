@@ -652,8 +652,22 @@ def civic_chat_assistant_tool(
 
     # 4. Built-in Strands Civic Reasoning & Statutory Rules Engine (Default / Fallback)
     if not llm_succeeded:
-        # Category A: Fraud, Scam, Fake Portals, Bribes, Cybercrime
-        if any(k in q_lower for k in ["fraud", "scam", "fake", "pass through", "bypass", "avoid fraud", "phishing", "money", "bribe", "demand", "otp", "stolen", "cyber"]):
+        # Category 1: Payment Disbursement Timeline & Processing Duration
+        if any(k in q_lower for k in ["how much time", "how long", "time will", "when will i get", "when will money", "processing time", "disburse", "transfer time", "disbursement duration", "turnaround", "installment date"]):
+            plain_reply = (
+                "Statutory Processing & DBT Disbursement Timelines:\n\n"
+                "1. Initial Application Scrutiny: Typically completed within 15 to 30 working days by the District Welfare / Nodal Officer after document verification.\n\n"
+                "2. NPCI Direct Benefit Transfer (DBT): Once approved, government subsidies are credited directly to your Aadhaar-linked bank account in the upcoming quarterly DBT cycle (e.g. PM-KISAN 4-month cycle, PM-JAY instant e-card issuance, or Post-Matric DBT cycle).\n\n"
+                "3. Statutory RTI Remedy for Delays: If your sanctioned funds or application are pending beyond 30 days without explanation, you have the right under Section 6(1) of the RTI Act 2005 to demand certified daily progress records from the Public Information Officer (mandated reply within 30 days)."
+            )
+            suggested_workflows = [
+                {"title": "Draft Section 6(1) RTI for Delayed Payment", "action": "open_rti"},
+                {"title": "Check Cedar Zero-Trust Status", "action": "check_cedar"},
+                {"title": "View Matched Schemes", "action": "view_schemes"}
+            ]
+
+        # Category 2: Fraud, Scam, Fake Portals, Bribes, Cybercrime
+        elif any(k in q_lower for k in ["fraud", "scam", "fake", "pass through", "bypass", "avoid fraud", "phishing", "bribe", "demand money", "otp", "stolen", "cyber"]):
             plain_reply = (
                 "To protect yourself from welfare fraud and fake portals:\n\n"
                 "1. Verify Official Domains: Authentic Indian Government portals always end in .gov.in or .nic.in. Never enter details on .com, .org, .xyz, or .online sites.\n\n"
@@ -667,8 +681,8 @@ def civic_chat_assistant_tool(
                 {"title": "File Grievance on CPGRAMS", "action": "open_cpgrams"}
             ]
 
-        # Category B: Cedar Zero-Trust, KYC & Identity Verification
-        elif any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth"]):
+        # Category 3: Cedar Zero-Trust, KYC & Identity Verification
+        elif any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth", "denied", "permission"]):
             kyc = context_profile.get("kyc_level", "aadhaar_otp")
             is_v = context_profile.get("is_verified", True)
             cedar_check = evaluate_authorization_tool(
@@ -691,7 +705,7 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category C: RTI Steps, Appeals, Delays & Higher Officials
+        # Category 4: RTI Steps, Appeals, Delays & Higher Officials
         elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
             plain_reply = (
                 "Statutory Steps to Escalate and Seek Public Records:\n\n"
@@ -704,8 +718,8 @@ def civic_chat_assistant_tool(
                 {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
             ]
 
-        # Category D: Documents & Bank DBT Seeding
-        elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate", "dbt"]):
+        # Category 5: Documents & Bank DBT Seeding
+        elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate", "dbt", "seeding", "mapper"]):
             top_missing = []
             if matched_schemes and len(matched_schemes) > 0:
                 top_missing = matched_schemes[0].get("missing_documents", [])
@@ -725,8 +739,8 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category E: Scheme Inquiries, Caste Matching & Eligibility
-        elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship"]):
+        # Category 6: Scheme Inquiries, Caste Matching & Eligibility
+        elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship", "benefit"]):
             caste_str = context_profile.get("caste_category", "General")
             schemes_summary = []
             for s in (matched_schemes[:4] if matched_schemes else []):
