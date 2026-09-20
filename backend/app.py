@@ -2,7 +2,7 @@
 ========================================================================================
 PRAAPTI AI (प्राप्ति AI) — Unified Agent Core & Serverless API Baseline
 Pradhanmantri & Rajya Assistance Application, Probability, and Transparency Interface
-Track 1 ("Build It") - WeMakeDevs AWS Hackathon (100% Local / Open Source Stack)
+Civic Intelligence Platform & Statutory RTI Engine
 ========================================================================================
 
 TEAM REPOSITORY DIVISION & SECTION OWNERSHIP:

@@ -1523,13 +1523,13 @@
             
             <div class="form-field-group">
               <label class="field-label" for="citizenNameInput">Full Legal Name</label>
-              <input type="text" id="citizenNameInput" class="input-control" placeholder="e.g. Ramesh Kumar" required />
+              <input type="text" id="citizenNameInput" class="input-control" placeholder="Enter full legal name" required />
             </div>
 
             <div class="form-grid-2">
               <div class="form-field-group">
                 <label class="field-label" for="citizenAgeInput">Age (Years)</label>
-                <input type="number" id="citizenAgeInput" class="input-control" min="0" max="120" placeholder="e.g. 45" required />
+                <input type="number" id="citizenAgeInput" class="input-control" min="1" max="120" placeholder="Enter age" required />
               </div>
               <div class="form-field-group">
                 <label class="field-label" for="citizenGenderSelect">Gender</label>
@@ -1577,7 +1577,7 @@
               </div>
               <div class="form-field-group">
                 <label class="field-label" for="citizenIncomeInput">Annual Family Income (₹)</label>
-                <input type="number" id="citizenIncomeInput" class="input-control" min="0" step="5000" placeholder="e.g. 110000" required />
+                <input type="number" id="citizenIncomeInput" class="input-control" min="0" placeholder="Enter annual income" required />
               </div>
             </div>
 
@@ -1585,7 +1585,7 @@
             <div class="form-grid-2">
               <div class="form-field-group">
                 <label class="field-label" for="citizenLandInput">Land Holding (Acres)</label>
-                <input type="number" id="citizenLandInput" class="input-control" min="0" step="0.1" value="0.0" />
+                <input type="number" id="citizenLandInput" class="input-control" min="0" step="any" placeholder="Enter land in acres (optional)" />
               </div>
               <div class="form-field-group">
                 <label class="field-label" for="citizenCasteSelect">Social Category</label>
@@ -1621,7 +1621,7 @@
             <!-- Grievance -->
             <div class="form-field-group">
               <label class="field-label" for="citizenGrievanceInput">Grievance / RTI Inquiry Subject</label>
-              <input type="text" id="citizenGrievanceInput" class="input-control" placeholder="e.g. Delay in DBT transfer sanction, application status" />
+              <input type="text" id="citizenGrievanceInput" class="input-control" placeholder="Enter grievance or inquiry subject" />
             </div>
 
             <button type="submit" id="btnRunAgent" class="btn btn-primary btn-shimmer" style="padding:13px; font-size:15px; width:100%;">
@@ -1701,7 +1701,7 @@
         </div>
 
         <div class="scam-input-flex">
-          <input type="text" id="scamScanInput" class="input-control" value="http://pm-kisan-yojna.org/pay-registration-fee-via-upi" placeholder="Enter portal URL or SMS text..." />
+          <input type="text" id="scamScanInput" class="input-control" placeholder="Enter portal URL or SMS text..." />
           <button type="button" id="btnVerifyScam" class="btn btn-primary" style="white-space:nowrap;">
             <i data-lucide="scan" style="width:16px; height:16px;"></i> Scan URL / Domain
           </button>
