@@ -1805,10 +1805,12 @@
     const darkBtn = document.getElementById("themeDarkBtn");
 
     function setAppTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("theme", theme);
-      localStorage.setItem("praapti_theme", theme);
-      if (theme === "dark") {
+      const mode = (theme === "dark") ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", mode);
+      document.documentElement.className = mode;
+      localStorage.setItem("theme", mode);
+      localStorage.setItem("praapti_theme", mode);
+      if (mode === "dark") {
         if (darkBtn) darkBtn.classList.add("active");
         if (lightBtn) lightBtn.classList.remove("active");
       } else {
@@ -1817,16 +1819,21 @@
       }
     }
 
-    // Initialize from saved preference or default to clean white light
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("praapti_theme");
-    const activeTheme = (savedTheme === "dark") ? "dark" : "light";
-    setAppTheme(activeTheme);
+    // Default strictly to clear pure white light mode unless user explicitly chose dark
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("praapti_theme") || "light";
+    setAppTheme(savedTheme);
 
     if (lightBtn) {
-      lightBtn.addEventListener("click", () => setAppTheme("light"));
+      lightBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        setAppTheme("light");
+      });
     }
     if (darkBtn) {
-      darkBtn.addEventListener("click", () => setAppTheme("dark"));
+      darkBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        setAppTheme("dark");
+      });
     }
 
     // 3. ReactBits Spotlight Mouse Coordinates Tracker
