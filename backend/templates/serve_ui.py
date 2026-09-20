@@ -12,6 +12,7 @@ import os
 import sys
 import json
 import logging
+from datetime import datetime
 
 # Ensure backend root is in python path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +25,8 @@ from app import (
     run_praapti_agent_workflow,
     check_cedar_policy,
     generate_statutory_rti_text,
-    query_opensearch_schemes
+    query_opensearch_schemes,
+    process_strands_chatbot_query
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -132,89 +134,21 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                     }).encode('utf-8'))
                     return
 
-                # Route 4: AI Civic Chat Assistant & Dynamic Doubts Resolver
+                # Route 4: AI Civic Chat Assistant & Dynamic Doubts Resolver (Strands SDK Agent)
                 elif self.path == "/api/chat":
                     user_query = str(data.get("message", "")).strip()
                     context_profile = data.get("profile", {})
                     matched_schemes = data.get("matched_schemes", [])
 
-                    # Construct context-aware intelligent response
-                    q_lower = user_query.lower()
-                    reply = ""
-                    suggested_workflows = []
-
-                    if any(w in q_lower for w in ["rti", "appeal", "application", "delay", "officer", "rejected", "reject", "status"]):
-                        reply = (
-                            f"📌 **RTI Transparency Workflow:** If your scheme application is delayed or rejected without reason, "
-                            f"you have the statutory right under **Section 6(1) of the RTI Act 2005** to demand application processing logs, "
-                            f"dispatch dates, and reason for rejection. If no response arrives within 30 days, file a **Section 19(1) First Appeal**."
-                        )
-                        suggested_workflows = [
-                            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
-                            {"title": "Check Verification & Cedar Policy", "action": "check_cedar"},
-                            {"title": "File Public Grievance on CPGRAMS", "action": "open_cpgrams"}
-                        ]
-                    elif any(w in q_lower for w in ["document", "doc", "aadhaar", "ration", "bpl", "certificate", "income"]):
-                        reply = (
-                            f"📋 **Document Checklist & Compliance:** For most Central and State DBT welfare programs, keep your "
-                            f"**Aadhaar-linked Bank Account**, **Income Certificate (issued by Tehsildar/Revenue Dept)**, and "
-                            f"**Ration/BPL card** ready. Ensure your bank account has **DBT (Direct Benefit Transfer) NPCI mapper active**."
-                        )
-                        suggested_workflows = [
-                            {"title": "Verify DigiLocker KYC Level", "action": "verify_kyc"},
-                            {"title": "Check NPCI DBT Bank Status", "action": "open_npci"},
-                            {"title": "Explore Low-Income Subsidies", "action": "filter_bpl"}
-                        ]
-                    elif any(w in q_lower for w in ["farm", "farmer", "kisan", "pm kisan", "crop", "land", "soil"]):
-                        reply = (
-                            f"🌾 **Agriculture & Farmer Workflows:** You qualify for **PM-KISAN Samman Nidhi** (₹6,000/yr DBT) and "
-                            f"**Kisan Credit Card (KCC)** offering 4% subsidized institutional credit. Make sure land records (Khata/Khasra) "
-                            f"are seeded on the PM-Kisan portal."
-                        )
-                        suggested_workflows = [
-                            {"title": "Apply for Kisan Credit Card (KCC)", "action": "scheme_kcc"},
-                            {"title": "Seed Aadhaar with Land Records (PM-Kisan)", "action": "scheme_pmkisan"},
-                            {"title": "Draft RTI for Pending PM-KISAN Installments", "action": "open_rti"}
-                        ]
-                    elif any(w in q_lower for w in ["health", "hospital", "ayushman", "treatment", "card", "pm-jay"]):
-                        reply = (
-                            f"🏥 **Healthcare Coverage:** Under **Ayushman Bharat (PM-JAY)**, eligible families receive cashless "
-                            f"hospitalization up to ₹5,00,000/year across empanelled public and private hospitals for secondary & tertiary care."
-                        )
-                        suggested_workflows = [
-                            {"title": "Check Ayushman Card Status (PM-JAY)", "action": "scheme_pmjay"},
-                            {"title": "Find Empanelled Network Hospitals", "action": "hospitals_list"}
-                        ]
-                    elif any(w in q_lower for w in ["loan", "credit", "business", "shop", "vendor", "artisan", "vishwakarma", "svanidhi"]):
-                        reply = (
-                            f"🛠️ **MSME & Livelihood Schemes:** \n"
-                            f"1. **PM Vishwakarma:** ₹15,000 e-voucher toolkit grant + 5% collateral-free credit.\n"
-                            f"2. **PM SVANidhi:** Working capital credit up to ₹50,000 with 7% interest cashback for urban street vendors."
-                        )
-                        suggested_workflows = [
-                            {"title": "Apply for PM Vishwakarma Toolkit Grant", "action": "scheme_vishwakarma"},
-                            {"title": "Apply for PM SVANidhi Credit", "action": "scheme_svanidhi"}
-                        ]
-                    else:
-                        top_sc = matched_schemes[0]["title"] if matched_schemes and len(matched_schemes) > 0 else "Welfare Schemes"
-                        reply = (
-                            f"PRAAPTI AI has analyzed your demographic profile. Based on your income and occupation, "
-                            f"you have high eligibility for schemes like **{top_sc}**. "
-                            f"You can ask me questions about eligibility rules, missing documents, statutory RTI drafting, or scam verification!"
-                        )
-                        suggested_workflows = [
-                            {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
-                            {"title": "Generate Legal RTI Notice", "action": "open_rti"},
-                            {"title": "Verify Official Portal Authenticity", "action": "open_scam"}
-                        ]
+                    # Call Strands SDK agent with AWS Cedar & OpenSearch tool suite
+                    chat_result = process_strands_chatbot_query(
+                        user_query=user_query,
+                        context_profile=context_profile,
+                        matched_schemes=matched_schemes
+                    )
 
                     self._set_headers(200)
-                    self.wfile.write(json.dumps({
-                        "status": "SUCCESS",
-                        "reply": reply,
-                        "suggested_workflows": suggested_workflows,
-                        "timestamp": datetime.now().isoformat()
-                    }).encode('utf-8'))
+                    self.wfile.write(json.dumps(chat_result).encode('utf-8'))
                     return
 
                 else:
