@@ -1084,7 +1084,17 @@
     function appendBotMessage(replyText, workflows = []) {
       const bubble = document.createElement("div");
       bubble.className = "chat-bubble bubble-bot";
-      bubble.innerHTML = replyText.replace(/\n/g, "<br>");
+
+      // Parse text into clean legible formatting without unparsed raw symbols
+      let formatted = replyText
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\s*•\s*(.*$)/gim, '<div style="margin: 4px 0 4px 8px; display: flex; gap: 6px;"><span style="color:var(--primary); font-weight:700;">•</span><span>$1</span></div>')
+        .replace(/^\s*-\s*(.*$)/gim, '<div style="margin: 4px 0 4px 8px; display: flex; gap: 6px;"><span style="color:var(--primary); font-weight:700;">•</span><span>$1</span></div>')
+        .replace(/^\s*(\d+)\.\s*(.*$)/gim, '<div style="margin: 4px 0 4px 8px; display: flex; gap: 6px;"><strong style="color:var(--primary);">$1.</strong><span>$2</span></div>')
+        .replace(/\n\n/g, '<div style="margin-bottom: 8px;"></div>')
+        .replace(/\n/g, '<br>');
+
+      bubble.innerHTML = formatted;
 
       if (workflows && workflows.length > 0) {
         const chipWrap = document.createElement("div");
@@ -1110,10 +1120,15 @@
     function handleWorkflowAction(wf) {
       if (wf.action === "open_rti") {
         document.querySelector(".clause-switcher").scrollIntoView({ behavior: "smooth" });
-        showToast("Jumped to Statutory RTI Drafter!");
+        showToast("Statutory RTI Drafter selected");
       } else if (wf.action === "check_cedar") {
         document.getElementById("cedarAlertBanner").scrollIntoView({ behavior: "smooth" });
-        showToast("Cedar Zero-Trust Policy Inspector active");
+        showToast("Cedar Policy Inspector active");
+      } else if (wf.action === "scan_fraud") {
+        sendChatPrompt("How do I verify if a welfare website or link is genuine or fake?");
+      } else if (wf.action === "view_schemes") {
+        document.querySelector(".schemes-grid").scrollIntoView({ behavior: "smooth" });
+        showToast("Viewing Matched Schemes");
       } else {
         sendChatPrompt(`Explain how to perform workflow: ${wf.title}`);
       }

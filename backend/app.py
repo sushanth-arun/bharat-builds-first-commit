@@ -539,125 +539,218 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
     )
 
 
-# Strands SDK Chatbot Civic Assistant with AWS Tools
+@tool
+def civic_chat_assistant_tool(
+    user_query: str,
+    context_profile: Optional[Dict[str, Any]] = None,
+    matched_schemes: Optional[List[Dict[str, Any]]] = None
+) -> Dict[str, Any]:
+    """
+    Strands Agent Tool: AI Civic Chat Assistant & Doubts Resolver.
+    Integrates LLM reasoning (Gemini, Claude, OpenAI, Bedrock) or built-in statutory civic knowledge
+    to deliver clear, direct, and actionable advice to citizens without fancy or unparsed syntax.
+    """
+    if context_profile is None:
+        context_profile = {}
+    if matched_schemes is None:
+        matched_schemes = []
+
+    q_lower = user_query.lower().strip()
+    suggested_workflows = []
+    plain_reply = ""
+
+    # Check for external LLM API configurations if provided by environment
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+
+    llm_succeeded = False
+    
+    # 1. Optional Gemini integration
+    if gemini_key and not llm_succeeded:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=gemini_key)
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            prompt = (
+                f"You are PRAAPTI AI, a helpful Indian civic welfare and RTI assistant. "
+                f"Provide a direct, practical, and clear response in plain text with no fancy or weird formatting. "
+                f"Citizen context: {json.dumps(context_profile)}. "
+                f"User Question: {user_query}"
+            )
+            resp = model.generate_content(prompt)
+            if resp and resp.text:
+                plain_reply = resp.text.strip()
+                llm_succeeded = True
+        except Exception as e:
+            logger.warning(f"Gemini generation fallback: {e}")
+
+    # 2. Optional OpenAI integration
+    if openai_key and not llm_succeeded:
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=openai_key)
+            prompt = (
+                f"You are PRAAPTI AI, an Indian civic welfare and statutory RTI assistant. "
+                f"Give direct, helpful, plain text answers. Citizen profile: {json.dumps(context_profile)}. "
+                f"Question: {user_query}"
+            )
+            chat_comp = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=400
+            )
+            plain_reply = chat_comp.choices[0].message.content.strip()
+            llm_succeeded = True
+        except Exception as e:
+            logger.warning(f"OpenAI generation fallback: {e}")
+
+    # 3. Optional Anthropic Claude integration
+    if anthropic_key and not llm_succeeded:
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=anthropic_key)
+            msg = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=400,
+                messages=[{"role": "user", "content": f"You are PRAAPTI AI civic agent. Citizen: {json.dumps(context_profile)}. Question: {user_query}"}]
+            )
+            plain_reply = msg.content[0].text.strip()
+            llm_succeeded = True
+        except Exception as e:
+            logger.warning(f"Claude generation fallback: {e}")
+
+    # 4. Built-in Strands Civic Reasoning & Statutory Rules Engine (Default / Fallback)
+    if not llm_succeeded:
+        # Category A: Fraud, Scam, Fake Portals, Bribes, Cybercrime
+        if any(k in q_lower for k in ["fraud", "scam", "fake", "pass through", "bypass", "avoid fraud", "phishing", "money", "bribe", "demand", "otp", "stolen", "cyber"]):
+            plain_reply = (
+                "To protect yourself from welfare fraud and fake portals:\n\n"
+                "1. Verify Official Domains: Authentic Indian Government portals always end in .gov.in or .nic.in. Never enter details on .com, .org, .xyz, or .online sites.\n\n"
+                "2. Zero Advance Fees: Government welfare programs (such as PM-KISAN, PM-JAY, or Mudra) never require registration fees, processing charges, or UPI transfers.\n\n"
+                "3. Never Share OTPs: Government officials will never ask for Aadhaar OTPs, bank MPINs, or ATM PINs over phone calls or WhatsApp.\n\n"
+                "4. Report Fraud Immediately: If you encounter a fake agent or unauthorized portal, call the National Cybercrime Helpline at 1930 or file a complaint on cybercrime.gov.in. You can also file a Section 6(1) RTI inquiry with the department's Vigilance Officer."
+            )
+            suggested_workflows = [
+                {"title": "Verify Portal Authenticity (Anti-Scam)", "action": "scan_fraud"},
+                {"title": "Draft Section 6(1) Vigilance RTI", "action": "open_rti"},
+                {"title": "File Grievance on CPGRAMS", "action": "open_cpgrams"}
+            ]
+
+        # Category B: Cedar Zero-Trust, KYC & Identity Verification
+        elif any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth"]):
+            kyc = context_profile.get("kyc_level", "aadhaar_otp")
+            is_v = context_profile.get("is_verified", True)
+            cedar_check = evaluate_authorization_tool(
+                user_role="Citizen",
+                action="DraftTier1RTI",
+                resource_tier="tier1",
+                is_verified=is_v,
+                kyc_level=kyc
+            )
+            plain_reply = (
+                f"Cedar Zero-Trust Policy Engine Verification Status:\n\n"
+                f"- Citizen Identity Status: {'Authenticated' if is_v else 'Unverified'} ({kyc})\n"
+                f"- Cedar Authorization Decision: {cedar_check.get('decision')} (Rule: {cedar_check.get('rule_id')})\n"
+                f"- Rationale: {cedar_check.get('reason')}\n\n"
+                f"Cedar policies enforce zero-trust security: Section 6(1) and Section 19(1) RTIs require verified identity, "
+                f"and Section 19(3) CIC Second Appeals strictly disallow unverified citizens."
+            )
+            suggested_workflows = [
+                {"title": "Check Cedar Authorization", "action": "check_cedar"},
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
+            ]
+
+        # Category C: RTI Steps, Appeals, Delays & Higher Officials
+        elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
+            plain_reply = (
+                "Statutory Steps to Escalate and Seek Public Records:\n\n"
+                "1. Section 6(1) Application (PIO): Submit Form 'A' to the Public Information Officer of the department with a Rs. 10 postal order. The officer has 30 days to provide official status.\n\n"
+                "2. Section 19(1) First Appeal (FAA): If no response is received in 30 days or if your application is delayed without reason, file a First Appeal to the First Appellate Authority (SDM/ADM level).\n\n"
+                "3. Section 19(3) Second Appeal (CIC/SIC): If the first appeal is rejected or ignored, approach the State or Central Information Commission for inquiry and penalty."
+            )
+            suggested_workflows = [
+                {"title": "Draft Section 6(1) PIO Application", "action": "open_rti"},
+                {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
+            ]
+
+        # Category D: Documents & Bank DBT Seeding
+        elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate", "dbt"]):
+            top_missing = []
+            if matched_schemes and len(matched_schemes) > 0:
+                top_missing = matched_schemes[0].get("missing_documents", [])
+            
+            miss_text = f" Missing for your top matched program: {', '.join(top_missing)}." if top_missing else ""
+            plain_reply = (
+                f"Key Documents Checklist for Welfare Subsidies:\n\n"
+                f"1. Aadhaar Card linked with Bank Account (Active NPCI DBT mapper for direct transfers).\n"
+                f"2. Income Certificate from the Tehsildar or Revenue Authority.\n"
+                f"3. Caste / Community Certificate (for SC, ST, OBC quotas if applicable).\n"
+                f"4. Land Records / Khatauni / Pattadar Passbook (for farmer schemes).\n"
+                f"5. Ration Card / BPL Card (for subsidized foodgrains and housing benefits).\n"
+                f"{miss_text}"
+            )
+            suggested_workflows = [
+                {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
+            ]
+
+        # Category E: Scheme Inquiries, Caste Matching & Eligibility
+        elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship"]):
+            caste_str = context_profile.get("caste_category", "General")
+            schemes_summary = []
+            for s in (matched_schemes[:4] if matched_schemes else []):
+                odds = s.get("empirical_approval_odds", 0.8)
+                pct = int(odds * 100) if odds <= 1 else int(odds)
+                schemes_summary.append(f"- {s.get('title')}: {pct}% Approval Probability ({s.get('category')})")
+            
+            summary_text = "\n".join(schemes_summary) if schemes_summary else "- PM-KISAN, Ayushman Bharat, Post-Matric Scholarship, and Stand-Up India"
+            plain_reply = (
+                f"Matched Schemes for {caste_str} Category:\n\n"
+                f"{summary_text}\n\n"
+                f"You can view complete eligibility details, required documents, or generate RTI notices if your disbursement is pending."
+            )
+            suggested_workflows = [
+                {"title": "View Matched Schemes", "action": "view_schemes"},
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
+            ]
+
+        # General / Default Citizen Query
+        else:
+            top_name = matched_schemes[0].get("title", "Welfare Scheme") if matched_schemes else "Central & State Welfare Schemes"
+            plain_reply = (
+                f"PRAAPTI AI Civic Agent is ready to assist you.\n\n"
+                f"You can ask about:\n"
+                f"1. How to avoid fraud and verify official portals\n"
+                f"2. Drafting statutory Section 6(1) RTI inquiries to officials\n"
+                f"3. Eligibility and application steps for {top_name}\n"
+                f"4. Required documents and bank account DBT linkage"
+            )
+            suggested_workflows = [
+                {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
+                {"title": "Verify Portal Authenticity (Anti-Scam)", "action": "scan_fraud"}
+            ]
+
+    return {
+        "status": "SUCCESS",
+        "reply": plain_reply,
+        "suggested_workflows": suggested_workflows,
+        "timestamp": datetime.now().isoformat()
+    }
+
+
 def process_strands_chatbot_query(
     user_query: str,
     context_profile: Dict[str, Any],
     matched_schemes: List[Dict[str, Any]]
 ) -> Dict[str, Any]:
-    """
-    Strands SDK Agent assistant for handling citizen doubts, statutory RTI advice,
-    OpenSearch welfare scheme questions, and Cedar Zero-Trust compliance.
-    """
-    q_lower = user_query.lower()
-    suggested_workflows = []
-    
-    # Tool 1: Cedar Zero-Trust Policy Verification Query
-    if any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth"]):
-        kyc = context_profile.get("kyc_level", "aadhaar_otp")
-        is_v = context_profile.get("is_verified", True)
-        cedar_check = evaluate_authorization_tool(
-            user_role="Citizen",
-            action="DraftTier1RTI",
-            resource_tier="tier1",
-            is_verified=is_v,
-            kyc_level=kyc
-        )
-        reply = (
-            f"🛡️ **Cedar Zero-Trust Policy Engine (Laptop 2 / AWS Verified Permissions):**\n\n"
-            f"• **Current Citizen Status:** {'Authenticated' if is_v else 'Unverified'} ({kyc})\n"
-            f"• **Cedar Evaluation Decision:** `{cedar_check.get('decision')}` via `{cedar_check.get('rule_id')}`\n"
-            f"• **Policy Rationale:** {cedar_check.get('reason')}\n\n"
-            f"Cedar policies enforce mathematical zero-trust: Tier 1 & 2 RTIs require verified identity, "
-            f"while Tier 3 CIC Second Appeals strictly forbid unverified requests under Rule 4."
-        )
-        suggested_workflows = [
-            {"title": "Check Cedar Authorization", "action": "check_cedar"},
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
-        ]
-
-    # Tool 2: Statutory RTI Notice, Appeals & Document Submissions to Higher Officials
-    elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
-        reply = (
-            f"🏛️ **Statutory Escalation & Document Submission to Higher Authorities:**\n\n"
-            f"1. **Stage 1 (PIO Submission):** Submit your Form 'A' Section 6(1) application directly to the Public Information Officer (PIO) at the District Collectorate / Block Development Office along with the ₹10 statutory postal order.\n"
-            f"2. **Stage 2 (Section 19(1) First Appeal):** If officials fail to respond within 30 days or delay your DBT disbursement, submit a First Appeal memorandum to the **First Appellate Authority (FAA)** (typically the Sub-Divisional Magistrate / Additional District Magistrate).\n"
-            f"3. **Stage 3 (Section 19(3) Central/State Information Commission):** For chronic non-compliance, file a Second Appeal before the Information Commission requesting Section 20 penalties."
-        )
-        suggested_workflows = [
-            {"title": "Draft Section 6(1) PIO Application", "action": "open_rti"},
-            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"},
-            {"title": "File Grievance on CPGRAMS Portal", "action": "open_cpgrams"}
-        ]
-
-    # Tool 3: Document Readiness & KYC Requirements
-    elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate"]):
-        top_missing = []
-        if matched_schemes and len(matched_schemes) > 0:
-            top_missing = matched_schemes[0].get("missing_documents", [])
-        
-        miss_str = f" For your top matched scheme, ensure you have: **{', '.join(top_missing)}**." if top_missing else ""
-        reply = (
-            f"📋 **Mandatory Welfare Compliance Checklist:**\n\n"
-            f"• **Aadhaar-Seeded Bank Account:** Active NPCI DBT mapper for direct benefit deposit.\n"
-            f"• **Income Certificate:** Issued by competent Revenue Authority / Tehsildar.\n"
-            f"• **Caste / Category Certificate:** For SC, ST, OBC, or EWS affirmative quotas.\n"
-            f"• **Land Holding Records:** Form 7/12, Khatauni or Pattadar passbook (for agricultural schemes).\n"
-            f"{miss_str}"
-        )
-        suggested_workflows = [
-            {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
-        ]
-
-    # Tool 4: OpenSearch Welfare Scheme Query & Caste Affirmative Programs
-    elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship"]):
-        caste_str = context_profile.get("caste_category", "General")
-        schemes_summary = []
-        for s in (matched_schemes[:4] if matched_schemes else []):
-            odds = s.get("empirical_approval_odds", 0.8)
-            schemes_summary.append(f"• **{s.get('title')}**: {int(odds*100) if odds <= 1 else int(odds)}% Approval Odds ({s.get('category')})")
-        
-        summary_text = "\n".join(schemes_summary) if schemes_summary else "• PM-KISAN, Ayushman Bharat (PM-JAY), Post-Matric Scholarship, and Stand-Up India"
-        reply = (
-            f"🏛️ **OpenSearch Dynamic Welfare Retrieval ({caste_str} Category):**\n\n"
-            f"Based on your profile, the top empirical matches are:\n{summary_text}\n\n"
-            f"You can review eligibility criteria, required documents, or generate statutory RTI notices for any delays."
-        )
-        suggested_workflows = [
-            {"title": "View Matched Schemes", "action": "view_schemes"},
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
-        ]
-
-    # Default Contextual Assistant
-    else:
-        top_name = matched_schemes[0].get("title", "Welfare Scheme") if matched_schemes else "Central & State Welfare Schemes"
-        reply = (
-            f"Namaste! PRAAPTI AI Civic Agent is ready to assist you. "
-            f"We have evaluated your profile against welfare registries and zero-trust Cedar policies. "
-            f"You can ask about:\n"
-            f"• **Statutory RTI Notices & Escalations** to higher officials\n"
-            f"• **Required Documents & NPCI DBT Seeding**\n"
-            f"• **Cedar Zero-Trust Verification Rules**\n"
-            f"• **Eligibility & Application Steps for {top_name}**"
-        )
-        suggested_workflows = [
-            {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
-            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
-        ]
-        suggested_workflows = [
-            {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
-            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
-        ]
-
-    return {
-        "status": "SUCCESS",
-        "reply": reply,
-        "suggested_workflows": suggested_workflows,
-        "timestamp": datetime.now().isoformat()
-    }
+    """Compatibility handler that delegates directly to Strands SDK civic_chat_assistant_tool."""
+    return civic_chat_assistant_tool(
+        user_query=user_query,
+        context_profile=context_profile,
+        matched_schemes=matched_schemes
+    )
 
 
 # ======================================================================================
