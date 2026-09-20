@@ -800,7 +800,7 @@
       </div>
 
       <!-- =================================================================== -->
-      <!-- TAB 2: SIGN UP VIEW                                                 -->
+      <!-- TAB 2: SIGN UP VIEW (Basic Citizen Profile Registration)              -->
       <!-- =================================================================== -->
       <div id="signUpSection" style="display:none;">
 
@@ -810,21 +810,19 @@
             <input type="text" id="regName" class="input-control" placeholder="e.g. Arvind Kumar Sharma" required />
           </div>
 
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label" for="regMobile">Mobile Number</label>
-              <div class="input-wrapper">
-                <span class="input-prefix">+91</span>
-                <input type="tel" id="regMobile" class="input-control has-prefix" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" required />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="regAge">Age (Years)</label>
-              <input type="number" id="regAge" class="input-control" min="1" max="120" placeholder="e.g. 34" required />
+          <div class="form-group">
+            <label class="form-label" for="regMobile">Mobile Number</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">+91</span>
+              <input type="tel" id="regMobile" class="input-control has-prefix" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" required />
             </div>
           </div>
 
           <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="regAge">Age (Years)</label>
+              <input type="number" id="regAge" class="input-control" min="1" max="120" placeholder="e.g. 34" required />
+            </div>
             <div class="form-group">
               <label class="form-label" for="regGender">Gender</label>
               <select id="regGender" class="select-control" required>
@@ -835,68 +833,9 @@
                 <option value="Other">Other</option>
               </select>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="regOccupation">Occupation / Trade</label>
-              <select id="regOccupation" class="select-control" required>
-                <option value="" selected disabled>-- Select Occupation --</option>
-                <option value="Farmer">Farmer / Agriculture</option>
-                <option value="Artisan">Artisan / Craftsperson</option>
-                <option value="Street Vendor">Street Vendor / Hawker</option>
-                <option value="Student">Student / Scholar</option>
-                <option value="Daily Wage Labourer">Daily Wage Labourer</option>
-                <option value="Self Employed">Small Business / Shopkeeper</option>
-                <option value="Senior Citizen">Senior Citizen / Retired</option>
-                <option value="Homemaker">Homemaker / Woman Beneficiary</option>
-                <option value="Unemployed">Unemployed Youth</option>
-                <option value="General">Other / General</option>
-              </select>
-            </div>
           </div>
 
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label" for="regState">State / UT</label>
-              <select id="regState" class="select-control" required onchange="populateDistricts()">
-                <option value="" selected disabled>-- Select State --</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="regDistrict">District</label>
-              <select id="regDistrict" class="select-control" required disabled>
-                <option value="" selected disabled>-- Select State First --</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label" for="regIncome">Annual Family Income (₹)</label>
-              <input type="number" id="regIncome" class="input-control" min="0" placeholder="e.g. 75000" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="regCaste">Social Category</label>
-              <select id="regCaste" class="select-control">
-                <option value="" selected disabled>-- Category --</option>
-                <option value="General">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-                <option value="EWS">EWS</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="regKyc">Identity Document to Link</label>
-            <select id="regKyc" class="select-control" required>
-              <option value="aadhaar_otp" selected>Aadhaar OTP (Instant e-KYC)</option>
-              <option value="digilocker">DigiLocker Verified Account</option>
-              <option value="offline_kyc">Ration Card / Offline KYC</option>
-              <option value="unverified">Unverified Guest Account</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn-submit">
+          <button type="submit" class="btn-submit" style="margin-top:16px;">
             <i data-lucide="check-circle-2" style="width:17px; height:17px;"></i>
             Register & Open Civic Dashboard
           </button>
@@ -1233,41 +1172,35 @@
       }, 600);
     }
 
-    // 5. New Registration
+    // 5. New Registration (Name, Mobile, Age & Gender)
     function handleRegistration(e) {
       e.preventDefault();
       const name = document.getElementById("regName").value.trim();
       const mobile = document.getElementById("regMobile").value.trim();
-      const age = parseInt(document.getElementById("regAge").value, 10);
-      const gender = document.getElementById("regGender").value;
-      const state = document.getElementById("regState").value;
-      const district = document.getElementById("regDistrict").value;
-      const occupation = document.getElementById("regOccupation").value;
-      const income = parseInt(document.getElementById("regIncome").value, 10) || 0;
-      const caste = document.getElementById("regCaste").value || "General";
-      const kyc_level = document.getElementById("regKyc").value;
+      const age = parseInt(document.getElementById("regAge").value, 10) || 30;
+      const gender = document.getElementById("regGender").value || "Male";
 
       const citizen = {
         name: name,
         mobile: mobile,
         age: age,
         gender: gender,
-        state: state,
-        district: district,
-        occupation: occupation,
-        income: income,
-        land: 0,
-        caste: caste,
-        kyc_level: kyc_level,
-        is_verified: kyc_level !== "unverified",
-        bpl: income < 100000,
-        grievance: "Citizen scheme intake",
-        auth_method: "Govt ID Registered (" + kyc_level + ")",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
+        kyc_level: "unverified",
+        is_verified: false,
+        bpl: false,
+        grievance: "",
+        auth_method: "Citizen Registered Profile",
         is_authenticated: true
       };
 
       localStorage.setItem("praapti_citizen_session", JSON.stringify(citizen));
-      showToast("Registration completed! Launching civic portal...");
+      showToast("Profile created! Redirecting to civic scheme finder...");
       setTimeout(() => {
         window.location.href = "/index.html";
       }, 700);
