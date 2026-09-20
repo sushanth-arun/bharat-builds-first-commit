@@ -663,21 +663,56 @@ def civic_chat_assistant_tool(
 
     # 4. Built-in Strands Civic Reasoning & Statutory Rules Engine (Default / Fallback)
     if not llm_succeeded:
-        # Category 1: Family / Parents / Relative Application Inquiries (e.g. "should i ask my parents to apply?")
-        if any(k in q_lower for k in ["parent", "parents", "father", "mother", "family", "relative", "sister", "brother", "grandparent", "wife", "husband", "spouse"]):
+        # Category 1: Maximum Benefit / Highest Financial Subsidy Comparison ("what schemes gives the most money")
+        if any(k in q_lower for k in ["most money", "highest money", "maximum benefit", "maximum money", "max subsidy", "highest subsidy", "most grant", "top money", "biggest grant", "large amount"]):
             plain_reply = (
-                "Guidance on Applying for Family Members & Parents:\n\n"
-                "1. Senior Citizen Programs: If your parents are aged 60+, they are eligible for the Indira Gandhi National Old Age Pension (IGNOAPS) or Atal Pension Yojana. If they are aged 70+, they are entitled to the Ayushman Vay Vandana Card (Rs. 5 Lakh cashless hospital cover, irrespective of income).\n\n"
-                "2. Farming & Landed Households: If your parents own agricultural land, they should apply directly under PM-KISAN (Rs. 6,000/yr) and Kisan Credit Card (KCC) using their Aadhaar and land Record of Rights (7/12 or Khatauni).\n\n"
-                "3. Independent Applications: Each adult family member can submit their own individual application through their Aadhaar-linked bank account without affecting your benefit eligibility."
+                "Comparative Analysis of Highest Financial Welfare Programs:\n\n"
+                "1. Stand-Up India (SIDBI / MoF): Up to Rs. 1,00,00,000 (Rs. 1 Crore) in composite credit for SC, ST, and Women entrepreneurs.\n"
+                "2. PMMY MUDRA Tarun Category: Up to Rs. 20,00,000 (Rs. 20 Lakh) collateral-free enterprise expansion loans.\n"
+                "3. Ayushman Bharat (PM-JAY / Vay Vandana): Rs. 5,00,000 per family/year in 100% cashless hospitalization coverage.\n"
+                "4. PMAY Urban 2.0 (Housing): Up to Rs. 2,67,000 interest subsidy or Rs. 1,50,000 direct construction grant.\n"
+                "5. PM Vishwakarma (Artisans): Up to Rs. 3,00,000 collateral-free credit at 5% interest + Rs. 15,000 modern tool incentive.\n\n"
+                "Analytical Note: Welfare schemes in India provide targeted assistance (cash grants vs subsidized working capital). Your empirical probability depends on verified demographic and income qualifications."
+            )
+            suggested_workflows = [
+                {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
+            ]
+
+        # Category 2: Platform Architecture & Problem PRAAPTI AI Solves ("what does this website do", "about", "mission")
+        elif any(k in q_lower for k in ["problem", "solve", "website do", "platform do", "what is praapti", "about this website", "about platform", "mission", "purpose", "how does this help"]):
+            plain_reply = (
+                "PRAAPTI AI Civic Intelligence Architecture & Problem Statement:\n\n"
+                "The Core Problem: Over Rs. 3.5 Lakh Crore in government DBT subsidies face citizen discovery friction, fraudulent intermediary fees (10-30%), and unaccountable processing delays.\n\n"
+                "Our Solution Pillars:\n"
+                "1. Mathematical Eligibility Engine: Evaluates 15+ Central and State welfare registries against citizen income, caste, age, and land demographics.\n"
+                "2. Zero-Trust Policy Guard: Powered by Cedar authorization rules to verify citizen identity and protect statutory RTI access.\n"
+                "3. Anti-Scam Phishing Defense: Real-time DNS and payment fraud scanning to eliminate phishing portals.\n"
+                "4. Automated Statutory RTI Drafter: Generates legally compliant Section 6(1), 19(1), and 19(3) notices to hold officials accountable for delayed funds."
+            )
+            suggested_workflows = [
+                {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"},
+                {"title": "Verify Portal Authenticity (Anti-Scam)", "action": "scan_fraud"}
+            ]
+
+        # Category 3: Conversational Inquiries on Parents / Relatives (Analytical Advisory)
+        elif any(k in q_lower for k in ["parent", "parents", "father", "mother", "family", "relative", "sister", "brother", "grandparent", "wife", "husband", "spouse"]):
+            plain_reply = (
+                "Demographic Advisory on Applying for Parents and Family Members:\n\n"
+                "Notice: Each welfare scheme evaluates individual demographic records via Aadhaar-linked e-KYC. You cannot combine or transfer personal eligibility across family members.\n\n"
+                "Targeted Opportunities for Parents:\n"
+                "1. Senior Citizens (Age 70+): Universal Ayushman Vay Vandana Card providing Rs. 5,00,000 cashless medical insurance (100% income-exempt).\n"
+                "2. BPL Elderly (Age 60+): National Old Age Pension Scheme (IGNOAPS) for monthly non-contributory cash pensions.\n"
+                "3. Agricultural Landholders: Direct income support of Rs. 6,000/yr under PM-KISAN and 4% subsidized credit under Kisan Credit Card (KCC).\n\n"
+                "Next Step: To evaluate exact odds for your parents, enter their specific age and landholding in the intake workspace."
             )
             suggested_workflows = [
                 {"title": "Explore Senior Citizen Schemes", "action": "view_schemes"},
-                {"title": "Check Required Documents", "action": "open_rti"}
+                {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category 2: Payment Disbursement Timeline & Processing Duration
-        elif any(k in q_lower for k in ["how much time", "how long", "time will", "when will i get", "when will money", "processing time", "disburse", "transfer time", "disbursement duration", "turnaround", "installment date"]):
+        # Category 4: Payment Disbursement Timeline & Processing Duration
+        elif any(k in q_lower for k in ["how much time", "how long", "time will", "when will i get", "processing time", "disburse", "transfer time", "disbursement duration", "turnaround", "installment date"]):
             plain_reply = (
                 "Statutory Processing & DBT Disbursement Timelines:\n\n"
                 "1. Initial Application Scrutiny: Typically completed within 15 to 30 working days by the District Welfare / Nodal Officer after document verification.\n\n"
@@ -690,7 +725,7 @@ def civic_chat_assistant_tool(
                 {"title": "View Matched Schemes", "action": "view_schemes"}
             ]
 
-        # Category 3: Fraud, Scam, Fake Portals, Bribes, Cybercrime
+        # Category 5: Fraud, Scam, Fake Portals, Bribes, Cybercrime
         elif any(k in q_lower for k in ["fraud", "scam", "fake", "pass through", "bypass", "avoid fraud", "phishing", "bribe", "demand money", "otp", "stolen", "cyber"]):
             plain_reply = (
                 "To protect yourself from welfare fraud and fake portals:\n\n"
@@ -705,7 +740,7 @@ def civic_chat_assistant_tool(
                 {"title": "File Grievance on CPGRAMS", "action": "open_cpgrams"}
             ]
 
-        # Category 4: Cedar Zero-Trust, KYC & Identity Verification
+        # Category 6: Cedar Zero-Trust, KYC & Identity Verification
         elif any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth", "denied", "permission"]):
             kyc = context_profile.get("kyc_level", "aadhaar_otp")
             is_v = context_profile.get("is_verified", True)
@@ -729,7 +764,7 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category 5: RTI Steps, Appeals, Delays & Higher Officials
+        # Category 7: RTI Steps, Appeals, Delays & Higher Officials
         elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
             plain_reply = (
                 "Statutory Steps to Escalate and Seek Public Records:\n\n"
@@ -742,7 +777,7 @@ def civic_chat_assistant_tool(
                 {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
             ]
 
-        # Category 6: Documents & Bank DBT Seeding
+        # Category 8: Documents & Bank DBT Seeding
         elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate", "dbt", "seeding", "mapper"]):
             top_missing = []
             if matched_schemes and len(matched_schemes) > 0:
@@ -763,7 +798,7 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category 7: Scheme Inquiries, Caste Matching & Eligibility
+        # Category 9: Scheme Inquiries, Caste Matching & Eligibility
         elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship", "benefit"]):
             caste_str = context_profile.get("caste_category", "General")
             schemes_summary = []

@@ -1857,14 +1857,29 @@
       const kyc = document.getElementById("citizenKYCSelect").value;
       const isVerified = (kyc !== "unverified");
 
+      const ageVal = parseInt(document.getElementById("citizenAgeInput").value, 10);
+      if (isNaN(ageVal) || ageVal < 1 || ageVal > 115) {
+        showToast("Please enter a realistic age between 1 and 115 years.", "alert-circle");
+        document.getElementById("citizenAgeInput").focus();
+        return;
+      }
+
+      const incomeRaw = document.getElementById("citizenIncomeInput").value;
+      const incomeVal = parseInt(incomeRaw, 10);
+      if (isNaN(incomeVal) || incomeVal < 0 || incomeVal > 100000000) {
+        showToast("Please enter a valid annual family income up to ₹10 Crore.", "alert-circle");
+        document.getElementById("citizenIncomeInput").focus();
+        return;
+      }
+
       const payload = {
         name: document.getElementById("citizenNameInput").value.trim(),
-        age: parseInt(document.getElementById("citizenAgeInput").value, 10),
+        age: ageVal,
         gender: document.getElementById("citizenGenderSelect").value,
         state: document.getElementById("stateSelect").value,
         district: document.getElementById("districtSelect").value,
         occupation: document.getElementById("citizenOccupationSelect").value,
-        annual_income: parseInt(document.getElementById("citizenIncomeInput").value, 10),
+        annual_income: incomeVal,
         land_holding_acres: parseFloat(document.getElementById("citizenLandInput").value) || 0.0,
         caste_category: document.getElementById("citizenCasteSelect").value,
         is_bpl: document.getElementById("citizenBPLCheck").checked,
