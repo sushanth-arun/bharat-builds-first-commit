@@ -149,20 +149,22 @@
     }
 
     .brand-emblem {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
-      border: 1.5px solid var(--border-main);
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
+      border: 1.5px solid #d1d5db;
       border-radius: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 19px;
-      color: #1e3a8a;
-      box-shadow: var(--shadow-sm);
+      font-size: 20px;
+      color: #000080;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       flex-shrink: 0;
+      text-shadow: 0 0 1px rgba(255,255,255,0.9);
+      position: relative;
     }
 
     .brand-title {
@@ -1862,12 +1864,19 @@
         if (!res.ok) throw new Error("API error: " + res.status);
         const data = await res.json();
         currentWorkflowData = data;
-        renderResultsView(data);
-        showToast("Workflow evaluation completed successfully!");
+        localStorage.setItem("praapti_last_workflow", JSON.stringify(data));
+        showToast("Workflow evaluation completed! Redirecting to schemes portal...");
+        setTimeout(() => {
+          window.location.href = "/results.html";
+        }, 300);
       } catch (err) {
         console.warn("API fallback to local reasoning:", err);
-        fallbackClientEvaluation(payload);
-        showToast("Evaluated using local client agent reasoning.");
+        const fallbackData = fallbackClientEvaluation(payload);
+        localStorage.setItem("praapti_last_workflow", JSON.stringify(fallbackData));
+        showToast("Evaluated using local client agent! Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/results.html";
+        }, 300);
       } finally {
         agentText.textContent = "Run Civic Agent";
         agentIcon.innerHTML = '<i data-lucide="sparkles" style="width:17px; height:17px;"></i>';
@@ -2030,7 +2039,9 @@ Declaration: I am a citizen of India and this matter is not exempt under Section
 Date: ${today}
 Applicant Signature: ${p.name}` : null;
 
-      renderResultsView({
+      const fallbackObj = {
+        citizen_name: p.name || "Citizen",
+        citizen_summary: p,
         cedar_authorization_status: auth,
         matched_schemes: [
           {
@@ -2040,6 +2051,7 @@ Applicant Signature: ${p.name}` : null;
             category: "Healthcare",
             description: "Cashless secondary & tertiary hospitalization cover up to Rs. 5 Lakh per family per year.",
             match_score: 93,
+            empirical_approval_odds: 0.93,
             official_portal: "https://nha.gov.in/PM-JAY"
           },
           {
@@ -2049,11 +2061,15 @@ Applicant Signature: ${p.name}` : null;
             category: "Agriculture",
             description: "Direct income support of Rs. 6,000 per year in three equal installments to farmer families.",
             match_score: p.occupation.toLowerCase().includes("farmer") ? 92 : 65,
+            empirical_approval_odds: p.occupation.toLowerCase().includes("farmer") ? 0.92 : 0.65,
             official_portal: "https://pmkisan.gov.in"
           }
         ],
         statutory_rti_draft: draft
-      });
+      };
+
+      renderResultsView(fallbackObj);
+      return fallbackObj;
     }
 
     // 9. Copy & Download RTI Notice

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRAAPTI AI — Scheme Intelligence & Civic Assistant</title>
+  <meta name="description" content="Matched welfare schemes evaluation, interactive AI civic chatbot, and statutory RTI draft generator." />
+
+  <!-- Google Fonts: Plus Jakarta Sans, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons via official CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ==========================================================================
+       PRAAPTI AI DESIGN SYSTEM (PURE CLEAN WHITE THEME)
+       21ST.DEV & REACTBITS DESIGN SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-page: #ffffff;
+      --bg-surface: #ffffff;
+      --bg-subtle: #fafafa;
+      --card-bg: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #ffffff;
+      --bg-glass: rgba(255, 255, 255, 0.98);
+      --bg-modal: rgba(0, 0, 0, 0.5);
+
+      --border-color: #e5e7eb;
+      --border-light: #f3f4f6;
+      --border-main: #e5e7eb;
+      --border-strong: #d1d5db;
+
+      --text-primary: #000000;
+      --text-main: #0a0a0a;
+      --text-secondary: #404040;
+      --text-heading: #000000;
+      --text-muted: #525252;
+      --text-subtle: #737373;
+      --text-inverse: #ffffff;
+
+      --accent-color: #1e3a8a;
+      --primary: #1e3a8a;
+      --primary-hover: #172554;
+      --primary-subtle: #eff6ff;
+      --primary-glow: rgba(30, 58, 138, 0.12);
+      
+      --accent: #d97706;
+      --accent-subtle: #fffbeb;
+      --accent-glow: rgba(217, 119, 6, 0.12);
+
+      --success: #059669;
+      --success-subtle: #ecfdf5;
+      --success-glow: rgba(5, 150, 105, 0.12);
+
+      --danger: #dc2626;
+      --danger-subtle: #fef2f2;
+      --danger-glow: rgba(220, 38, 38, 0.12);
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.07);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-main);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
+    }
+
+    .brand-emblem {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: #000080;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+      text-shadow: 0 0 1px rgba(255,255,255,0.9);
+      position: relative;
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-heading);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .brand-title span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--text-heading);
+      color: var(--text-inverse);
+      border: 1.5px solid var(--border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-main);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border-strong);
+      color: var(--text-heading);
+    }
+
+    /* Main Results Layout Grid */
+    .results-layout {
+      padding: 32px 0 64px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    @media (min-width: 1024px) {
+      .results-layout {
+        grid-template-columns: 1.35fr 1fr;
+      }
+    }
+
+    /* Citizen Summary Profile Card */
+    .citizen-summary-banner {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .citizen-summary-banner {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .citizen-info-block h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .citizen-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .meta-tag {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Panels & Containers */
+    .modern-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .panel-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .panel-header-row h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Cedar Banner */
+    .cedar-box-banner {
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border: 1.5px solid;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cedar-allow {
+      background: #f0fdf4;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    .cedar-deny {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .cedar-box-banner h4 {
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .cedar-box-banner p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    /* Scheme Item Card (21st.dev Style) */
+    .matched-scheme-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .matched-scheme-item:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .res-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .res-head-row h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-heading);
+    }
+
+    .res-head-row span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .odds-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12.5px;
+      font-weight: 800;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .odds-high {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .odds-med {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .odds-low {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .res-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .res-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .status-tag {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .doc-alert {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    /* RTI Section */
+    .clause-switcher {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+    }
+
+    .clause-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .clause-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-heading);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .rti-code-container {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      line-height: 1.6;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    /* ==========================================================================
+       PRAAPTI CHATBOT & RECOMMENDED WORKFLOWS ASSISTANT
+       ========================================================================== */
+    .chatbot-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-main);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      height: 720px;
+      position: sticky;
+      top: 96px;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      color: #000080;
+      font-size: 16px;
+    }
+
+    .chat-header-info h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-heading);
+    }
+
+    .chat-header-info span {
+      font-size: 11px;
+      color: var(--success);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #ffffff;
+    }
+
+    .chat-bubble {
+      max-width: 86%;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .bubble-bot {
+      align-self: flex-start;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-main);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble-user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+
+    /* Recommended Workflows Chips inside Chat */
+    .suggested-chips-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-heading);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .chat-input-row {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-main);
+      background: var(--bg-surface);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 42px;
+      border: 1.5px solid var(--border-main);
+      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-send-btn {
+      height: 42px;
+      padding: 0 16px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-card {
+      background: var(--text-heading);
+      color: var(--text-inverse);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="/index.html" class="brand">
+        <div class="brand-emblem">प्र</div>
+        <div class="brand-title">
+          <h1>PRAAPTI AI</h1>
+          <span>Civic Intelligence & Statutory RTI Platform</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/index.html#workspace" class="btn btn-secondary">
+          <i data-lucide="arrow-left" style="width:15px; height:15px;"></i> Modify Citizen Profile
+        </a>
+        <a href="/index.html" class="btn btn-primary">
+          <i data-lucide="home" style="width:15px; height:15px;"></i> Home
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="results-layout">
+      
+      <!-- Left Column: Evaluated Schemes & Statutory RTI -->
+      <div>
+        
+        <!-- Citizen Summary Banner -->
+        <div class="citizen-summary-banner">
+          <div class="citizen-info-block">
+            <h2 id="citizenHeaderName"><i data-lucide="user-check" style="color:var(--success);"></i> Evaluating Profile</h2>
+            <div class="citizen-meta-tags" id="citizenMetaTags">
+              <span class="meta-tag"><i data-lucide="map-pin" style="width:12px; height:12px;"></i> All India</span>
+              <span class="meta-tag"><i data-lucide="briefcase" style="width:12px; height:12px;"></i> General</span>
+            </div>
+          </div>
+          <div>
+            <span id="evaluatedCountBadge" class="odds-badge-pill odds-high" style="font-size:13px; padding:8px 16px;">
+              <i data-lucide="sparkles" style="width:14px; height:14px;"></i> 0 Schemes Evaluated
+            </span>
+          </div>
+        </div>
+
+        <!-- Cedar Zero-Trust Status Banner -->
+        <div id="cedarAlertBanner" class="cedar-box-banner cedar-allow">
+          <div>
+            <h4 id="cedarAlertTitle"><i data-lucide="shield-check"></i> Cedar Policy: ALLOW</h4>
+            <p id="cedarAlertReason">Citizen identity verified for Section 6(1) and First Appeal notice generation.</p>
+          </div>
+          <span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; background:#ffffff; padding:4px 8px; border-radius:4px;">ZERO-TRUST GUARD</span>
+        </div>
+
+        <!-- Matched Welfare Schemes List -->
+        <div class="modern-panel">
+          <div class="panel-header-row">
+            <h3><i data-lucide="award" style="color:var(--success);"></i> Matched Welfare Schemes & Empirical Odds</h3>
+          </div>
+          <div id="matchedSchemesContainer">
+            <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+              <i data-lucide="loader-2" class="spinner-icon" style="width:32px; height:32px; margin-bottom:12px;"></i>
+              <p>Loading scheme evaluation from agent workflow...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statutory RTI Legal Notice Panel -->
+        <div class="modern-panel">
+          <div class="panel-header-row">
+            <h3><i data-lucide="file-text" style="color:var(--accent);"></i> Statutory RTI Application Draft</h3>
+            <div style="display:flex; gap:8px;">
+              <button type="button" id="btnCopyRTI" class="btn btn-secondary" style="padding:6px 12px; font-size:12px; height:32px;">
+                <i data-lucide="copy" style="width:13px; height:13px;"></i> Copy
+              </button>
+              <button type="button" id="btnDownloadRTI" class="btn btn-secondary" style="padding:6px 12px; font-size:12px; height:32px;">
+                <i data-lucide="download" style="width:13px; height:13px;"></i> Download
+              </button>
+            </div>
+          </div>
+
+          <div class="clause-switcher">
+            <button type="button" class="clause-btn active" data-clause="tier1">Section 6(1) PIO Application</button>
+            <button type="button" class="clause-btn" data-clause="tier2">Section 19(1) First Appeal</button>
+            <button type="button" class="clause-btn" data-clause="tier3">Section 19(3) CIC Appeal</button>
+          </div>
+
+          <pre id="rtiDraftViewer" class="rti-code-container">Drafting statutory RTI notice...</pre>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive Chatbot & Recommended Workflows Assistant -->
+      <div>
+        <div class="chatbot-card">
+          <div class="chat-header">
+            <div class="chat-header-title">
+              <div class="chat-avatar">प्र</div>
+              <div class="chat-header-info">
+                <h4>PRAAPTI Civic Assistant</h4>
+                <span><i data-lucide="sparkles" style="width:11px; height:11px;"></i> AI Live & Doubts Resolver</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Conversation Stream -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-bubble bubble-bot">
+              👋 <strong>Namaste!</strong> I am your <strong>PRAAPTI Civic Assistant</strong>.<br><br>
+              I have analyzed your demographic eligibility. Ask me any doubts about application procedures, missing documents, statutory RTI appeals, or click a recommended workflow below:
+              <div class="suggested-chips-container" id="initialChips">
+                <button type="button" class="chip-btn" onclick="sendChatPrompt('What documents do I need to apply for my top matched scheme?')">
+                  <span>📄 Documents required for top scheme</span>
+                  <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+                </button>
+                <button type="button" class="chip-btn" onclick="sendChatPrompt('How do I file an RTI if my scheme DBT installment is delayed?')">
+                  <span>⚖️ Delayed DBT payment RTI workflow</span>
+                  <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+                </button>
+                <button type="button" class="chip-btn" onclick="sendChatPrompt('How does Cedar Zero-Trust policy verify my citizen identity?')">
+                  <span>🛡️ Cedar Policy verification rules</span>
+                  <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chatForm" class="chat-input-row">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Ask any doubt or question about your schemes..." autocomplete="off" />
+            <button type="submit" id="btnSendChat" class="chat-send-btn">
+              <i data-lucide="send" style="width:15px; height:15px;"></i> Send
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script>
+    // 1. Retrieve Workflow Data from localStorage or API
+    let workflowData = null;
+    try {
+      const stored = localStorage.getItem("praapti_last_workflow");
+      if (stored) {
+        workflowData = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error("Failed to parse workflow data:", e);
+    }
+
+    function showToast(message, iconName = "check-circle") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast-card";
+      toast.innerHTML = `<i data-lucide="${iconName}" style="width:16px; height:16px; color:var(--success);"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function populateResults(data) {
+      if (!data) return;
+
+      // Header summary
+      const name = data.citizen_name || (data.citizen_summary && data.citizen_summary.name) || "Citizen";
+      document.getElementById("citizenHeaderName").innerHTML = `<i data-lucide="user-check" style="color:var(--success);"></i> Profile: ${name}`;
+
+      const summary = data.citizen_summary || {};
+      const metaContainer = document.getElementById("citizenMetaTags");
+      metaContainer.innerHTML = `
+        <span class="meta-tag"><i data-lucide="map-pin" style="width:12px; height:12px;"></i> ${summary.district || ""}, ${summary.state || "India"}</span>
+        <span class="meta-tag"><i data-lucide="briefcase" style="width:12px; height:12px;"></i> ${summary.occupation || "General"}</span>
+        <span class="meta-tag"><i data-lucide="indian-rupee" style="width:12px; height:12px;"></i> ₹${Number(summary.annual_income || 0).toLocaleString()} / yr</span>
+        <span class="meta-tag"><i data-lucide="shield" style="width:12px; height:12px;"></i> KYC: ${summary.kyc_level || "Standard"}</span>
+      `;
+
+      // Cedar Banner
+      const alertBanner = document.getElementById("cedarAlertBanner");
+      const alertTitle = document.getElementById("cedarAlertTitle");
+      const alertReason = document.getElementById("cedarAlertReason");
+      const auth = data.cedar_authorization_status || {};
+
+      if (auth.decision === "ALLOW") {
+        alertBanner.className = "cedar-box-banner cedar-allow";
+        alertTitle.innerHTML = `<i data-lucide="shield-check"></i> Cedar Policy: ALLOW (${auth.rule_id || "Rule 2"})`;
+        alertReason.textContent = auth.reason || "Citizen identity verified for Section 6(1) and First Appeal notice generation.";
+      } else {
+        alertBanner.className = "cedar-box-banner cedar-deny";
+        alertTitle.innerHTML = `<i data-lucide="shield-alert"></i> Cedar Policy: ${auth.decision || "DENY"} (${auth.rule_id || "Rule 4"})`;
+        alertReason.textContent = auth.reason || "Citizen verification required before generating statutory RTI draft.";
+      }
+
+      // Matched Schemes
+      const container = document.getElementById("matchedSchemesContainer");
+      container.innerHTML = "";
+      const schemes = data.matched_schemes || [];
+      document.getElementById("evaluatedCountBadge").innerHTML = `<i data-lucide="sparkles" style="width:14px; height:14px;"></i> ${schemes.length} Schemes Evaluated`;
+
+      if (schemes.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">No schemes found matching the criteria.</div>`;
+      } else {
+        schemes.forEach(sc => {
+          const card = document.createElement("div");
+          card.className = "matched-scheme-item";
+
+          const odds = sc.empirical_approval_odds ? Math.round(sc.empirical_approval_odds * 100) : sc.match_score || 75;
+          let oddsCls = "odds-high";
+          if (odds < 60) oddsCls = "odds-low";
+          else if (odds < 75) oddsCls = "odds-med";
+
+          let missingTag = (sc.missing_documents && sc.missing_documents.length > 0)
+            ? `<span class="status-tag doc-alert"><i data-lucide="alert-triangle" style="width:12px; height:12px; display:inline;"></i> Required: ${sc.missing_documents.slice(0, 2).join(", ")}</span>`
+            : `<span class="status-tag" style="color:var(--success);"><i data-lucide="check" style="width:12px; height:12px; display:inline;"></i> Documents Complete</span>`;
+
+          card.innerHTML = `
+            <div class="res-head-row">
+              <div>
+                <h4>${sc.title} (${sc.short_code || sc.scheme_id})</h4>
+                <span>${sc.ministry || "Government of India"}</span>
+              </div>
+              <div class="odds-badge-pill ${oddsCls}">
+                <i data-lucide="trending-up" style="width:14px; height:14px;"></i> ${odds}% Approval Odds
+              </div>
+            </div>
+            <p class="res-desc">${sc.description || sc.benefits}</p>
+            <div class="res-tags-row">
+              <span class="status-tag"><i data-lucide="building" style="width:12px; height:12px; display:inline;"></i> ${sc.category}</span>
+              ${missingTag}
+              <a href="${sc.official_portal}" target="_blank" rel="noopener" class="status-tag" style="text-decoration:none; color:var(--primary); font-weight:700;">
+                Official Portal <i data-lucide="external-link" style="width:12px; height:12px; display:inline;"></i>
+              </a>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      // RTI Notice Viewer
+      const rtiViewer = document.getElementById("rtiDraftViewer");
+      if (data.statutory_rti_draft) {
+        rtiViewer.textContent = data.statutory_rti_draft;
+      } else {
+        rtiViewer.textContent = `[ACCESS RESTRICTED BY CEDAR ZERO-TRUST POLICY]\nReason: ${auth.reason || "Citizen authentication required"}\nTo generate statutory legal notices, please authenticate your citizen identity.`;
+      }
+
+      lucide.createIcons();
+    }
+
+    if (workflowData) {
+      populateResults(workflowData);
+    } else {
+      // Fallback sample data if opened directly
+      fetch("/api/workflow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Citizen",
+          age: 30,
+          gender: "All",
+          state: "All India",
+          district: "District",
+          occupation: "Farmer",
+          annual_income: 120000,
+          is_verified: true,
+          kyc_level: "aadhaar_otp"
+        })
+      })
+      .then(res => res.json())
+      .then(d => populateResults(d))
+      .catch(err => console.warn(err));
+    }
+
+    // Copy & Download RTI
+    document.getElementById("btnCopyRTI").addEventListener("click", () => {
+      const text = document.getElementById("rtiDraftViewer").innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Statutory RTI Draft copied to clipboard!");
+      });
+    });
+
+    document.getElementById("btnDownloadRTI").addEventListener("click", () => {
+      const text = document.getElementById("rtiDraftViewer").innerText;
+      const blob = new Blob([text], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `RTI_Application_Notice.txt`;
+      a.click();
+      showToast("RTI Notice downloaded as text document!", "download");
+    });
+
+    // Clause Switcher
+    document.querySelectorAll(".clause-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        document.querySelectorAll(".clause-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const tier = btn.dataset.clause;
+
+        const summary = (workflowData && workflowData.citizen_summary) || {};
+        try {
+          const res = await fetch("/api/rti/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tier: tier,
+              applicant_name: workflowData?.citizen_name || "Citizen",
+              applicant_address: `${summary.district || "District"}, ${summary.state || "State"}`,
+              public_authority: `Public Information Officer (PIO), ${summary.district || "District"}`,
+              department: "Department of Revenue & Public Grievance",
+              matter_description: "Scheme DBT entitlement status and delayed processing logs",
+              specific_queries: [
+                "Provide certified true copy of citizen profile evaluation record.",
+                "Provide reasons on record for delay in DBT disbursement under Section 4(1)(d).",
+                "Furnish names and designations of dealing assistants responsible for processing."
+              ],
+              is_verified: summary.is_verified !== false,
+              kyc_level: summary.kyc_level || "aadhaar_otp"
+            })
+          });
+          const d = await res.json();
+          if (d.status === "SUCCESS") {
+            document.getElementById("rtiDraftViewer").textContent = d.draft_content;
+            showToast(`Generated statutory ${tier.toUpperCase()} RTI draft!`);
+          } else {
+            document.getElementById("rtiDraftViewer").textContent = `[DENIED BY CEDAR POLICY]\nReason: ${d.reason}`;
+            showToast("Policy Denied: " + d.reason, "alert-circle");
+          }
+        } catch (err) {
+          console.warn("RTI generation error:", err);
+        }
+      });
+    });
+
+    // =========================================================================
+    // CHATBOT INTERACTIVE ENGINE
+    // =========================================================================
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const chatMessages = document.getElementById("chatMessages");
+
+    function appendUserMessage(msg) {
+      const bubble = document.createElement("div");
+      bubble.className = "chat-bubble bubble-user";
+      bubble.textContent = msg;
+      chatMessages.appendChild(bubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function appendBotMessage(replyText, workflows = []) {
+      const bubble = document.createElement("div");
+      bubble.className = "chat-bubble bubble-bot";
+      bubble.innerHTML = replyText.replace(/\n/g, "<br>");
+
+      if (workflows && workflows.length > 0) {
+        const chipWrap = document.createElement("div");
+        chipWrap.className = "suggested-chips-container";
+        workflows.forEach(wf => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "chip-btn";
+          btn.innerHTML = `<span>⚡ ${wf.title}</span> <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>`;
+          btn.addEventListener("click", () => {
+            handleWorkflowAction(wf);
+          });
+          chipWrap.appendChild(btn);
+        });
+        bubble.appendChild(chipWrap);
+      }
+
+      chatMessages.appendChild(bubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function handleWorkflowAction(wf) {
+      if (wf.action === "open_rti") {
+        document.querySelector(".clause-switcher").scrollIntoView({ behavior: "smooth" });
+        showToast("Jumped to Statutory RTI Drafter!");
+      } else if (wf.action === "check_cedar") {
+        document.getElementById("cedarAlertBanner").scrollIntoView({ behavior: "smooth" });
+        showToast("Cedar Zero-Trust Policy Inspector active");
+      } else {
+        sendChatPrompt(`Explain how to perform workflow: ${wf.title}`);
+      }
+    }
+
+    async function sendChatPrompt(text) {
+      if (!text) return;
+      appendUserMessage(text);
+
+      const typingIndicator = document.createElement("div");
+      typingIndicator.className = "chat-bubble bubble-bot";
+      typingIndicator.id = "typingIndicator";
+      typingIndicator.innerHTML = `<em>PRAAPTI Agent is thinking...</em>`;
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            profile: workflowData?.citizen_summary || {},
+            matched_schemes: workflowData?.matched_schemes || []
+          })
+        });
+        const d = await res.json();
+        typingIndicator.remove();
+        if (d.status === "SUCCESS") {
+          appendBotMessage(d.reply, d.suggested_workflows);
+        } else {
+          appendBotMessage("I encountered an issue processing your query. Please ask again.");
+        }
+      } catch (e) {
+        typingIndicator.remove();
+        appendBotMessage("Here is guidance based on citizen rights: You have statutory rights under the RTI Act 2005 to inspect public records and receive DBT welfare subsidies with 0% advance fees.");
+      }
+    }
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const val = chatInput.value.trim();
+      if (!val) return;
+      chatInput.value = "";
+      sendChatPrompt(val);
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
