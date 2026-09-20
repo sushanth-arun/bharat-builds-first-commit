@@ -25,31 +25,39 @@
 
   <style>
     /* ==========================================================================
-       21ST.DEV & REACTBITS DESIGN TOKENS (PURE CRISP WHITE LIGHT MODE & DARK)
+       OPTION 2 STANDARD: PURE CLEAN WHITE LIGHT MODE & DEEP OBSIDIAN DARK MODE
        ========================================================================== */
-    :root, html[data-theme="light"] {
-      /* Pure Crisp White Surfaces */
+    :root,
+    [data-theme="light"],
+    html[data-theme="light"] {
+      /* Pure Clean White Surfaces */
+      --bg-primary: #ffffff;
       --bg-page: #ffffff;
       --bg-surface: #ffffff;
       --bg-subtle: #f8fafc;
+      --card-bg: #ffffff;
       --bg-card: #ffffff;
       --bg-card-hover: #ffffff;
-      --bg-glass: rgba(255, 255, 255, 0.95);
-      --bg-modal: rgba(15, 23, 42, 0.4);
+      --bg-glass: rgba(255, 255, 255, 0.98);
+      --bg-modal: rgba(15, 23, 42, 0.45);
 
-      /* High Contrast Borders */
+      /* High Contrast Clean Borders */
+      --border-color: #e2e8f0;
       --border-light: #f1f5f9;
       --border-main: #e2e8f0;
       --border-strong: #cbd5e1;
 
       /* High Contrast Text */
+      --text-primary: #0f172a;
       --text-main: #0f172a;
+      --text-secondary: #475569;
       --text-heading: #020617;
       --text-muted: #334155;
       --text-subtle: #64748b;
       --text-inverse: #ffffff;
 
       /* Civic Brand Accents */
+      --accent-color: #1e3a8a;
       --primary: #1e3a8a;         /* Deep Ashok Navy */
       --primary-hover: #172554;
       --primary-subtle: #eff6ff;
@@ -79,26 +87,34 @@
       --radius-full: 9999px;
     }
 
+    [data-theme="dark"],
+    .dark,
     html[data-theme="dark"] {
-      /* Deep Obsidian / Dark Mode */
+      /* Deep Obsidian / Dark Mode Overrides */
+      --bg-primary: #090d16;
       --bg-page: #090d16;
       --bg-surface: #0f172a;
       --bg-subtle: #141c2e;
+      --card-bg: #0f172a;
       --bg-card: #0f172a;
       --bg-card-hover: #162238;
-      --bg-glass: rgba(15, 23, 42, 0.9);
-      --bg-modal: rgba(0, 0, 0, 0.7);
+      --bg-glass: rgba(15, 23, 42, 0.92);
+      --bg-modal: rgba(0, 0, 0, 0.75);
 
+      --border-color: #1e293b;
       --border-light: #1e293b;
       --border-main: #334155;
       --border-strong: #475569;
 
+      --text-primary: #f8fafc;
       --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
       --text-heading: #ffffff;
       --text-muted: #cbd5e1;
       --text-subtle: #94a3b8;
       --text-inverse: #090d16;
 
+      --accent-color: #3b82f6;
       --primary: #3b82f6;
       --primary-hover: #60a5fa;
       --primary-subtle: rgba(59, 130, 246, 0.15);
@@ -129,11 +145,11 @@
     }
 
     body {
-      background-color: var(--bg-page);
-      color: var(--text-main);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.6;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      transition: background-color 0.25s ease, color 0.25s ease;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
@@ -1781,28 +1797,34 @@
       });
     });
 
-    // 2. Clear White Light Mode (Default) & Dark Mode Toggle
-    const htmlEl = document.documentElement;
+    // 2. Standard HTML / JS Light & Dark Mode System (Option 2)
     const lightBtn = document.getElementById("themeLightBtn");
     const darkBtn = document.getElementById("themeDarkBtn");
 
-    function setAppTheme(mode) {
-      htmlEl.setAttribute("data-theme", mode);
-      localStorage.setItem("praapti_theme", mode);
-      if (mode === "dark") {
-        darkBtn.classList.add("active");
-        lightBtn.classList.remove("active");
+    function setAppTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
+      localStorage.setItem("praapti_theme", theme);
+      if (theme === "dark") {
+        if (darkBtn) darkBtn.classList.add("active");
+        if (lightBtn) lightBtn.classList.remove("active");
       } else {
-        lightBtn.classList.add("active");
-        darkBtn.classList.remove("active");
+        if (lightBtn) lightBtn.classList.add("active");
+        if (darkBtn) darkBtn.classList.remove("active");
       }
     }
 
-    const initialTheme = localStorage.getItem("praapti_theme") || "light";
-    setAppTheme(initialTheme);
+    // Initialize from saved preference or default to clean white light
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("praapti_theme");
+    const activeTheme = (savedTheme === "dark") ? "dark" : "light";
+    setAppTheme(activeTheme);
 
-    lightBtn.addEventListener("click", () => setAppTheme("light"));
-    darkBtn.addEventListener("click", () => setAppTheme("dark"));
+    if (lightBtn) {
+      lightBtn.addEventListener("click", () => setAppTheme("light"));
+    }
+    if (darkBtn) {
+      darkBtn.addEventListener("click", () => setAppTheme("dark"));
+    }
 
     // 3. ReactBits Spotlight Mouse Coordinates Tracker
     document.querySelectorAll(".spotlight-card").forEach(card => {
