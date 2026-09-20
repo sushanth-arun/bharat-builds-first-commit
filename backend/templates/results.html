@@ -773,16 +773,19 @@
         <!-- Cedar Zero-Trust Status Banner -->
         <div id="cedarAlertBanner" class="cedar-box-banner cedar-allow">
           <div>
-            <h4 id="cedarAlertTitle"><i data-lucide="shield-check"></i> Cedar Policy: ALLOW</h4>
+            <h4 id="cedarAlertTitle"><i data-lucide="shield-check"></i> AWS Cedar Policy: ALLOW</h4>
             <p id="cedarAlertReason">Citizen identity verified for Section 6(1) and First Appeal notice generation.</p>
           </div>
-          <span class="cat-badge">ZERO-TRUST GUARD</span>
+          <span class="cat-badge" style="font-weight:800;">AWS CEDAR ZERO-TRUST GUARD</span>
         </div>
 
         <!-- Matched Welfare Schemes List -->
         <div class="modern-panel">
           <div class="panel-header-row">
-            <h3><i data-lucide="award" style="color:var(--success);"></i> Matched Welfare Schemes & Empirical Odds</h3>
+            <h3>
+              <i data-lucide="award" style="color:var(--success);"></i> Matched Welfare Schemes & Empirical Odds
+              <span class="cat-badge" style="background:#f0fdf4; color:#166534; font-size:11px; font-weight:700; border:1px solid #bbf7d0; margin-left:8px;">Amazon OpenSearch</span>
+            </h3>
           </div>
           <div id="matchedSchemesContainer">
             <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
@@ -795,7 +798,10 @@
         <!-- Statutory RTI Legal Notice Panel -->
         <div class="modern-panel">
           <div class="panel-header-row">
-            <h3><i data-lucide="file-text" style="color:var(--accent);"></i> Statutory RTI Application Draft</h3>
+            <h3>
+              <i data-lucide="file-text" style="color:var(--accent);"></i> Statutory RTI Application Draft
+              <span class="cat-badge" style="background:#eff6ff; color:#1e3a8a; font-size:11px; font-weight:700; border:1px solid #bfdbfe; margin-left:8px;">AWS Cedar Governed</span>
+            </h3>
             <div style="display:flex; gap:8px;">
               <button type="button" id="btnCopyRTI" class="btn btn-secondary" style="padding:6px 12px; font-size:12px; height:32px;">
                 <i data-lucide="copy" style="width:13px; height:13px;"></i> Copy
@@ -824,7 +830,7 @@
             <div class="chat-header-title">
               <div class="chat-header-info">
                 <h4>PRAAPTI Civic Assistant</h4>
-                <span><i data-lucide="sparkles" style="width:11px; height:11px;"></i> AI Live & Doubts Resolver</span>
+                <span><i data-lucide="sparkles" style="width:11px; height:11px;"></i> Powered by Strands Agents SDK & AWS AI</span>
               </div>
             </div>
           </div>
@@ -933,11 +939,11 @@
 
       if (auth.decision === "ALLOW") {
         alertBanner.className = "cedar-box-banner cedar-allow";
-        alertTitle.innerHTML = `<i data-lucide="shield-check"></i> Cedar Policy: ALLOW (${auth.rule_id || "Rule 2"})`;
+        alertTitle.innerHTML = `<i data-lucide="shield-check"></i> AWS Cedar Policy: ALLOW (${auth.rule_id || "Rule 3"})`;
         alertReason.textContent = auth.reason || "Citizen identity verified for Section 6(1) and First Appeal notice generation.";
       } else {
         alertBanner.className = "cedar-box-banner cedar-deny";
-        alertTitle.innerHTML = `<i data-lucide="shield-alert"></i> Cedar Policy: ${auth.decision || "DENY"} (${auth.rule_id || "Rule 4"})`;
+        alertTitle.innerHTML = `<i data-lucide="shield-alert"></i> AWS Cedar Policy: ${auth.decision || "DENY"} (${auth.rule_id || "Rule 3"})`;
         alertReason.textContent = auth.reason || "Citizen verification required before generating statutory RTI draft.";
       }
 

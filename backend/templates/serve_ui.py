@@ -159,8 +159,23 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
         super().do_POST()
 
     def do_GET(self):
-        """Serves civic gateway login.html on root or static requests with zero cache."""
+        """Serves civic gateway login.html on root, static requests with zero cache, or api health check."""
         clean_path = self.path.split("?")[0]
+        if clean_path == "/api/health":
+            health_info = {
+                "status": "healthy",
+                "service": "PRAAPTI AI — Civic Intelligence & Welfare Transparency Platform",
+                "hackathon_track": "Track 1: Build It (WeMakeDevs AWS Hackathon)",
+                "aws_tools_integrated": [
+                    "AWS Cedar Zero-Trust Authorization Policy Engine (14 Statutory Rules)",
+                    "Amazon OpenSearch Service (Dynamic Scheme Discovery & Empirical Odds)",
+                    "AWS GuardDuty & Route 53 Threat Intelligence Heuristics (Anti-Scam Phishing Guard)",
+                    "Strands Agents SDK & AWS AI Assistant (Civic Doubt Resolver & Statutory Workflows)"
+                ]
+            }
+            self._send_json(health_info, 200)
+            return
+
         if clean_path in ("/", "", "/login"):
             self.path = "/login.html"
         elif clean_path in ("/dashboard", "/dashboard.html"):
