@@ -129,6 +129,74 @@ def search_schemes_tool(profile_dict: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 @tool
+def verify_portal_authenticity_tool(domain_or_url: str) -> Dict[str, Any]:
+    """
+    Strands Agent tool for statutory verification of government domains and anti-scam defense.
+    Enforces that authentic Indian Government welfare portals MUST end with official TLDs (.gov.in, .nic.in, .ac.in).
+    Flags any non-government, commercial (.com, .org, .net, .xyz, .online, .info), or private registries.
+    """
+    raw = domain_or_url.strip().lower()
+    
+    # Strip protocols and paths to get domain
+    clean_domain = raw.replace("https://", "").replace("http://", "").split("/")[0].split("?")[0].strip()
+    
+    # Official Indian Government Top-Level Domains
+    OFFICIAL_GOV_TLDS = [".gov.in", ".nic.in", ".ac.in", ".gov", ".nic", ".res.in"]
+    
+    is_official_gov = any(clean_domain.endswith(tld) or f"{tld}:" in clean_domain for tld in OFFICIAL_GOV_TLDS)
+    
+    # Known fake/scam welfare phishing registries
+    KNOWN_SCAM_PATTERNS = [
+        "pmkisan-gov.in", "pm-kisan-yojna.org", "ayushmanbharat-card.online",
+        "free-ration-card.info", "pm-svanidhi.org", "kisan-credit-card.net",
+        "rationcard-apply.xyz", "pmay-apply.com"
+    ]
+    
+    flagged_reasons = []
+    
+    # Check 1: Non-government registry / TLD
+    if not is_official_gov:
+        flagged_reasons.append(
+            f"NON-GOVERNMENT DOMAIN: '{clean_domain}' is not registered under official Indian Sovereign registries (*.gov.in / *.nic.in)."
+        )
+    
+    # Check 2: Known Scam Pattern Registry Match
+    if any(sp in clean_domain for sp in KNOWN_SCAM_PATTERNS):
+        flagged_reasons.append(
+            f"PHISHING REGISTRY MATCH: Domain matches active fraudulent portal pattern catalog."
+        )
+    
+    # Check 3: Commercial / Private TLDs posing as official services
+    if any(clean_domain.endswith(tld) for tld in [".com", ".org", ".net", ".info", ".online", ".site", ".xyz", ".top", ".biz"]):
+        flagged_reasons.append(
+            f"UNAUTHORIZED PRIVATE TLD: Government welfare applications NEVER operate on commercial .{clean_domain.split('.')[-1]} extensions."
+        )
+
+    # Check 4: Fraudulent fee / payment demands in SMS / URL text
+    if any(kw in raw for kw in ["upi", "fee", "registration fee", "qr code", "instant cash", "advance fee", "paytm", "gpay"]):
+        flagged_reasons.append(
+            "ADVANCE FEE FRAUD: Demands payment or UPI transaction. Genuine Government welfare schemes are 100% free of application charges."
+        )
+
+    if flagged_reasons:
+        return {
+            "is_safe": False,
+            "risk_level": "HIGH_RISK",
+            "domain": clean_domain,
+            "flagged_issues": flagged_reasons,
+            "statutory_advisory": "DO NOT enter personal credentials, Aadhaar OTP, or transfer any funds to non-government websites."
+        }
+    
+    return {
+        "is_safe": True,
+        "risk_level": "SAFE",
+        "domain": clean_domain,
+        "flagged_issues": [],
+        "statutory_advisory": f"Verified official Indian Government public portal ({clean_domain})."
+    }
+
+
+@tool
 def evaluate_authorization_tool(user_role: str, action: str, resource_tier: str, is_verified: bool, kyc_level: str) -> Dict[str, Any]:
     """Wraps Laptop 2's Cedar Zero-Trust Authorization Policy Engine."""
     return check_cedar_policy(

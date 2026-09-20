@@ -2114,7 +2114,7 @@ Applicant Signature: ${p.name}` : null;
       showToast("RTI Notice downloaded as text document!", "download");
     });
 
-    // 10. Anti-Scam Phishing Verifier
+    // 10. Anti-Scam Phishing Verifier (Strands Agent Tool)
     document.getElementById("btnVerifyScam").addEventListener("click", async () => {
       const val = document.getElementById("scamScanInput").value.trim();
       const feedback = document.getElementById("scamFeedbackBox");
@@ -2128,22 +2128,20 @@ Applicant Signature: ${p.name}` : null;
         });
         const d = await res.json();
         feedback.style.display = "block";
-        if (d.risk_level === "HIGH_RISK") {
+        if (d.risk_level === "HIGH_RISK" || !d.is_safe) {
           feedback.className = "scam-result-card danger-alert";
-          feedback.innerHTML = `🚨 <strong>HIGH RISK FRAUD DETECTED:</strong><br>${d.flagged_issues.join("<br>")}`;
+          const issues = (d.flagged_issues && d.flagged_issues.length > 0)
+            ? d.flagged_issues.map(i => `• ${i}`).join("<br>")
+            : "• Non-government domain detected";
+          feedback.innerHTML = `🚨 <strong>FRAUD RISK / NON-GOVERNMENT DOMAIN DETECTED:</strong><br>${issues}<br><br><span style="font-size:12px; color:#b91c1c;">⚠️ ${d.statutory_advisory || "Government welfare schemes are NEVER hosted on commercial or private domains."}</span>`;
         } else {
           feedback.className = "scam-result-card safe-alert";
-          feedback.innerHTML = `✅ <strong>VERIFIED / SAFE:</strong> No known scam signatures or fake fee demands detected.`;
+          feedback.innerHTML = `✅ <strong>VERIFIED OFFICIAL GOVERNMENT REGISTRY (${d.domain}):</strong> ${d.statutory_advisory || "Authentic official portal."}`;
         }
       } catch {
         feedback.style.display = "block";
-        if (val.includes(".org") || val.includes("upi") || val.includes("fee")) {
-          feedback.className = "scam-result-card danger-alert";
-          feedback.innerHTML = `🚨 <strong>HIGH RISK FRAUD DETECTED:</strong> Non-government domain posing as official portal with fee demand.`;
-        } else {
-          feedback.className = "scam-result-card safe-alert";
-          feedback.innerHTML = `✅ <strong>SAFE:</strong> No obvious scam flags detected.`;
-        }
+        feedback.className = "scam-result-card danger-alert";
+        feedback.innerHTML = `🚨 <strong>UNVERIFIED DOMAIN:</strong> Please ensure portal belongs to official *.gov.in or *.nic.in registries.`;
       }
     });
 

@@ -26,7 +26,8 @@ from app import (
     check_cedar_policy,
     generate_statutory_rti_text,
     query_opensearch_schemes,
-    process_strands_chatbot_query
+    process_strands_chatbot_query,
+    verify_portal_authenticity_tool
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -101,37 +102,13 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                     }).encode('utf-8'))
                     return
 
-                # Route 3: Anti-Scam Phishing Scan
+                # Route 3: Anti-Scam Phishing Scan (Strands Agent Tool)
                 elif self.path == "/api/fraud-scan":
-                    input_text = str(data.get("url_or_text", "")).lower()
-                    fraud_file = os.path.join(backend_dir, "data/fraud_patterns.json")
-                    
-                    suspicious_domains = ["pmkisan-gov.in", "pm-kisan-yojna.org", "ayushmanbharat-card.online", "free-ration-card.info"]
-                    if os.path.exists(fraud_file):
-                        try:
-                            with open(fraud_file, "r", encoding="utf-8") as f:
-                                f_data = json.load(f)
-                                suspicious_domains = f_data.get("suspicious_domains", suspicious_domains)
-                        except Exception:
-                            pass
-
-                    flagged = []
-                    is_scam = False
-                    for sd in suspicious_domains:
-                        if sd in input_text:
-                            is_scam = True
-                            flagged.append(f"Domain matches known scam registry: '{sd}'")
-
-                    if any(kw in input_text for kw in ["upi", "registration fee", "qr code", "instant prize", "advance fee"]):
-                        is_scam = True
-                        flagged.append("Demands upfront fee or UPI transfer (Government welfare schemes are ALWAYS free to apply)")
+                    input_text = str(data.get("url_or_text", "")).strip()
+                    scan_result = verify_portal_authenticity_tool(input_text)
 
                     self._set_headers(200)
-                    self.wfile.write(json.dumps({
-                        "is_safe": not is_scam,
-                        "risk_level": "HIGH_RISK" if is_scam else "SAFE",
-                        "flagged_issues": flagged
-                    }).encode('utf-8'))
+                    self.wfile.write(json.dumps(scan_result).encode('utf-8'))
                     return
 
                 # Route 4: AI Civic Chat Assistant & Dynamic Doubts Resolver (Strands SDK Agent)
