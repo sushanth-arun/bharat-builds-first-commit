@@ -16,51 +16,47 @@
 
   <style>
     /* ==========================================================================
-       1. PURE CRISP WHITE LIGHT MODE (DEFAULT) & OBSIDIAN DARK MODE
+       21ST.DEV & REACTBITS DESIGN TOKENS (PURE CRISP WHITE LIGHT MODE & DARK)
        ========================================================================== */
     :root, html[data-theme="light"] {
-      /* Purest Clean White Backgrounds */
+      /* Pure Crisp White Surfaces */
       --bg-page: #ffffff;
       --bg-surface: #ffffff;
-      --bg-surface-elevated: #ffffff;
       --bg-subtle: #f8fafc;
       --bg-card: #ffffff;
       --bg-card-hover: #ffffff;
       --bg-glass: rgba(255, 255, 255, 0.95);
-      
-      --hero-gradient: #ffffff;
-      --card-gradient: #ffffff;
+      --bg-modal: rgba(15, 23, 42, 0.4);
 
       /* High Contrast Borders */
       --border-light: #f1f5f9;
       --border-main: #e2e8f0;
       --border-strong: #cbd5e1;
-      --border-glass: #e2e8f0;
 
-      /* High Contrast Typography */
+      /* High Contrast Text */
       --text-main: #0f172a;
       --text-heading: #020617;
       --text-muted: #334155;
       --text-subtle: #64748b;
       --text-inverse: #ffffff;
 
-      /* Brand Accents */
+      /* Civic Brand Accents */
       --primary: #1e3a8a;         /* Deep Ashok Navy */
       --primary-hover: #172554;
       --primary-subtle: #eff6ff;
-      --primary-glow: rgba(30, 58, 138, 0.12);
+      --primary-glow: rgba(30, 58, 138, 0.15);
       
       --accent: #d97706;          /* Saffron Accent */
       --accent-subtle: #fffbeb;
-      --accent-glow: rgba(217, 119, 6, 0.12);
+      --accent-glow: rgba(217, 119, 6, 0.15);
 
       --success: #047857;         /* High Contrast Green */
       --success-subtle: #ecfdf5;
-      --success-glow: rgba(4, 120, 87, 0.12);
+      --success-glow: rgba(4, 120, 87, 0.15);
 
       --danger: #b91c1c;          /* Red Alert */
       --danger-subtle: #fef2f2;
-      --danger-glow: rgba(185, 28, 28, 0.12);
+      --danger-glow: rgba(185, 28, 28, 0.15);
 
       /* Shadows */
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -78,19 +74,15 @@
       /* Deep Obsidian / Dark Mode */
       --bg-page: #090d16;
       --bg-surface: #0f172a;
-      --bg-surface-elevated: #182238;
       --bg-subtle: #141c2e;
       --bg-card: #0f172a;
       --bg-card-hover: #162238;
       --bg-glass: rgba(15, 23, 42, 0.9);
-      
-      --hero-gradient: #090d16;
-      --card-gradient: #0f172a;
+      --bg-modal: rgba(0, 0, 0, 0.7);
 
       --border-light: #1e293b;
       --border-main: #334155;
       --border-strong: #475569;
-      --border-glass: rgba(255, 255, 255, 0.08);
 
       --text-main: #f8fafc;
       --text-heading: #ffffff;
@@ -230,6 +222,7 @@
       gap: 12px;
     }
 
+    /* 21st.dev Shimmer Button */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -244,6 +237,8 @@
       transition: all 0.2s ease;
       text-decoration: none;
       user-select: none;
+      position: relative;
+      overflow: hidden;
     }
 
     .btn:active {
@@ -259,6 +254,7 @@
     .btn-primary:hover {
       background: var(--primary-hover);
       box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
     .btn-secondary {
@@ -270,6 +266,29 @@
     .btn-secondary:hover {
       background: var(--bg-subtle);
       border-color: var(--border-strong);
+    }
+
+    /* Shimmer sweep effect */
+    .btn-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.25) 25%,
+        transparent 30%
+      );
+      transform: rotate(30deg);
+      animation: shimmerSweep 4s infinite;
+    }
+
+    @keyframes shimmerSweep {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      30%, 100% { transform: translateX(100%) rotate(30deg); }
     }
 
     /* Theme Switcher Segmented Button */
@@ -304,12 +323,13 @@
     }
 
     /* ==========================================================================
-       HERO SECTION
+       HERO & 21ST.DEV SPOTLIGHT BENTO GRID
        ========================================================================== */
     .hero-wrapper {
       background: var(--bg-page);
       padding: 64px 0 54px;
       border-bottom: 1px solid var(--border-light);
+      position: relative;
     }
 
     .hero-badge-pill {
@@ -356,23 +376,43 @@
       margin-bottom: 48px;
     }
 
-    /* Bento Grid Widgets */
-    .bento-grid {
+    /* ReactBits Spotlight Card Effect */
+    .spotlight-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
 
-    .bento-card {
+    .spotlight-card {
       background: var(--bg-surface);
       border: 1.5px solid var(--border-main);
       border-radius: var(--radius-lg);
       padding: 26px;
       box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .bento-card:hover {
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(30, 58, 138, 0.06),
+        transparent 40%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+
+    .spotlight-card:hover {
       border-color: var(--primary);
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
@@ -390,7 +430,7 @@
       margin-bottom: 16px;
     }
 
-    .bento-card h3 {
+    .spotlight-card h3 {
       font-family: 'Outfit', sans-serif;
       font-size: 19px;
       font-weight: 800;
@@ -398,13 +438,13 @@
       margin-bottom: 8px;
     }
 
-    .bento-card p {
+    .spotlight-card p {
       font-size: 14px;
       color: var(--text-muted);
       line-height: 1.6;
     }
 
-    /* Gauge Widget */
+    /* Radial Progress Gauge */
     .gauge-widget {
       display: flex;
       align-items: center;
@@ -884,6 +924,36 @@
       border-color: var(--accent);
     }
 
+    /* RTI Clause Switcher (21st.dev Style Segmented View) */
+    .clause-switcher {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-main);
+      margin-bottom: 12px;
+    }
+
+    .clause-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .clause-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
     /* RTI Code Viewer */
     .rti-code-container {
       background: var(--bg-subtle);
@@ -962,6 +1032,40 @@
       gap: 10px;
     }
 
+    /* Modal Sheet */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-modal);
+      backdrop-filter: blur(8px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-main);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      max-width: 640px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
     .spinner-icon {
       display: inline-block;
       width: 16px;
@@ -988,7 +1092,7 @@
 
     /* Responsive */
     @media (max-width: 1024px) {
-      .bento-grid, .schemes-catalog-grid, .workspace-grid {
+      .spotlight-grid, .schemes-catalog-grid, .workspace-grid {
         grid-template-columns: 1fr;
       }
       .hero-title {
@@ -1018,7 +1122,7 @@
       </nav>
 
       <div class="nav-actions">
-        <a href="#workspace" class="btn btn-primary">
+        <a href="#workspace" class="btn btn-primary btn-shimmer">
           <i data-lucide="sparkles" style="width:16px; height:16px;"></i> Launch Engine
         </a>
 
@@ -1035,7 +1139,7 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero Section with ReactBits Spotlight Bento Grid -->
   <section class="hero-wrapper">
     <div class="container">
       
@@ -1053,7 +1157,7 @@
       </p>
 
       <div class="hero-cta-group">
-        <a href="#workspace" class="btn btn-primary" style="padding:13px 26px; font-size:15px;">
+        <a href="#workspace" class="btn btn-primary btn-shimmer" style="padding:13px 26px; font-size:15px;">
           <i data-lucide="search" style="width:17px; height:17px;"></i> Match Schemes & Draft RTI
         </a>
         <a href="#schemesLibrary" class="btn btn-secondary" style="padding:13px 22px; font-size:15px;">
@@ -1061,11 +1165,11 @@
         </a>
       </div>
 
-      <!-- Bento Grid Showcase -->
-      <div id="architecture" class="bento-grid">
+      <!-- Spotlight Bento Grid Cards -->
+      <div id="architecture" class="spotlight-grid">
         
-        <!-- Bento 1 -->
-        <div class="bento-card">
+        <!-- Spotlight 1 -->
+        <div class="spotlight-card">
           <div class="bento-icon"><i data-lucide="activity"></i></div>
           <h3>Empirical Probability Scoring</h3>
           <p>Multi-dimensional matching weighing family income ceilings, occupation relevance, land records, and document readiness.</p>
@@ -1081,8 +1185,8 @@
           </div>
         </div>
 
-        <!-- Bento 2 -->
-        <div class="bento-card">
+        <!-- Spotlight 2 -->
+        <div class="spotlight-card">
           <div class="bento-icon" style="background:var(--success-subtle); color:var(--success);"><i data-lucide="shield-check"></i></div>
           <h3>Cedar Policy Engine</h3>
           <p>Strict zero-trust policies permitting verified citizens for Tier 1/2 RTIs while blocking unverified bot appeals.</p>
@@ -1092,8 +1196,8 @@
           </div>
         </div>
 
-        <!-- Bento 3 -->
-        <div class="bento-card">
+        <!-- Spotlight 3 -->
+        <div class="spotlight-card">
           <div class="bento-icon" style="background:var(--accent-subtle); color:var(--accent);"><i data-lucide="scale"></i></div>
           <h3>Statutory RTI Legal Compliance</h3>
           <p>Auto-formats Form 'A' applications under Section 6(1) and Section 19 First Appeals under the Right to Information Act, 2005.</p>
@@ -1256,7 +1360,7 @@
               <input type="text" id="citizenGrievanceInput" class="input-control" placeholder="e.g. Delay in DBT transfer sanction, application status" />
             </div>
 
-            <button type="submit" id="btnRunAgent" class="btn btn-primary" style="padding:13px; font-size:15px; width:100%;">
+            <button type="submit" id="btnRunAgent" class="btn btn-primary btn-shimmer" style="padding:13px; font-size:15px; width:100%;">
               <span id="agentIcon"><i data-lucide="sparkles" style="width:17px; height:17px;"></i></span>
               <span id="agentText">Run Civic Agent</span>
             </button>
@@ -1306,6 +1410,14 @@
                 </button>
               </div>
             </div>
+
+            <!-- Clause Switcher (21st.dev style) -->
+            <div class="clause-switcher">
+              <button type="button" class="clause-btn active" data-clause="tier1">Section 6(1) PIO Application</button>
+              <button type="button" class="clause-btn" data-clause="tier2">Section 19(1) First Appeal</button>
+              <button type="button" class="clause-btn" data-clause="tier3">Section 19(3) CIC Appeal</button>
+            </div>
+
             <pre id="rtiDraftViewer" class="rti-code-container">Complete the demographic form on the left to generate statutory RTI legal notice.</pre>
           </div>
 
@@ -1336,6 +1448,14 @@
 
     </div>
   </section>
+
+  <!-- Interactive Scheme Detail Modal (21st.dev Style) -->
+  <div id="schemeDetailModal" class="modal-overlay">
+    <div class="modal-card">
+      <button type="button" id="modalCloseBtn" class="modal-close"><i data-lucide="x"></i></button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 
   <!-- Toast Container & Footer -->
   <div id="toastContainer" class="toast-container"></div>
@@ -1430,21 +1550,31 @@
       }
     }
 
-    // Default strictly to Light Mode (Pure White)
     const initialTheme = localStorage.getItem("praapti_theme") || "light";
     setAppTheme(initialTheme);
 
     lightBtn.addEventListener("click", () => setAppTheme("light"));
     darkBtn.addEventListener("click", () => setAppTheme("dark"));
 
-    // 3. Schemes Catalog Grid
+    // 3. ReactBits Spotlight Mouse Coordinates Tracker
+    document.querySelectorAll(".spotlight-card").forEach(card => {
+      card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    });
+
+    // 4. Schemes Catalog Grid
     const CATALOG_ITEMS = [
-      { id: "PM-KISAN", title: "PM-KISAN Samman Nidhi", dept: "Ministry of Agriculture", category: "Agriculture", desc: "Income support of Rs. 6,000/yr in 3 installments to landholding farmer families.", grant: "Rs. 6,000 / year" },
-      { id: "PM-JAY", title: "Ayushman Bharat (PM-JAY)", dept: "Ministry of Health & Family Welfare", category: "Healthcare", desc: "Cashless secondary & tertiary hospital cover up to Rs. 5 Lakh per family per year.", grant: "Rs. 5,00,000 / family" },
-      { id: "PMAY-G", title: "PMAY Gramin Housing", dept: "Ministry of Rural Development", category: "Housing", desc: "Financial grant of Rs. 1.20 Lakh to construct pucca houses for rural houseless.", grant: "Rs. 1,20,000 Grant" },
-      { id: "PM-VISHWAKARMA", title: "PM Vishwakarma Scheme", dept: "Ministry of MSME", category: "MSME", desc: "Skill training, Rs. 15,000 tool kit incentive, and 5% concessional credit for traditional artisans.", grant: "Rs. 15,000 Kit + 5% Loan" },
-      { id: "PM-SVANIDHI", title: "PM SVANidhi Street Vendors", dept: "Ministry of Housing & Urban Affairs", category: "MSME", desc: "Collateral-free working capital loans up to Rs. 50,000 with 7% interest subsidy.", grant: "Up to Rs. 50k Credit" },
-      { id: "KCC", title: "Kisan Credit Card (KCC)", dept: "Ministry of Agriculture / RBI", category: "Agriculture", desc: "Subsidized short-term crop loans up to Rs. 3 Lakh at 4% effective interest rate.", grant: "4% Subsidized Credit" }
+      { id: "PM-KISAN", title: "PM-KISAN Samman Nidhi", dept: "Ministry of Agriculture", category: "Agriculture", desc: "Income support of Rs. 6,000/yr in 3 installments to landholding farmer families.", grant: "Rs. 6,000 / year", portal: "https://pmkisan.gov.in" },
+      { id: "PM-JAY", title: "Ayushman Bharat (PM-JAY)", dept: "Ministry of Health & Family Welfare", category: "Healthcare", desc: "Cashless secondary & tertiary hospital cover up to Rs. 5 Lakh per family per year.", grant: "Rs. 5,00,000 / family", portal: "https://nha.gov.in/PM-JAY" },
+      { id: "PMAY-G", title: "PMAY Gramin Housing", dept: "Ministry of Rural Development", category: "Housing", desc: "Financial grant of Rs. 1.20 Lakh to construct pucca houses for rural houseless.", grant: "Rs. 1,20,000 Grant", portal: "https://pmayg.nic.in" },
+      { id: "PM-VISHWAKARMA", title: "PM Vishwakarma Scheme", dept: "Ministry of MSME", category: "MSME", desc: "Skill training, Rs. 15,000 tool kit incentive, and 5% concessional credit for traditional artisans.", grant: "Rs. 15,000 Kit + 5% Loan", portal: "https://pmvishwakarma.gov.in" },
+      { id: "PM-SVANIDHI", title: "PM SVANidhi Street Vendors", dept: "Ministry of Housing & Urban Affairs", category: "MSME", desc: "Collateral-free working capital loans up to Rs. 50,000 with 7% interest subsidy.", grant: "Up to Rs. 50k Credit", portal: "https://pmsvanidhi.mohua.gov.in" },
+      { id: "KCC", title: "Kisan Credit Card (KCC)", dept: "Ministry of Agriculture / RBI", category: "Agriculture", desc: "Subsidized short-term crop loans up to Rs. 3 Lakh at 4% effective interest rate.", grant: "4% Subsidized Credit", portal: "https://agricoop.nic.in" }
     ];
 
     function renderCatalog(filter = "all") {
@@ -1467,7 +1597,7 @@
           </div>
           <div class="card-foot">
             <span class="grant-pill">${item.grant}</span>
-            <a href="#workspace" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">Test Eligibility ↗</a>
+            <button type="button" class="btn btn-secondary" onclick="openSchemeModal('${item.id}')" style="padding:6px 12px; font-size:12px;">Details & Rules ↗</button>
           </div>
         `;
         grid.appendChild(card);
@@ -1485,7 +1615,37 @@
 
     renderCatalog();
 
-    // 4. Toast System
+    // 5. Modal System (21st.dev Style)
+    const modal = document.getElementById("schemeDetailModal");
+    const modalContent = document.getElementById("modalContent");
+    document.getElementById("modalCloseBtn").addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    function openSchemeModal(schemeId) {
+      const item = CATALOG_ITEMS.find(c => c.id === schemeId);
+      if (!item) return;
+
+      modalContent.innerHTML = `
+        <span class="cat-badge" style="margin-bottom:12px; display:inline-block;">${item.category}</span>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; color:var(--text-heading); margin-bottom:8px;">${item.title}</h3>
+        <p style="font-size:13px; font-weight:600; color:var(--text-subtle); margin-bottom:16px;">Administering Authority: ${item.dept}</p>
+        
+        <div style="background:var(--bg-subtle); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-main); margin-bottom:18px;">
+          <strong style="font-size:13px; color:var(--text-heading);">Benefit Structure:</strong>
+          <p style="font-size:14px; color:var(--text-main); margin-top:4px;">${item.desc}</p>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+          <a href="${item.portal}" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:13px;">Official Portal ↗</a>
+          <a href="#workspace" onclick="document.getElementById('schemeDetailModal').style.display='none'" class="btn btn-primary" style="font-size:13px;">Test In Engine</a>
+        </div>
+      `;
+      modal.style.display = "flex";
+      lucide.createIcons();
+    }
+
+    // 6. Toast System
     function showToast(message, iconName = "check-circle") {
       const container = document.getElementById("toastContainer");
       const toast = document.createElement("div");
@@ -1500,11 +1660,13 @@
       }, 3500);
     }
 
-    // 5. Citizen Intake Form & Agent Execution
+    // 7. Citizen Intake Form & Agent Execution
     const intakeForm = document.getElementById("citizenIntakeForm");
     const agentBtn = document.getElementById("btnRunAgent");
     const agentText = document.getElementById("agentText");
     const agentIcon = document.getElementById("agentIcon");
+
+    let currentWorkflowData = null;
 
     intakeForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -1541,6 +1703,7 @@
 
         if (!res.ok) throw new Error("API error: " + res.status);
         const data = await res.json();
+        currentWorkflowData = data;
         renderResultsView(data);
         showToast("Workflow evaluation completed successfully!");
       } catch (err) {
@@ -1629,6 +1792,56 @@
       lucide.createIcons();
     }
 
+    // 8. Clause Switcher Event (Section 6(1) vs 19(1) vs 19(3))
+    document.querySelectorAll(".clause-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        document.querySelectorAll(".clause-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const tier = btn.dataset.clause;
+
+        const citizenName = document.getElementById("citizenNameInput").value.trim() || "Citizen";
+        const district = document.getElementById("districtSelect").value || "District Office";
+        const state = document.getElementById("stateSelect").value || "State";
+        const kyc = document.getElementById("citizenKYCSelect").value;
+        const grievance = document.getElementById("citizenGrievanceInput").value.trim() || "Scheme application DBT status";
+
+        try {
+          const res = await fetch("/api/rti/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tier: tier,
+              applicant_name: citizenName,
+              applicant_address: `${district}, ${state}`,
+              public_authority: `District Nodal Office, ${district}`,
+              department: "Department of Agriculture & Welfare",
+              matter_description: grievance,
+              specific_queries: [
+                "Certified daily progress report and file notings regarding application.",
+                "Official grounds recorded for DBT hold or disbursement schedule.",
+                "Name, designation and contact of the Public Information Officer."
+              ],
+              is_verified: (kyc !== "unverified"),
+              kyc_level: kyc
+            })
+          });
+
+          const d = await res.json();
+          const viewer = document.getElementById("rtiDraftViewer");
+          if (d.status === "SUCCESS") {
+            viewer.textContent = d.draft_content;
+            showToast(`Generated ${tier.toUpperCase()} statutory notice!`);
+          } else {
+            viewer.textContent = `[ACCESS RESTRICTED BY CEDAR POLICY]\nReason: ${d.reason || d.message}`;
+            showToast("Tier restricted by Cedar Policy.", "alert-triangle");
+          }
+        } catch {
+          // Fallback notice
+          document.getElementById("rtiDraftViewer").textContent = `STATUTORY MEMORANDUM (${tier.toUpperCase()})\nApplicant: ${citizenName}\nJurisdiction: ${district}, ${state}`;
+        }
+      });
+    });
+
     function fallbackClientEvaluation(p) {
       const isVer = (p.kyc_level !== "unverified");
       const auth = isVer
@@ -1685,7 +1898,7 @@ Applicant Signature: ${p.name}` : null;
       });
     }
 
-    // 6. Copy & Download RTI Notice
+    // 9. Copy & Download RTI Notice
     document.getElementById("btnCopyRTI").addEventListener("click", () => {
       const text = document.getElementById("rtiDraftViewer").innerText;
       navigator.clipboard.writeText(text).then(() => {
@@ -1704,7 +1917,7 @@ Applicant Signature: ${p.name}` : null;
       showToast("RTI Notice downloaded as text document!", "download");
     });
 
-    // 7. Anti-Scam Phishing Verifier
+    // 10. Anti-Scam Phishing Verifier
     document.getElementById("btnVerifyScam").addEventListener("click", async () => {
       const val = document.getElementById("scamScanInput").value.trim();
       const feedback = document.getElementById("scamFeedbackBox");
