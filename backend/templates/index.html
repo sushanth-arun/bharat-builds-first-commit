@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,28 +11,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Early Theme Setter: Strictly default to pure white light mode -->
-  <script>
-    (function() {
-      // Force initial load to clean white light mode
-      var saved = localStorage.getItem("praapti_user_theme");
-      var theme = (saved === "dark") ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", theme);
-      document.documentElement.className = theme;
-    })();
-  </script>
-
   <!-- Lucide Icons via official CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     /* ==========================================================================
-       PLAIN WHITE LIGHT MODE (#ffffff) & PLAIN BLACK DARK MODE (#000000)
+       PRAAPTI AI DESIGN SYSTEM (PURE CLEAN WHITE THEME)
        21ST.DEV & REACTBITS DESIGN SYSTEM
        ========================================================================== */
-    :root,
-    [data-theme="light"],
-    html[data-theme="light"] {
+    :root {
       /* 100% Plain White Light Surfaces */
       --bg-primary: #ffffff;
       --bg-page: #ffffff;
@@ -88,56 +75,6 @@
       --radius-lg: 18px;
       --radius-xl: 24px;
       --radius-full: 9999px;
-    }
-
-    html[data-theme="dark"] {
-      /* 100% Plain Black Dark Surfaces (Only when data-theme is dark) */
-      --bg-primary: #000000;
-      --bg-page: #000000;
-      --bg-surface: #0a0a0a;
-      --bg-subtle: #141414;
-      --card-bg: #0a0a0a;
-      --bg-card: #0a0a0a;
-      --bg-card-hover: #171717;
-      --bg-glass: rgba(10, 10, 10, 0.95);
-      --bg-modal: rgba(0, 0, 0, 0.85);
-
-      /* Plain Black High Contrast Borders */
-      --border-color: #262626;
-      --border-light: #1f1f1f;
-      --border-main: #262626;
-      --border-strong: #404040;
-
-      /* Plain Black High Contrast Text */
-      --text-primary: #ffffff;
-      --text-main: #f5f5f5;
-      --text-secondary: #a3a3a3;
-      --text-heading: #ffffff;
-      --text-muted: #d4d4d4;
-      --text-subtle: #a3a3a3;
-      --text-inverse: #000000;
-
-      --accent-color: #3b82f6;
-      --primary: #3b82f6;
-      --primary-hover: #60a5fa;
-      --primary-subtle: rgba(59, 130, 246, 0.15);
-      --primary-glow: rgba(59, 130, 246, 0.3);
-
-      --accent: #f59e0b;
-      --accent-subtle: rgba(245, 158, 11, 0.15);
-      --accent-glow: rgba(245, 158, 11, 0.25);
-
-      --success: #10b981;
-      --success-subtle: rgba(16, 185, 129, 0.15);
-      --success-glow: rgba(16, 185, 129, 0.3);
-
-      --danger: #ef4444;
-      --danger-subtle: rgba(239, 68, 68, 0.15);
-      --danger-glow: rgba(239, 68, 68, 0.3);
-
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
-      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.9);
-      --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.95);
     }
 
     * {
@@ -465,43 +402,6 @@
     @keyframes shimmerSweep {
       0% { transform: translateX(-100%) rotate(30deg); }
       30%, 100% { transform: translateX(100%) rotate(30deg); }
-    }
-
-    /* Theme Switcher Segmented Button */
-    .theme-toggle-wrap {
-      display: inline-flex;
-      align-items: center;
-      background: var(--bg-subtle);
-      border: 1.5px solid var(--border-main);
-      border-radius: var(--radius-full);
-      padding: 2px;
-      gap: 2px;
-      height: 40px;
-      flex-shrink: 0;
-    }
-
-    .theme-mode-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0 12px;
-      height: 32px;
-      border-radius: var(--radius-full);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .theme-mode-btn.active {
-      background: var(--bg-surface);
-      color: var(--text-heading);
-      box-shadow: var(--shadow-sm);
     }
 
     /* ==========================================================================
@@ -1401,16 +1301,6 @@
           <i data-lucide="sparkles" style="width:15px; height:15px; color:var(--accent);"></i> Launch Engine
         </a>
 
-        <!-- Animated Theme Toggle -->
-        <div class="theme-toggle-wrap">
-          <button id="themeLightBtn" class="theme-mode-btn active" title="Switch to Pure White Light Mode">
-            <i data-lucide="sun" style="width:14px; height:14px;"></i> Light
-          </button>
-          <button id="themeDarkBtn" class="theme-mode-btn" title="Switch to Dark Mode">
-            <i data-lucide="moon" style="width:14px; height:14px;"></i> Dark
-          </button>
-        </div>
-
         <!-- Mobile Menu Toggle -->
         <button id="mobileMenuBtn" class="mobile-menu-btn" title="Toggle Navigation Menu">
           <i data-lucide="menu" id="mobileMenuIcon" style="width:20px; height:20px;"></i>
@@ -1824,42 +1714,7 @@
       });
     });
 
-    // 2. Standard HTML / JS Light & Dark Mode System
-    const lightBtn = document.getElementById("themeLightBtn");
-    const darkBtn = document.getElementById("themeDarkBtn");
-
-    function setAppTheme(theme) {
-      const mode = (theme === "dark") ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", mode);
-      document.documentElement.className = mode;
-      localStorage.setItem("praapti_user_theme", mode);
-      if (mode === "dark") {
-        if (darkBtn) darkBtn.classList.add("active");
-        if (lightBtn) lightBtn.classList.remove("active");
-      } else {
-        if (lightBtn) lightBtn.classList.add("active");
-        if (darkBtn) darkBtn.classList.remove("active");
-      }
-    }
-
-    // Default strictly to clean plain white light mode
-    const savedTheme = localStorage.getItem("praapti_user_theme") || "light";
-    setAppTheme(savedTheme);
-
-    if (lightBtn) {
-      lightBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        setAppTheme("light");
-      });
-    }
-    if (darkBtn) {
-      darkBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        setAppTheme("dark");
-      });
-    }
-
-    // 3. ReactBits Spotlight Mouse Coordinates Tracker
+    // 2. ReactBits Spotlight Mouse Coordinates Tracker
     document.querySelectorAll(".spotlight-card").forEach(card => {
       card.addEventListener("mousemove", e => {
         const rect = card.getBoundingClientRect();
