@@ -397,5 +397,110 @@
     ],
     "official_portal": "https://www.standupmitra.in",
     "is_active": true
+  },
+  {
+    "scheme_id": "PM-SYM",
+    "title": "Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM)",
+    "short_code": "PM-SYM",
+    "level": "Central",
+    "ministry": "Ministry of Labour and Employment",
+    "category": "Social Security & Labour",
+    "description": "Voluntary and contributory pension scheme for unorganized workers, domestic helpers, street vendors, and daily wage earners.",
+    "benefits": "Assured monthly pension of Rs. 3,000 per month after attaining 60 years of age with 50% matching contribution from Central Government.",
+    "eligibility": {
+      "target_group": "Unorganized Workers, Daily Wage, Drivers, Domestic Workers, Unemployed",
+      "max_annual_income": 180000,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 40,
+      "occupations": ["labourer", "daily wage", "driver", "domestic worker", "unemployed", "maid", "street vendor"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Savings Bank Account with IFSC",
+      "e-Shram Card"
+    ],
+    "official_portal": "https://maandhan.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "NSAP-IGNOAPS",
+    "title": "Indira Gandhi National Old Age Pension Scheme (IGNOAPS)",
+    "short_code": "NSAP-IGNOAPS",
+    "level": "Central & State",
+    "ministry": "Ministry of Rural Development",
+    "category": "Social Security & Senior Citizens",
+    "description": "Monthly financial pension to destitute elderly citizens living below poverty line.",
+    "benefits": "Monthly non-contributory cash pension transferred via DBT directly to bank accounts of senior citizens.",
+    "eligibility": {
+      "target_group": "Senior Citizens, BPL Families, Destitute Elderly",
+      "max_annual_income": 100000,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 60,
+      "age_max": 120,
+      "occupations": ["senior citizen", "retired", "unemployed", "homemaker", "all"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "BPL Card / Ration Card",
+      "Age Proof",
+      "Bank Account Details"
+    ],
+    "official_portal": "https://nsap.nic.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "NAPS-SKILL",
+    "title": "National Apprenticeship Promotion Scheme (NAPS-2)",
+    "short_code": "NAPS-2",
+    "level": "Central",
+    "ministry": "Ministry of Skill Development and Entrepreneurship",
+    "category": "Skill Development & Youth",
+    "description": "Direct financial stipend support and on-the-job training for youth and unemployed individuals seeking corporate industrial apprenticeships.",
+    "benefits": "Direct monthly stipend subsidy up to Rs. 1,500/month by Government plus industry training compensation up to Rs. 12,000/month.",
+    "eligibility": {
+      "target_group": "Unemployed Youth, ITI Graduates, Students, Job Seekers",
+      "max_annual_income": 400000,
+      "land_holding_required": false,
+      "gender": "All",
+      "age_min": 16,
+      "age_max": 35,
+      "occupations": ["student", "unemployed", "graduate", "technician", "trainee", "all"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Educational Certificates (10th / 12th / ITI / Diploma / Degree)",
+      "Bank Passbook"
+    ],
+    "official_portal": "https://www.apprenticeshipindia.gov.in",
+    "is_active": true
+  },
+  {
+    "scheme_id": "PM-KMY",
+    "title": "Pradhan Mantri Kisan Maan-Dhan Yojana (PM-KMY)",
+    "short_code": "PM-KMY",
+    "level": "Central",
+    "ministry": "Ministry of Agriculture and Farmers Welfare",
+    "category": "Agriculture & Pension",
+    "description": "Old age pension scheme for Small and Marginal Farmers (SMF) possessing land holding up to 2 hectares.",
+    "benefits": "Assured pension of Rs. 3,000/- per month to small and marginal farmers upon reaching 60 years of age.",
+    "eligibility": {
+      "target_group": "Small & Marginal Farmers with land up to 2 hectares",
+      "max_annual_income": 300000,
+      "land_holding_required": true,
+      "gender": "All",
+      "age_min": 18,
+      "age_max": 40,
+      "occupations": ["farmer", "cultivator", "agriculture"]
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Khatauni / Land Record documents",
+      "Bank Passbook"
+    ],
+    "official_portal": "https://pmkmy.gov.in",
+    "is_active": true
   }
 ]

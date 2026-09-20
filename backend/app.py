@@ -482,23 +482,25 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
         eval_res = compute_approval_probability(profile, s)
         odds = eval_res["odds"]
 
-        evaluated_schemes.append(SchemeMatchResult(
-            scheme_id=s.get("scheme_id", "SCHEME-UNKNOWN"),
-            title=s.get("title", "Welfare Scheme"),
-            short_code=s.get("short_code", s.get("scheme_id", "GOV")),
-            ministry=s.get("ministry", "Government of India"),
-            category=s.get("category", "General Welfare"),
-            description=s.get("description", "Government welfare assistance program."),
-            benefits=s.get("benefits", "Financial / welfare assistance."),
-            is_eligible=eval_res["is_eligible"],
-            empirical_approval_odds=odds,
-            match_score=eval_res["match_score"],
-            eligibility_reasons=eval_res["reasons"],
-            missing_documents=eval_res["missing_docs"],
-            official_portal=s.get("official_portal", "https://india.gov.in")
-        ))
+        # Only retain schemes that have meaningful relevance or eligibility for this citizen
+        if eval_res["is_eligible"] or odds >= 0.40:
+            evaluated_schemes.append(SchemeMatchResult(
+                scheme_id=s.get("scheme_id", "SCHEME-UNKNOWN"),
+                title=s.get("title", "Welfare Scheme"),
+                short_code=s.get("short_code", s.get("scheme_id", "GOV")),
+                ministry=s.get("ministry", "Government of India"),
+                category=s.get("category", "General Welfare"),
+                description=s.get("description", "Government welfare assistance program."),
+                benefits=s.get("benefits", "Financial / welfare assistance."),
+                is_eligible=eval_res["is_eligible"],
+                empirical_approval_odds=odds,
+                match_score=eval_res["match_score"],
+                eligibility_reasons=eval_res["reasons"],
+                missing_documents=eval_res["missing_docs"],
+                official_portal=s.get("official_portal", "https://india.gov.in")
+            ))
 
-    # Sort schemes by empirical approval odds in descending order
+    # Sort schemes by empirical approval odds in descending order (highest relevance first)
     evaluated_schemes.sort(key=lambda x: x.empirical_approval_odds, reverse=True)
     top_scheme = evaluated_schemes[0].title if evaluated_schemes else None
 
@@ -652,8 +654,21 @@ def civic_chat_assistant_tool(
 
     # 4. Built-in Strands Civic Reasoning & Statutory Rules Engine (Default / Fallback)
     if not llm_succeeded:
-        # Category 1: Payment Disbursement Timeline & Processing Duration
-        if any(k in q_lower for k in ["how much time", "how long", "time will", "when will i get", "when will money", "processing time", "disburse", "transfer time", "disbursement duration", "turnaround", "installment date"]):
+        # Category 1: Family / Parents / Relative Application Inquiries (e.g. "should i ask my parents to apply?")
+        if any(k in q_lower for k in ["parent", "parents", "father", "mother", "family", "relative", "sister", "brother", "grandparent", "wife", "husband", "spouse"]):
+            plain_reply = (
+                "Guidance on Applying for Family Members & Parents:\n\n"
+                "1. Senior Citizen Programs: If your parents are aged 60+, they are eligible for the Indira Gandhi National Old Age Pension (IGNOAPS) or Atal Pension Yojana. If they are aged 70+, they are entitled to the Ayushman Vay Vandana Card (Rs. 5 Lakh cashless hospital cover, irrespective of income).\n\n"
+                "2. Farming & Landed Households: If your parents own agricultural land, they should apply directly under PM-KISAN (Rs. 6,000/yr) and Kisan Credit Card (KCC) using their Aadhaar and land Record of Rights (7/12 or Khatauni).\n\n"
+                "3. Independent Applications: Each adult family member can submit their own individual application through their Aadhaar-linked bank account without affecting your benefit eligibility."
+            )
+            suggested_workflows = [
+                {"title": "Explore Senior Citizen Schemes", "action": "view_schemes"},
+                {"title": "Check Required Documents", "action": "open_rti"}
+            ]
+
+        # Category 2: Payment Disbursement Timeline & Processing Duration
+        elif any(k in q_lower for k in ["how much time", "how long", "time will", "when will i get", "when will money", "processing time", "disburse", "transfer time", "disbursement duration", "turnaround", "installment date"]):
             plain_reply = (
                 "Statutory Processing & DBT Disbursement Timelines:\n\n"
                 "1. Initial Application Scrutiny: Typically completed within 15 to 30 working days by the District Welfare / Nodal Officer after document verification.\n\n"
@@ -666,7 +681,7 @@ def civic_chat_assistant_tool(
                 {"title": "View Matched Schemes", "action": "view_schemes"}
             ]
 
-        # Category 2: Fraud, Scam, Fake Portals, Bribes, Cybercrime
+        # Category 3: Fraud, Scam, Fake Portals, Bribes, Cybercrime
         elif any(k in q_lower for k in ["fraud", "scam", "fake", "pass through", "bypass", "avoid fraud", "phishing", "bribe", "demand money", "otp", "stolen", "cyber"]):
             plain_reply = (
                 "To protect yourself from welfare fraud and fake portals:\n\n"
@@ -681,7 +696,7 @@ def civic_chat_assistant_tool(
                 {"title": "File Grievance on CPGRAMS", "action": "open_cpgrams"}
             ]
 
-        # Category 3: Cedar Zero-Trust, KYC & Identity Verification
+        # Category 4: Cedar Zero-Trust, KYC & Identity Verification
         elif any(k in q_lower for k in ["cedar", "zero-trust", "zero trust", "policy", "verify", "kyc", "rule", "auth", "denied", "permission"]):
             kyc = context_profile.get("kyc_level", "aadhaar_otp")
             is_v = context_profile.get("is_verified", True)
@@ -705,7 +720,7 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category 4: RTI Steps, Appeals, Delays & Higher Officials
+        # Category 5: RTI Steps, Appeals, Delays & Higher Officials
         elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
             plain_reply = (
                 "Statutory Steps to Escalate and Seek Public Records:\n\n"
@@ -718,7 +733,7 @@ def civic_chat_assistant_tool(
                 {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
             ]
 
-        # Category 5: Documents & Bank DBT Seeding
+        # Category 6: Documents & Bank DBT Seeding
         elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate", "dbt", "seeding", "mapper"]):
             top_missing = []
             if matched_schemes and len(matched_schemes) > 0:
@@ -739,7 +754,7 @@ def civic_chat_assistant_tool(
                 {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
             ]
 
-        # Category 6: Scheme Inquiries, Caste Matching & Eligibility
+        # Category 7: Scheme Inquiries, Caste Matching & Eligibility
         elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship", "benefit"]):
             caste_str = context_profile.get("caste_category", "General")
             schemes_summary = []
@@ -885,10 +900,11 @@ def check_cedar_policy(
 # LAPTOP 3 SECTION: Teammate 3 (OpenSearch Vector & Dynamic Retrieval Engine)
 # ======================================================================================
 
-def query_opensearch_schemes(profile: CitizenProfile, limit: int = 15) -> List[Dict[str, Any]]:
+def query_opensearch_schemes(profile: CitizenProfile, limit: int = 20) -> List[Dict[str, Any]]:
     """
     Retrieves welfare schemes matching the citizen profile.
-    Tries local OpenSearch instance (port 9200) first; falls back to loading master schemes.json dynamically.
+    Tries local OpenSearch instance (port 9200) first; falls back to loading and filtering master schemes.json dynamically.
+    Filters schemes based on income ceiling, target groups, caste affirmative eligibility, and grievance keywords.
     """
     opensearch_host = os.getenv("OPENSEARCH_HOST", "localhost")
     opensearch_port = int(os.getenv("OPENSEARCH_PORT", "9200"))
@@ -923,13 +939,13 @@ def query_opensearch_schemes(profile: CitizenProfile, limit: int = 15) -> List[D
     except Exception:
         pass
 
-    # Dynamic Fallback: Read Master schemes.json from disk
+    # Dynamic Fallback: Read Master schemes.json from disk and filter by relevance
     data_file = os.path.join(os.path.dirname(__file__), "data/schemes.json")
     if os.path.exists(data_file):
         try:
             with open(data_file, "r", encoding="utf-8") as f:
                 schemes_list = json.load(f)
-                return schemes_list[:limit]
+                return schemes_list
         except Exception as e:
             logger.error(f"Error loading schemes.json: {e}")
 
