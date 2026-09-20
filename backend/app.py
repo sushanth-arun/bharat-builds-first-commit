@@ -469,7 +469,7 @@ def check_cedar_policy(
         }
 
     # 2. Tier 3 CIC Second Appeal (Explicit Forbid for unverified accounts)
-    if clean_action in ["DraftTier3CICAppeal", "tier3", "TIER3"]:
+    if clean_action in ["DraftTier3CICAppeal", "DraftTIER3CICAppeal", "DraftTIER3RTI", "DraftTier3RTI", "tier3", "TIER3"]:
         if not is_verified:
             return {
                 "decision": "DENY",
@@ -495,7 +495,7 @@ def check_cedar_policy(
         }
 
     # 3. Tier 1 (PIO) & Tier 2 (FAA) RTIs
-    if clean_action in ["DraftTier1RTI", "DraftTier2RTI", "tier1", "tier2", "TIER1", "TIER2"]:
+    if clean_action in ["DraftTier1RTI", "DraftTier2RTI", "DraftTIER1RTI", "DraftTIER2RTI", "tier1", "tier2", "TIER1", "TIER2"]:
         if is_verified:
             return {
                 "decision": "ALLOW",
