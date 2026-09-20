@@ -1098,55 +1098,61 @@ def process_api_request(endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any
 
 if __name__ == "__main__":
     print("=" * 80)
-    print("PRAAPTI AI - Civic Intelligence & RTI Platform (Dynamic Verification)")
+    print("PRAAPTI AI - Civic Intelligence & Zero-Trust Verification")
     print("=" * 80)
 
-    # Dynamic Profile 1: Sunita Devi (Artisan / Women MSME Entrepreneur from Rajasthan)
-    profile_1 = CitizenProfile(
-        name="Sunita Devi",
-        age=34,
-        gender="Female",
-        state="Rajasthan",
-        district="Jaipur",
-        occupation="Artisan",
-        annual_income=90000,
-        land_holding_acres=0.0,
-        caste_category="SC",
+    # Test Profile 1: Ratheeswar (All verifications of Aadhaar and DigiLocker already verified)
+    profile_ratheeswar = CitizenProfile(
+        name="Ratheeswar",
+        age=32,
+        gender="Male",
+        state="Tamil Nadu",
+        district="Chennai",
+        occupation="Farmer",
+        annual_income=52000,
+        land_holding_acres=2.5,
+        caste_category="OBC",
         is_bpl=True,
         is_verified=True,
-        kyc_level="aadhaar_otp",
-        available_documents=["Aadhaar Card", "Bank Passbook", "Artisan Verification"],
-        rti_target_department="District MSME Development Office, Jaipur",
-        rti_target_matter="Application status for PM Vishwakarma tool kit incentive"
+        kyc_level="digilocker",
+        available_documents=["Aadhaar Card", "DigiLocker Verified KYC", "Ration Card"],
+        rti_target_department="Department of Agriculture & Farmers Welfare, Chennai",
+        rti_target_matter="Statutory inquiry on PM-Kisan & fertilizer subsidy release"
     )
 
-    print(f"\n[TEST] Dynamic Evaluation for: {profile_1.name} ({profile_1.occupation}, Income: Rs. {profile_1.annual_income:,})")
-    res_1 = run_praapti_agent_workflow(profile_1)
+    print(f"\n[TEST 1] Fully Verified Profile: {profile_ratheeswar.name} (Phone: 9840123456)")
+    print(f"Status: Aadhaar & DigiLocker Verified | BPL: {profile_ratheeswar.is_bpl} | KYC: {profile_ratheeswar.kyc_level}")
+    res_1 = run_praapti_agent_workflow(profile_ratheeswar)
     print(f"Total Evaluated Schemes: {res_1.total_schemes_evaluated}")
     print(f"Top Recommendation:      {res_1.top_recommended_scheme}")
-    print(f"Cedar Policy Decision:   {res_1.cedar_authorization_status.get('decision')}")
+    print(f"Cedar Policy Decision:   {res_1.cedar_authorization_status.get('decision')} ({res_1.cedar_authorization_status.get('reason')})")
+    print(f"Statutory RTI Drafted?:  {'Yes (Section 6(1) Draft Generated)' if res_1.statutory_rti_draft else 'No'}")
     print("-" * 80)
     for idx, sc in enumerate(res_1.matched_schemes[:4], 1):
         print(f"  {idx}. {sc.title} ({sc.short_code}) -> Approval Odds: {sc.match_score}% | Category: {sc.category}")
 
-    # Dynamic Profile 2: Unverified Student
+    # Test Profile 2: Suriya (Only name and phone number saved, all other verifications unchecked)
     print("\n" + "=" * 80)
-    profile_2 = CitizenProfile(
-        name="Aakash Verma",
-        age=20,
+    profile_suriya = CitizenProfile(
+        name="Suriya",
+        age=25,
         gender="Male",
-        state="Karnataka",
-        district="Bengaluru Urban",
-        occupation="Student",
-        annual_income=180000,
-        caste_category="OBC",
+        state="Tamil Nadu",
+        district="Chennai",
+        occupation="General",
+        annual_income=75000,
+        caste_category="General",
+        is_bpl=False,
         is_verified=False,
-        kyc_level="unverified"
+        kyc_level="unverified",
+        available_documents=[]
     )
-    print(f"[TEST] Dynamic Evaluation for Unverified Student: {profile_2.name}")
-    res_2 = run_praapti_agent_workflow(profile_2)
+    print(f"[TEST 2] Minimal Unverified Profile: {profile_suriya.name} (Phone: 9876501234)")
+    print(f"Status: Name & Phone Number Saved Only | All verifications NOT checked | KYC: {profile_suriya.kyc_level}")
+    res_2 = run_praapti_agent_workflow(profile_suriya)
+    print(f"Total Evaluated Schemes: {res_2.total_schemes_evaluated}")
     print(f"Top Recommendation:    {res_2.top_recommended_scheme}")
-    print(f"Cedar Decision (RTI):  {res_2.cedar_authorization_status.get('decision')} ({res_2.cedar_authorization_status.get('reason')})")
-    print(f"RTI Draft Generated?:  {'Yes' if res_2.statutory_rti_draft else 'Blocked (Unverified Citizen)'}")
+    print(f"Cedar Policy Decision: {res_2.cedar_authorization_status.get('decision')} ({res_2.cedar_authorization_status.get('reason')})")
+    print(f"Statutory RTI Drafted: {'Generated' if res_2.statutory_rti_draft else 'Blocked (Unverified Citizen under Cedar Zero-Trust Rules)'}")
     print("=" * 80)
-    print("[SUCCESS] Dynamic execution test completed successfully!")
+    print("[SUCCESS] Both Ratheeswar (Fully Verified) & Suriya (Unverified) tested successfully!")

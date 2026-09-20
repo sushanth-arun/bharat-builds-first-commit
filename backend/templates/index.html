@@ -2233,55 +2233,68 @@ Applicant Signature: ${p.name}` : null;
         const session = JSON.parse(sessionRaw);
         if (session && session.name) {
           // Update navbar
-          if (navCitizenName) navCitizenName.textContent = session.name.split(" ")[0];
+          if (navCitizenName) {
+            const statusLabel = session.is_verified ? " (Verified)" : " (Unverified)";
+            navCitizenName.textContent = session.name.split(" ")[0] + statusLabel;
+          }
           if (navUserBadge) navUserBadge.style.display = "flex";
           if (navLoginBtn) navLoginBtn.style.display = "none";
 
           // Update banner in intake form
           if (authBanner && authText) {
             authBanner.style.display = "flex";
-            const method = session.auth_method || (session.is_verified ? "Verified Citizen" : "Guest Citizen");
-            authText.innerHTML = `<strong>Citizen Identity:</strong> ${session.name} • <span style="color:var(--success); font-weight:700;">${method}</span>`;
+            const isVer = Boolean(session.is_verified);
+            const badgeColor = isVer ? "var(--success)" : "var(--danger)";
+            const method = session.auth_method || (isVer ? "Verified Citizen (DigiLocker & Aadhaar)" : "Unverified Citizen (No KYC Documents Checked)");
+            authText.innerHTML = `<strong>Citizen Identity:</strong> ${session.name} • <span style="color:${badgeColor}; font-weight:700;">${method}</span>`;
           }
 
-          // Auto-fill form inputs if present and empty
+          // Auto-fill form inputs
           const nameInput = document.getElementById("citizenNameInput");
-          if (nameInput) nameInput.value = session.name;
+          if (nameInput) nameInput.value = session.name || "";
 
           const ageInput = document.getElementById("citizenAgeInput");
-          if (ageInput && session.age) ageInput.value = session.age;
+          if (ageInput) ageInput.value = session.age || "";
 
           const genderSel = document.getElementById("citizenGenderSelect");
-          if (genderSel && session.gender) genderSel.value = session.gender;
+          if (genderSel) genderSel.value = session.gender || "";
 
           const stateSel = document.getElementById("stateSelect");
-          if (stateSel && session.state) {
-            stateSel.value = session.state;
-            stateSel.dispatchEvent(new Event("change"));
-            const distSel = document.getElementById("districtSelect");
-            if (distSel && session.district) distSel.value = session.district;
+          if (stateSel) {
+            stateSel.value = session.state || "";
+            if (session.state) {
+              stateSel.dispatchEvent(new Event("change"));
+              const distSel = document.getElementById("districtSelect");
+              if (distSel) distSel.value = session.district || "";
+            } else {
+              const distSel = document.getElementById("districtSelect");
+              if (distSel) {
+                distSel.disabled = true;
+                distSel.value = "";
+              }
+            }
           }
 
           const occSel = document.getElementById("citizenOccupationSelect");
-          if (occSel && session.occupation) occSel.value = session.occupation;
+          if (occSel) occSel.value = session.occupation || "";
 
           const incInput = document.getElementById("citizenIncomeInput");
-          if (incInput && session.income !== undefined) incInput.value = session.income;
+          if (incInput) incInput.value = (session.income !== undefined && session.income !== "") ? session.income : "";
 
           const landInput = document.getElementById("citizenLandInput");
-          if (landInput && session.land !== undefined) landInput.value = session.land;
+          if (landInput) landInput.value = (session.land !== undefined && session.land !== "") ? session.land : "";
 
           const casteSel = document.getElementById("citizenCasteSelect");
-          if (casteSel && session.caste) casteSel.value = session.caste;
+          if (casteSel) casteSel.value = session.caste || "";
 
           const kycSel = document.getElementById("citizenKYCSelect");
-          if (kycSel && session.kyc_level) kycSel.value = session.kyc_level;
+          if (kycSel) kycSel.value = session.kyc_level || (session.is_verified ? "digilocker" : "unverified");
 
           const bplCheck = document.getElementById("citizenBPLCheck");
-          if (bplCheck && session.bpl !== undefined) bplCheck.checked = Boolean(session.bpl);
+          if (bplCheck) bplCheck.checked = Boolean(session.bpl);
 
           const griInput = document.getElementById("citizenGrievanceInput");
-          if (griInput && session.grievance) griInput.value = session.grievance;
+          if (griInput) griInput.value = session.grievance || "";
         }
       } catch (e) {
         console.error("Error reading citizen session:", e);

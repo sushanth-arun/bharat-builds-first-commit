@@ -753,6 +753,24 @@
             1-Click Demo Citizen Profiles (Hackathon Evaluation)
           </div>
           <div class="demo-chips">
+            <!-- Ratheeswar: Fully Verified (Aadhaar + DigiLocker) -->
+            <div class="demo-chip" onclick="loadDemoCitizen('ratheeswar')">
+              <div>
+                <div class="demo-chip-name">🛡️ Ratheeswar (Full Statutory Clearance)</div>
+                <div class="demo-chip-sub">Tamil Nadu • Income ₹52,000 • Phone: +91 9840123456</div>
+              </div>
+              <span class="demo-badge" style="background:#ecfdf5; color:#059669; border:1px solid rgba(5,150,105,0.2);">Aadhaar & DigiLocker Verified</span>
+            </div>
+
+            <!-- Suriya: Minimal Profile (Name & Phone only, No KYC checked) -->
+            <div class="demo-chip" onclick="loadDemoCitizen('suriya')">
+              <div>
+                <div class="demo-chip-name">📱 Suriya (Basic Unverified Citizen)</div>
+                <div class="demo-chip-sub">Phone: +91 9876501234 • Name & Mobile only, No KYC checked</div>
+              </div>
+              <span class="demo-badge" style="background:#fef2f2; color:#dc2626; border:1px solid rgba(220,38,38,0.2);">Unverified (No KYC)</span>
+            </div>
+
             <div class="demo-chip" onclick="loadDemoCitizen('ramesh')">
               <div>
                 <div class="demo-chip-name">🌾 Ramesh Kumar (Small Farmer)</div>
@@ -938,6 +956,46 @@
 
     // 2. Preset Demo Profiles for instant evaluation
     const DEMO_CITIZENS = {
+      ratheeswar: {
+        name: "Ratheeswar",
+        mobile: "9840123456",
+        age: 32,
+        gender: "Male",
+        state: "Tamil Nadu",
+        district: "Chennai",
+        occupation: "Farmer",
+        income: 52000,
+        land: 2.5,
+        caste: "OBC",
+        kyc_level: "digilocker",
+        is_verified: true,
+        aadhaar_verified: true,
+        digilocker_verified: true,
+        bpl: true,
+        grievance: "PM-Kisan installment & agricultural subsidy verification",
+        auth_method: "Aadhaar & DigiLocker Verified (Full Statutory Clearance)",
+        is_authenticated: true
+      },
+      suriya: {
+        name: "Suriya",
+        mobile: "9876501234",
+        age: "",
+        gender: "",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
+        kyc_level: "unverified",
+        is_verified: false,
+        aadhaar_verified: false,
+        digilocker_verified: false,
+        bpl: false,
+        grievance: "",
+        auth_method: "Basic Phone Profile (Unverified)",
+        is_authenticated: true
+      },
       ramesh: {
         name: "Ramesh Kumar",
         mobile: "9876543211",
