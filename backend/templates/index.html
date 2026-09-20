@@ -993,17 +993,21 @@
       animation: fadeIn 0.2s ease;
     }
 
-    /* Non-editable KYC Account Status Display */
+    /* Non-editable KYC Account Status Display (Clean single line) */
     .kyc-status-display-card {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 10px;
       height: 44px;
       padding: 0 14px;
       border-radius: var(--radius-sm);
       border: 1.5px solid var(--border-main);
       background: var(--bg-subtle);
       transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      font-size: 13.5px;
+      font-weight: 700;
     }
     .kyc-status-display-card.verified {
       background: #ecfdf5;
@@ -1014,31 +1018,6 @@
       background: #fef2f2;
       border-color: rgba(220, 38, 38, 0.3);
       color: #991b1b;
-    }
-    .kyc-status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13.5px;
-      font-weight: 700;
-    }
-    .kyc-status-pill {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .kyc-status-display-card.verified .kyc-status-pill {
-      background: #d1fae5;
-      color: #047857;
-      border: 1px solid rgba(4, 120, 87, 0.25);
-    }
-    .kyc-status-display-card.unverified .kyc-status-pill {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: 1px solid rgba(185, 28, 28, 0.25);
     }
 
     /* Cedar Status Banner */
@@ -1640,14 +1619,11 @@
             <!-- KYC Account Status & BPL -->
             <div class="form-grid-2">
               <div class="form-field-group">
-                <label class="field-label">KYC Verification Status</label>
+                <label class="field-label" for="citizenKYCSelect">KYC Verification Status</label>
                 <input type="hidden" id="citizenKYCSelect" name="kyc_level" value="unverified" />
                 <div id="citizenKycStatusCard" class="kyc-status-display-card unverified">
-                  <div class="kyc-status-indicator">
-                    <span id="kycStatusIcon"><i data-lucide="shield-alert" style="width:16px; height:16px; color:#dc2626;"></i></span>
-                    <span id="kycStatusText">Unverified Account</span>
-                  </div>
-                  <span id="kycStatusPill" class="kyc-status-pill">No KYC Checked</span>
+                  <span id="kycStatusIcon"><i data-lucide="shield-alert" style="width:17px; height:17px; color:#dc2626; flex-shrink:0;"></i></span>
+                  <span id="kycStatusText">Not Verified</span>
                 </div>
               </div>
               <div class="form-field-group" style="justify-content:flex-end;">
@@ -2481,24 +2457,20 @@ Applicant Signature: ${p.name}` : null;
           const kycCard = document.getElementById("citizenKycStatusCard");
           const kycIcon = document.getElementById("kycStatusIcon");
           const kycText = document.getElementById("kycStatusText");
-          const kycPill = document.getElementById("kycStatusPill");
-
           const isVerified = Boolean(session.is_verified || session.aadhaar_verified || session.digilocker_verified || session.kyc_level === "digilocker" || session.kyc_level === "aadhaar_otp");
           const kycLevel = session.kyc_level || (isVerified ? "digilocker" : "unverified");
 
           if (kycSel) kycSel.value = kycLevel;
 
-          if (kycCard && kycText && kycPill && kycIcon) {
+          if (kycCard && kycText && kycIcon) {
             if (isVerified) {
               kycCard.className = "kyc-status-display-card verified";
-              kycIcon.innerHTML = '<i data-lucide="shield-check" style="width:16px; height:16px; color:#059669;"></i>';
-              kycText.textContent = "Verified Account";
-              kycPill.textContent = (session.kyc_level === "aadhaar_otp" ? "Aadhaar e-KYC" : "DigiLocker Verified");
+              kycIcon.innerHTML = '<i data-lucide="shield-check" style="width:17px; height:17px; color:#059669; flex-shrink:0;"></i>';
+              kycText.textContent = "Verified";
             } else {
               kycCard.className = "kyc-status-display-card unverified";
-              kycIcon.innerHTML = '<i data-lucide="shield-alert" style="width:16px; height:16px; color:#dc2626;"></i>';
-              kycText.textContent = "Unverified Account";
-              kycPill.textContent = "No KYC Checked";
+              kycIcon.innerHTML = '<i data-lucide="shield-alert" style="width:17px; height:17px; color:#dc2626; flex-shrink:0;"></i>';
+              kycText.textContent = "Not Verified";
             }
           }
 
