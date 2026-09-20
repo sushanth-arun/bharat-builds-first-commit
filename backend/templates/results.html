@@ -888,11 +888,19 @@
       document.getElementById("citizenHeaderName").innerHTML = `<i data-lucide="user-check" style="color:var(--success);"></i> Profile: ${name}`;
 
       const summary = data.citizen_summary || {};
+      const locationText = (summary.district && summary.state) 
+        ? `${summary.district}, ${summary.state}`
+        : (summary.state || summary.district || "All India");
+
+      const casteText = summary.caste_category || "General";
+      const incomeVal = summary.annual_income !== undefined ? summary.annual_income : (summary.income || 0);
+
       const metaContainer = document.getElementById("citizenMetaTags");
       metaContainer.innerHTML = `
-        <span class="meta-tag"><i data-lucide="map-pin" style="width:12px; height:12px;"></i> ${summary.district || ""}, ${summary.state || "India"}</span>
+        <span class="meta-tag"><i data-lucide="map-pin" style="width:12px; height:12px;"></i> ${locationText}</span>
         <span class="meta-tag"><i data-lucide="briefcase" style="width:12px; height:12px;"></i> ${summary.occupation || "General"}</span>
-        <span class="meta-tag"><i data-lucide="indian-rupee" style="width:12px; height:12px;"></i> ₹${Number(summary.annual_income || 0).toLocaleString()} / yr</span>
+        <span class="meta-tag"><i data-lucide="users" style="width:12px; height:12px;"></i> ${casteText} Category</span>
+        <span class="meta-tag"><i data-lucide="indian-rupee" style="width:12px; height:12px;"></i> ₹${Number(incomeVal).toLocaleString()} / yr</span>
         <span class="meta-tag"><i data-lucide="shield" style="width:12px; height:12px;"></i> KYC: ${summary.kyc_level || "Standard"}</span>
       `;
 
@@ -1018,24 +1026,30 @@
         const tier = btn.dataset.clause;
 
         const summary = (workflowData && workflowData.citizen_summary) || {};
+        const isVer = summary.is_verified !== false && summary.kyc_level !== "unverified";
+        const kyc = summary.kyc_level || (isVer ? "aadhaar_otp" : "unverified");
+        const applicantName = workflowData?.citizen_name || summary.name || "Citizen";
+        const locationStr = summary.location || ((summary.district && summary.state) ? `${summary.district}, ${summary.state}` : (summary.state || "All India"));
+        const grievance = summary.rti_target_matter || "Scheme DBT entitlement status and delayed processing inquiry";
+
         try {
           const res = await fetch("/api/rti/generate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               tier: tier,
-              applicant_name: workflowData?.citizen_name || "Citizen",
-              applicant_address: `${summary.district || "District"}, ${summary.state || "State"}`,
-              public_authority: `Public Information Officer (PIO), ${summary.district || "District"}`,
-              department: "Department of Revenue & Public Grievance",
-              matter_description: "Scheme DBT entitlement status and delayed processing logs",
+              applicant_name: applicantName,
+              applicant_address: locationStr,
+              public_authority: `Public Information Officer (PIO) / FAA, ${locationStr}`,
+              department: "Department of Revenue & Public Welfare",
+              matter_description: grievance,
               specific_queries: [
-                "Provide certified true copy of citizen profile evaluation record.",
-                "Provide reasons on record for delay in DBT disbursement under Section 4(1)(d).",
-                "Furnish names and designations of dealing assistants responsible for processing."
+                "Provide certified true copy of citizen profile evaluation record and DBT sanction status.",
+                "Provide recorded grounds for any hold or timeline delay in disbursement under Section 4(1)(d).",
+                "Furnish names, designations and contact details of dealing officers responsible for application processing."
               ],
-              is_verified: summary.is_verified !== false,
-              kyc_level: summary.kyc_level || "aadhaar_otp"
+              is_verified: isVer,
+              kyc_level: kyc
             })
           });
           const d = await res.json();

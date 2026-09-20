@@ -238,22 +238,49 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
     else:
         reasons.append(f"Income Requirement: EXCEEDED (Limit: Rs. {max_income:,})")
 
-    # 2. Occupation / Target group match (Weight: 30%)
+    # 2. Occupation & Target group match (Weight: 25%)
     target_occupations = [o.lower() for o in el.get("occupations", ["all"])]
     target_group_desc = el.get("target_group", "").lower()
     user_occ = profile.occupation.lower()
 
     if "all" in target_occupations or any(o in user_occ or user_occ in o for o in target_occupations):
-        score += 0.30
+        score += 0.25
         reasons.append(f"Occupation Match: High relevance for '{profile.occupation}'")
     elif any(term in target_group_desc for term in [user_occ, profile.caste_category.lower(), "bpl" if profile.is_bpl else ""]):
-        score += 0.20
+        score += 0.18
         reasons.append(f"Target Group Match: Matches social/livelihood criteria")
     else:
         score += 0.05
-        reasons.append(f"Occupation Match: Neutral/General category")
+        reasons.append(f"Occupation Match: General category eligibility")
 
-    # 3. Age & Gender checks (Weight: 15%)
+    # 3. Social Category & Affirmative Welfare Match (Weight: 15%)
+    caste_user = profile.caste_category.lower()
+    scheme_title_desc = (scheme.get("title", "") + " " + scheme.get("description", "") + " " + target_group_desc).lower()
+    if caste_user in ["sc", "st"]:
+        if any(term in scheme_title_desc for term in ["sc", "st", "scheduled caste", "tribal", "stand-up", "pms-sc-st"]):
+            score += 0.15
+            reasons.append(f"Affirmative Category Match: Specifically tailored for {profile.caste_category} citizens")
+        else:
+            score += 0.10
+    elif caste_user in ["obc", "ews"]:
+        if any(term in scheme_title_desc for term in [caste_user, "backward", "weaker", "scholarship"]):
+            score += 0.15
+            reasons.append(f"Affirmative Category Match: Tailored for {profile.caste_category} beneficiaries")
+        else:
+            score += 0.10
+    else:
+        score += 0.10
+
+    # 4. Grievance / Intent Semantic Alignment (Weight: 10%)
+    if profile.rti_target_matter:
+        grievance_lower = profile.rti_target_matter.lower()
+        if any(k in scheme_title_desc for k in grievance_lower.split() if len(k) > 3):
+            score += 0.10
+            reasons.append(f"Grievance Alignment: Closely related to your target query ('{profile.rti_target_matter}')")
+        elif any(k in grievance_lower for k in ["delay", "payment", "money", "dbt", "kisan", "loan", "hospital", "health"]):
+            score += 0.05
+
+    # 5. Age & Gender checks (Weight: 10%)
     age_min = el.get("age_min", 0)
     age_max = el.get("age_max", 120)
     target_gender = el.get("gender", "All")
@@ -262,27 +289,26 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
     gender_ok = (target_gender == "All" or target_gender.lower() == profile.gender.lower())
 
     if age_ok and gender_ok:
-        score += 0.15
-        reasons.append(f"Demographics: Age ({profile.age} yrs) & Gender ({profile.gender}) fully match")
+        score += 0.10
+        reasons.append(f"Demographics: Age ({profile.age} yrs) & Gender ({profile.gender}) match")
     elif age_ok or gender_ok:
-        score += 0.08
-        reasons.append("Demographics: Partial criteria match")
+        score += 0.05
+        reasons.append("Demographics: Partial age/gender match")
     else:
         reasons.append("Demographics: Outside prescribed age/gender range")
 
-    # 4. Land holding check (Weight: 15%)
+    # 6. Land holding check (Weight: 10%)
     land_req = el.get("land_holding_required", False)
     if land_req:
         if profile.land_holding_acres > 0:
-            score += 0.15
-            reasons.append(f"Land Records: Verified ({profile.land_holding_acres} acres cultivable land)")
+            score += 0.10
+            reasons.append(f"Land Records: Verified ({profile.land_holding_acres} acres land)")
         else:
             reasons.append("Land Records: Requires cultivable landholding")
     else:
-        score += 0.15
-        reasons.append("Land Records: Not required for this scheme")
+        score += 0.10
 
-    # 5. Document & KYC verification readiness (Weight: 15%)
+    # 7. Document & KYC verification readiness (Weight: 10%)
     required_docs = scheme.get("documents_required", [])
     user_docs_lower = [d.lower() for d in profile.available_documents]
 
@@ -295,12 +321,12 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
                 missing_docs.append(rd)
         
         doc_ratio = matched / len(required_docs)
-        doc_score = 0.10 * doc_ratio
+        doc_score = 0.08 * doc_ratio
         score += doc_score
     else:
-        score += 0.10
+        score += 0.08
 
-    # KYC Trust boost
+    # KYC Trust boost (5%)
     if profile.is_verified and profile.kyc_level in ["aadhaar_otp", "digilocker", "offline_kyc"]:
         score += 0.05
         reasons.append(f"KYC Verification: Authenticated ({profile.kyc_level})")
@@ -491,11 +517,18 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
             "name": profile.name,
             "age": profile.age,
             "gender": profile.gender,
+            "state": profile.state,
+            "district": profile.district,
             "occupation": profile.occupation,
             "income": profile.annual_income,
+            "annual_income": profile.annual_income,
+            "land_holding_acres": profile.land_holding_acres,
+            "caste_category": profile.caste_category,
+            "is_bpl": profile.is_bpl,
             "location": location_str,
             "is_verified": profile.is_verified,
-            "kyc_level": profile.kyc_level
+            "kyc_level": profile.kyc_level,
+            "rti_target_matter": profile.rti_target_matter
         },
         total_schemes_evaluated=len(evaluated_schemes),
         matched_schemes=evaluated_schemes,
@@ -543,21 +576,22 @@ def process_strands_chatbot_query(
             {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
         ]
 
-    # Tool 2: Statutory RTI Notice & Legal Drafting
-    elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer"]):
+    # Tool 2: Statutory RTI Notice, Appeals & Document Submissions to Higher Officials
+    elif any(k in q_lower for k in ["rti", "delayed", "delay", "installment", "appeal", "application", "grievance", "officer", "official", "higher", "process", "complaint", "submit", "send"]):
         reply = (
-            f"⚖️ **Statutory RTI Transparency Workflow (Section 6(1) & 19(1)):**\n\n"
-            f"1. **Section 6(1) Application:** Demand certified daily progress reports, dispatch ledger entries, and reasons for DBT hold.\n"
-            f"2. **30-Day Mandate:** Under Section 7(1), the PIO must reply within 30 days.\n"
-            f"3. **Section 19(1) First Appeal:** If no reply or unsatisfactory justification is received within 30 days, file an appeal to the First Appellate Authority (FAA)."
+            f"🏛️ **Statutory Escalation & Document Submission to Higher Authorities:**\n\n"
+            f"1. **Stage 1 (PIO Submission):** Submit your Form 'A' Section 6(1) application directly to the Public Information Officer (PIO) at the District Collectorate / Block Development Office along with the ₹10 statutory postal order.\n"
+            f"2. **Stage 2 (Section 19(1) First Appeal):** If officials fail to respond within 30 days or delay your DBT disbursement, submit a First Appeal memorandum to the **First Appellate Authority (FAA)** (typically the Sub-Divisional Magistrate / Additional District Magistrate).\n"
+            f"3. **Stage 3 (Section 19(3) Central/State Information Commission):** For chronic non-compliance, file a Second Appeal before the Information Commission requesting Section 20 penalties."
         )
         suggested_workflows = [
-            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
-            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
+            {"title": "Draft Section 6(1) PIO Application", "action": "open_rti"},
+            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"},
+            {"title": "File Grievance on CPGRAMS Portal", "action": "open_cpgrams"}
         ]
 
     # Tool 3: Document Readiness & KYC Requirements
-    elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank"]):
+    elif any(k in q_lower for k in ["document", "doc", "aadhaar", "ration", "bpl", "income certificate", "bank", "certificate"]):
         top_missing = []
         if matched_schemes and len(matched_schemes) > 0:
             top_missing = matched_schemes[0].get("missing_documents", [])
@@ -567,7 +601,8 @@ def process_strands_chatbot_query(
             f"📋 **Mandatory Welfare Compliance Checklist:**\n\n"
             f"• **Aadhaar-Seeded Bank Account:** Active NPCI DBT mapper for direct benefit deposit.\n"
             f"• **Income Certificate:** Issued by competent Revenue Authority / Tehsildar.\n"
-            f"• **Category / Domicile Certificate:** For state-specific quotas or affirmative benefits.\n"
+            f"• **Caste / Category Certificate:** For SC, ST, OBC, or EWS affirmative quotas.\n"
+            f"• **Land Holding Records:** Form 7/12, Khatauni or Pattadar passbook (for agricultural schemes).\n"
             f"{miss_str}"
         )
         suggested_workflows = [
@@ -575,21 +610,22 @@ def process_strands_chatbot_query(
             {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
         ]
 
-    # Tool 4: OpenSearch Welfare Scheme Query
-    elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply"]):
+    # Tool 4: OpenSearch Welfare Scheme Query & Caste Affirmative Programs
+    elif any(k in q_lower for k in ["scheme", "pm-kisan", "ayushman", "kcc", "vishwakarma", "svanidhi", "eligible", "apply", "caste", "reservation", "scholarship"]):
+        caste_str = context_profile.get("caste_category", "General")
         schemes_summary = []
-        for s in (matched_schemes[:3] if matched_schemes else []):
+        for s in (matched_schemes[:4] if matched_schemes else []):
             odds = s.get("empirical_approval_odds", 0.8)
-            schemes_summary.append(f"• **{s.get('title')}**: {int(odds*100) if odds <= 1 else int(odds)}% Empirical Approval Odds ({s.get('category')})")
+            schemes_summary.append(f"• **{s.get('title')}**: {int(odds*100) if odds <= 1 else int(odds)}% Approval Odds ({s.get('category')})")
         
-        summary_text = "\n".join(schemes_summary) if schemes_summary else "• PM-KISAN, Ayushman Bharat (PM-JAY), and Kisan Credit Card (KCC)"
+        summary_text = "\n".join(schemes_summary) if schemes_summary else "• PM-KISAN, Ayushman Bharat (PM-JAY), Post-Matric Scholarship, and Stand-Up India"
         reply = (
-            f"🏛️ **OpenSearch Dynamic Welfare Retrieval:**\n\n"
+            f"🏛️ **OpenSearch Dynamic Welfare Retrieval ({caste_str} Category):**\n\n"
             f"Based on your profile, the top empirical matches are:\n{summary_text}\n\n"
             f"You can review eligibility criteria, required documents, or generate statutory RTI notices for any delays."
         )
         suggested_workflows = [
-            {"title": "View Scheme Catalog", "action": "view_schemes"},
+            {"title": "View Matched Schemes", "action": "view_schemes"},
             {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"}
         ]
 
@@ -600,11 +636,16 @@ def process_strands_chatbot_query(
             f"Namaste! PRAAPTI AI Civic Agent is ready to assist you. "
             f"We have evaluated your profile against welfare registries and zero-trust Cedar policies. "
             f"You can ask about:\n"
-            f"• **Statutory RTI Notices** for delayed DBT payments\n"
-            f"• **Required Documents & NPCI Seeding**\n"
+            f"• **Statutory RTI Notices & Escalations** to higher officials\n"
+            f"• **Required Documents & NPCI DBT Seeding**\n"
             f"• **Cedar Zero-Trust Verification Rules**\n"
             f"• **Eligibility & Application Steps for {top_name}**"
         )
+        suggested_workflows = [
+            {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
+            {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},
+            {"title": "Inspect Cedar Zero-Trust Status", "action": "check_cedar"}
+        ]
         suggested_workflows = [
             {"title": "Explore Matched Welfare Schemes", "action": "view_schemes"},
             {"title": "Draft Section 6(1) RTI Notice", "action": "open_rti"},

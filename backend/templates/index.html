@@ -2064,7 +2064,22 @@ Applicant Signature: ${p.name}` : null;
 
       const fallbackObj = {
         citizen_name: p.name || "Citizen",
-        citizen_summary: p,
+        citizen_summary: {
+          name: p.name || "Citizen",
+          age: p.age,
+          gender: p.gender,
+          state: p.state || "India",
+          district: p.district || "",
+          occupation: p.occupation || "General",
+          income: p.annual_income || 0,
+          annual_income: p.annual_income || 0,
+          land_holding_acres: p.land_holding_acres || 0,
+          caste_category: p.caste_category || "General",
+          is_bpl: p.is_bpl || false,
+          is_verified: isVer,
+          kyc_level: p.kyc_level || "unverified",
+          rti_target_matter: p.rti_target_matter || ""
+        },
         cedar_authorization_status: auth,
         matched_schemes: [
           {
