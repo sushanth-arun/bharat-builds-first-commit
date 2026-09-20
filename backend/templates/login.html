@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRAAPTI AI — Civic Gateway & Identity Authentication</title>
+  <meta name="description" content="Secure citizen gateway for PRAAPTI AI. Authenticate with DigiLocker, Mobile OTP, or Register for personalized welfare discovery and statutory RTI drafting." />
+
+  <!-- Google Fonts: Plus Jakarta Sans, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --card-bg: #ffffff;
+      
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+      --border-main: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --text-primary: #0f172a;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-heading: #0a0a0a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --text-inverse: #ffffff;
+
+      --primary: #1e3a8a;         /* Deep Ashok Navy */
+      --primary-hover: #172554;
+      --primary-subtle: #eff6ff;
+      --primary-glow: rgba(30, 58, 138, 0.12);
+      
+      --accent: #d97706;          /* Saffron Accent */
+      --accent-subtle: #fffbeb;
+
+      --success: #059669;         /* High Contrast Green */
+      --success-subtle: #ecfdf5;
+
+      --digilocker-blue: #004b93;
+      --digilocker-hover: #00366b;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 16px 36px rgba(15, 23, 42, 0.09);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Tricolor Strip */
+    .tricolor-bar {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(90deg, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%);
+    }
+
+    /* Top Navigation Bar */
+    .top-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-main);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-emblem {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #ff9933 0%, rgba(255, 153, 51, 0.3) 30%, #ffffff 50%, rgba(19, 136, 8, 0.3) 70%, #138808 100%);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 22px;
+      color: #0f172a;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-title h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-heading);
+      line-height: 1.1;
+    }
+
+    .brand-title span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-subtle);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(30, 58, 138, 0.15);
+    }
+
+    /* Main Container */
+    .gateway-wrapper {
+      flex: 1;
+      max-width: 1080px;
+      width: 100%;
+      margin: 32px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .gateway-wrapper {
+        grid-template-columns: 1fr;
+        margin: 16px auto;
+      }
+    }
+
+    /* Left Info Column */
+    .gateway-info {
+      padding: 12px 0;
+    }
+
+    .info-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .info-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+      letter-spacing: -0.8px;
+    }
+
+    .info-subtext {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .pillars-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .pillar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pillar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary-subtle);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pillar-content h4 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 3px;
+    }
+
+    .pillar-content p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Right Auth Box */
+    .auth-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 30px;
+      position: relative;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* DigiLocker Button */
+    .btn-digilocker {
+      width: 100%;
+      background: var(--digilocker-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 75, 147, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .btn-digilocker:hover {
+      background: var(--digilocker-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 75, 147, 0.3);
+    }
+
+    .btn-digilocker:active {
+      transform: scale(0.99);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 18px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border-main);
+    }
+
+    .divider span {
+      padding: 0 12px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .input-control {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-main);
+      background: var(--bg-surface);
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+
+    .input-control.has-prefix {
+      padding-left: 50px;
+    }
+
+    .input-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .select-control {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-main);
+      background: var(--bg-surface);
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 540px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.2);
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    /* Demo Profile Cards */
+    .demo-profiles-box {
+      margin-top: 22px;
+      padding: 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-main);
+      border-radius: var(--radius-md);
+    }
+
+    .demo-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .demo-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .demo-chip {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+
+    .demo-chip:hover {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+      transform: translateX(2px);
+    }
+
+    .demo-chip-name {
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    .demo-chip-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .demo-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      background: var(--success-subtle);
+      color: var(--success);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    /* Guest Bypass */
+    .guest-bypass-box {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-main);
+    }
+
+    .guest-link {
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s ease;
+    }
+
+    .guest-link:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Active Session Banner */
+    .active-session-banner {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .active-session-text {
+      font-size: 13px;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .btn-resume {
+      background: #166534;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-main);
+      padding: 18px 24px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tricolor Bar -->
+  <div class="tricolor-bar"></div>
+
+  <!-- Header -->
+  <header class="top-header">
+    <a href="/login.html" class="brand">
+      <div class="brand-emblem">प्र</div>
+      <div class="brand-title">
+        <h1>PRAAPTI AI</h1>
+        <span>Civic Intelligence & Statutory RTI Platform</span>
+      </div>
+    </a>
+    <div class="header-badge">
+      <i data-lucide="shield-check" style="width:14px; height:14px; color:var(--primary);"></i>
+      Official Civic Identity Gateway
+    </div>
+  </header>
+
+  <!-- Main Wrapper -->
+  <main class="gateway-wrapper">
+
+    <!-- Left Column: Platform Pillars & Context -->
+    <div class="gateway-info">
+      <div class="info-tag">
+        <i data-lucide="sparkles" style="width:14px; height:14px;"></i>
+        Civic Empowerment Portal
+      </div>
+      <h2 class="info-heading">
+        Access Indian Welfare Schemes with Zero Guesswork.
+      </h2>
+      <p class="info-subtext">
+        Connect your citizen identity to evaluate 100% verified Central and State welfare programs, calculate empirical approval odds, and generate statutory Section 6(1) RTI notices under AWS Cedar Zero-Trust rules.
+      </p>
+
+      <div class="pillars-list">
+        <div class="pillar-card">
+          <div class="pillar-icon">
+            <i data-lucide="lock" style="width:18px; height:18px;"></i>
+          </div>
+          <div class="pillar-content">
+            <h4>AWS Cedar Zero-Trust Guard</h4>
+            <p>Cryptographically enforces statutory access tiers. Unverified profiles are protected against unlawful RTI notice generation.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon">
+            <i data-lucide="badge-check" style="width:18px; height:18px;"></i>
+          </div>
+          <div class="pillar-content">
+            <h4>DigiLocker & MeriPehchaan Ready</h4>
+            <p>Seamlessly import verified demographic & KYC records to auto-populate scheme applications instantly.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon">
+            <i data-lucide="shield-alert" style="width:18px; height:18px;"></i>
+          </div>
+          <div class="pillar-content">
+            <h4>Anti-Scam Phishing Protection</h4>
+            <p>Real-time DNS & SSL validation flags spurious portals mimicking official .gov.in and .nic.in welfare schemes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Authentication & Registration Card -->
+    <div class="auth-card">
+
+      <!-- Active Session Alert (shown if already logged in) -->
+      <div id="activeSessionBanner" class="active-session-banner">
+        <div>
+          <span class="active-session-text" id="activeSessionText">Welcome back!</span>
+        </div>
+        <a href="/index.html" class="btn-resume">Open Dashboard →</a>
+      </div>
+
+      <!-- Auth Mode Tabs -->
+      <div class="auth-tabs">
+        <button type="button" id="tabBtnSignIn" class="auth-tab-btn active" onclick="switchAuthTab('signin')">
+          <i data-lucide="log-in" style="width:15px; height:15px;"></i> Citizen Sign In
+        </button>
+        <button type="button" id="tabBtnSignUp" class="auth-tab-btn" onclick="switchAuthTab('signup')">
+          <i data-lucide="user-plus" style="width:15px; height:15px;"></i> New Registration
+        </button>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 1: SIGN IN VIEW                                                 -->
+      <!-- =================================================================== -->
+      <div id="signInSection">
+
+        <!-- DigiLocker SSO Button -->
+        <button type="button" class="btn-digilocker" onclick="authenticateDigiLocker()">
+          <i data-lucide="shield-check" style="width:18px; height:18px;"></i>
+          Sign In with DigiLocker / MeriPehchaan
+        </button>
+
+        <div class="divider">
+          <span>Or Sign In with Mobile Number</span>
+        </div>
+
+        <form id="signInForm" onsubmit="handleMobileSignIn(event)">
+          <div class="form-group">
+            <label class="form-label" for="loginMobile">Mobile Number</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">+91</span>
+              <input type="tel" id="loginMobile" class="input-control has-prefix" placeholder="98765 43210" pattern="[0-9]{10}" maxlength="10" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label class="form-label" for="loginOtp" style="margin-bottom:0;">6-Digit OTP / Password</label>
+              <button type="button" id="btnRequestOtp" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;" onclick="requestOtpDemo()">
+                Get OTP via SMS
+              </button>
+            </div>
+            <input type="text" id="loginOtp" class="input-control" placeholder="Enter 6-digit OTP (e.g. 482910)" maxlength="8" required />
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <i data-lucide="arrow-right-circle" style="width:17px; height:17px;"></i>
+            Sign In & Launch Dashboard
+          </button>
+        </form>
+
+        <!-- Quick 1-Click Demo Profiles for Hackathon Judges -->
+        <div class="demo-profiles-box">
+          <div class="demo-title">
+            <i data-lucide="zap" style="width:13px; height:13px; color:var(--accent);"></i>
+            1-Click Demo Citizen Profiles (Hackathon Evaluation)
+          </div>
+          <div class="demo-chips">
+            <div class="demo-chip" onclick="loadDemoCitizen('ramesh')">
+              <div>
+                <div class="demo-chip-name">🌾 Ramesh Kumar (Small Farmer)</div>
+                <div class="demo-chip-sub">Uttar Pradesh • Income ₹48,000 • 3.5 Acres</div>
+              </div>
+              <span class="demo-badge">Aadhaar Verified</span>
+            </div>
+
+            <div class="demo-chip" onclick="loadDemoCitizen('sunita')">
+              <div>
+                <div class="demo-chip-name">🧵 Sunita Devi (Handloom Artisan)</div>
+                <div class="demo-chip-sub">Madhya Pradesh • Income ₹90,000 • Artisan</div>
+              </div>
+              <span class="demo-badge">DigiLocker Verified</span>
+            </div>
+
+            <div class="demo-chip" onclick="loadDemoCitizen('aakash')">
+              <div>
+                <div class="demo-chip-name">🎓 Aakash Verma (Higher Ed Student)</div>
+                <div class="demo-chip-sub">Bihar • Income ₹65,000 • Student</div>
+              </div>
+              <span class="demo-badge">Student KYC</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 2: SIGN UP VIEW                                                 -->
+      <!-- =================================================================== -->
+      <div id="signUpSection" style="display:none;">
+
+        <form id="signUpForm" onsubmit="handleRegistration(event)">
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Legal Name (as per Govt ID)</label>
+            <input type="text" id="regName" class="input-control" placeholder="e.g. Arvind Kumar Sharma" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="regMobile">Mobile Number</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">+91</span>
+                <input type="tel" id="regMobile" class="input-control has-prefix" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regAge">Age (Years)</label>
+              <input type="number" id="regAge" class="input-control" min="1" max="120" placeholder="e.g. 34" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="regGender">Gender</label>
+              <select id="regGender" class="select-control" required>
+                <option value="" selected disabled>-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Transgender">Transgender</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regOccupation">Occupation / Trade</label>
+              <select id="regOccupation" class="select-control" required>
+                <option value="" selected disabled>-- Select Occupation --</option>
+                <option value="Farmer">Farmer / Agriculture</option>
+                <option value="Artisan">Artisan / Craftsperson</option>
+                <option value="Street Vendor">Street Vendor / Hawker</option>
+                <option value="Student">Student / Scholar</option>
+                <option value="Daily Wage Labourer">Daily Wage Labourer</option>
+                <option value="Self Employed">Small Business / Shopkeeper</option>
+                <option value="Senior Citizen">Senior Citizen / Retired</option>
+                <option value="Homemaker">Homemaker / Woman Beneficiary</option>
+                <option value="Unemployed">Unemployed Youth</option>
+                <option value="General">Other / General</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="regState">State / UT</label>
+              <select id="regState" class="select-control" required onchange="populateDistricts()">
+                <option value="" selected disabled>-- Select State --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regDistrict">District</label>
+              <select id="regDistrict" class="select-control" required disabled>
+                <option value="" selected disabled>-- Select State First --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="regIncome">Annual Family Income (₹)</label>
+              <input type="number" id="regIncome" class="input-control" min="0" placeholder="e.g. 75000" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regCaste">Social Category</label>
+              <select id="regCaste" class="select-control">
+                <option value="" selected disabled>-- Category --</option>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="EWS">EWS</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="regKyc">Identity Document to Link</label>
+            <select id="regKyc" class="select-control" required>
+              <option value="aadhaar_otp" selected>Aadhaar OTP (Instant e-KYC)</option>
+              <option value="digilocker">DigiLocker Verified Account</option>
+              <option value="offline_kyc">Ration Card / Offline KYC</option>
+              <option value="unverified">Unverified Guest Account</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <i data-lucide="check-circle-2" style="width:17px; height:17px;"></i>
+            Register & Open Civic Dashboard
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Guest Bypass Footer Link -->
+      <div class="guest-bypass-box">
+        <a href="/index.html" class="guest-link" onclick="handleGuestAccess(event)">
+          <span>Skip to Scheme Explorer as Guest Citizen</span>
+          <i data-lucide="arrow-right" style="width:14px; height:14px;"></i>
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Toast Element -->
+  <div id="toast" class="toast">
+    <i data-lucide="check" style="width:18px; height:18px; color:#4ade80;"></i>
+    <span id="toastMsg">Success</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>PRAAPTI AI — Civic Intelligence & Transparency Interface. Built with AWS Cedar Zero-Trust & OpenSearch.</p>
+  </footer>
+
+  <script>
+    // 1. Full 22+ Indian States & Districts Map
+    const DISTRICTS_MAP = {
+      "Andhra Pradesh": ["Visakhapatnam", "Vijayawada (NTR)", "Guntur", "Tirupati", "Kurnool", "Kakinada", "Nellore", "Anantapur", "Kadapa", "Eluru", "Srikakulam"],
+      "Assam": ["Kamrup Metropolitan (Guwahati)", "Dibrugarh", "Silchar (Cachar)", "Jorhat", "Nagaon", "Tinsukia", "Sonitpur (Tezpur)", "Barpeta"],
+      "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga", "Purnia", "Rohtas", "Samastipur", "Begusarai", "Nalanda", "Vaishali"],
+      "Chhattisgarh": ["Raipur", "Bilaspur", "Durg", "Bhilai", "Korba", "Rajnandgaon", "Jagdalpur (Bastar)", "Ambikapur (Surguja)"],
+      "Delhi (NCT)": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+      "Goa": ["North Goa (Panaji)", "South Goa (Margao)"],
+      "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Kutch (Bhuj)", "Mehsana"],
+      "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal", "Hisar", "Rohtak", "Sonipat", "Panchkula", "Yamunanagar"],
+      "Himachal Pradesh": ["Shimla", "Kangra (Dharamshala)", "Mandi", "Solan", "Kullu", "Sirmaur", "Hamirpur", "Una", "Bilaspur", "Chamba"],
+      "Jharkhand": ["Ranchi", "East Singhbhum (Jamshedpur)", "Dhanbad", "Bokaro", "Hazaribagh", "Deoghar", "Giridih", "Palamu"],
+      "Karnataka": ["Bengaluru Urban", "Bengaluru Rural", "Mysuru", "Dharwad (Hubballi)", "Belagavi", "Dakshina Kannada (Mangaluru)", "Udupi", "Tumakuru", "Shivamogga", "Ballari", "Kalaburagi", "Vijayapura"],
+      "Kerala": ["Thiruvananthapuram", "Ernakulam (Kochi)", "Kozhikode", "Thrissur", "Kollam", "Kannur", "Palakkad", "Kottayam", "Malappuram", "Alappuzha"],
+      "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa"],
+      "Maharashtra": ["Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Thane", "Nashik", "Chhatrapati Sambhajinagar (Aurangabad)", "Solapur", "Kolhapur", "Amravati", "Nanded"],
+      "Odisha": ["Khordha (Bhubaneswar)", "Cuttack", "Ganjam (Berhampur)", "Sundargarh (Rourkela)", "Puri", "Sambalpur", "Balasore", "Bhadrak"],
+      "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "SAS Nagar (Mohali)", "Bathinda", "Hoshiarpur", "Pathankot"],
+      "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", "Ajmer", "Alwar", "Bhilwara", "Sikar", "Barmer", "Sri Ganganagar"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Kanchipuram", "Vellore", "Erode", "Thanjavur", "Dindigul"],
+      "Telangana": ["Hyderabad", "Rangareddy", "Medchal-Malkajgiri", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Mahabubnagar", "Nalgonda", "Siddipet"],
+      "Uttar Pradesh": ["Lucknow", "Varanasi", "Kanpur Nagar", "Prayagraj", "Agra", "Gorakhpur", "Gautam Buddha Nagar (Noida)", "Ghaziabad", "Meerut", "Ayodhya", "Bareilly", "Aligarh", "Mathura"],
+      "Uttarakhand": ["Dehradun", "Haridwar", "Nainital (Haldwani)", "Udham Singh Nagar", "Pauri Garhwal", "Almora", "Rishikesh"],
+      "West Bengal": ["Kolkata", "North 24 Parganas", "South 24 Parganas", "Howrah", "Hooghly", "Purba Medinipur", "Paschim Medinipur", "Darjeeling", "Murshidabad", "Nadia", "Malda"]
+    };
+
+    // 2. Preset Demo Profiles for instant evaluation
+    const DEMO_CITIZENS = {
+      ramesh: {
+        name: "Ramesh Kumar",
+        mobile: "9876543211",
+        age: 42,
+        gender: "Male",
+        state: "Uttar Pradesh",
+        district: "Varanasi",
+        occupation: "Farmer",
+        income: 48000,
+        land: 3.5,
+        caste: "OBC",
+        kyc_level: "aadhaar_otp",
+        is_verified: true,
+        bpl: true,
+        grievance: "PM-Kisan installment pending for Kharif season",
+        auth_method: "Aadhaar e-KYC"
+      },
+      sunita: {
+        name: "Sunita Devi",
+        mobile: "9876543212",
+        age: 36,
+        gender: "Female",
+        state: "Madhya Pradesh",
+        district: "Bhopal",
+        occupation: "Artisan",
+        income: 90000,
+        land: 0,
+        caste: "SC",
+        kyc_level: "digilocker",
+        is_verified: true,
+        bpl: true,
+        grievance: "Collateral-free toolkit loan for Chanderi handloom",
+        auth_method: "DigiLocker SSO"
+      },
+      aakash: {
+        name: "Aakash Verma",
+        mobile: "9876543213",
+        age: 21,
+        gender: "Male",
+        state: "Bihar",
+        district: "Patna",
+        occupation: "Student",
+        income: 65000,
+        land: 0,
+        caste: "SC",
+        kyc_level: "aadhaar_otp",
+        is_verified: true,
+        bpl: false,
+        grievance: "Post-matric scholarship disbursement tracking",
+        auth_method: "National Scholarship Portal KYC"
+      }
+    };
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      initStatesDropdown();
+      checkExistingSession();
+    });
+
+    function checkExistingSession() {
+      const existing = localStorage.getItem("praapti_citizen_session");
+      if (existing) {
+        try {
+          const session = JSON.parse(existing);
+          if (session.name && session.is_authenticated) {
+            const banner = document.getElementById("activeSessionBanner");
+            const text = document.getElementById("activeSessionText");
+            text.innerHTML = `<strong>Signed in as:</strong> ${session.name} (${session.auth_method || "Verified Citizen"})`;
+            banner.style.display = "flex";
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    function initStatesDropdown() {
+      const stateSel = document.getElementById("regState");
+      if (!stateSel) return;
+      Object.keys(DISTRICTS_MAP).sort().forEach(st => {
+        const opt = document.createElement("option");
+        opt.value = st;
+        opt.textContent = st;
+        stateSel.appendChild(opt);
+      });
+    }
+
+    function populateDistricts() {
+      const stateSel = document.getElementById("regState");
+      const distSel = document.getElementById("regDistrict");
+      const val = stateSel.value;
+      distSel.innerHTML = "";
+
+      if (!val || !DISTRICTS_MAP[val]) {
+        distSel.disabled = true;
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "-- Select State First --";
+        distSel.appendChild(opt);
+        return;
+      }
+
+      distSel.disabled = false;
+      const defOpt = document.createElement("option");
+      defOpt.value = "";
+      defOpt.textContent = "-- Select District --";
+      distSel.appendChild(defOpt);
+
+      DISTRICTS_MAP[val].forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        distSel.appendChild(opt);
+      });
+    }
+
+    function switchAuthTab(mode) {
+      const tabSignIn = document.getElementById("tabBtnSignIn");
+      const tabSignUp = document.getElementById("tabBtnSignUp");
+      const secSignIn = document.getElementById("signInSection");
+      const secSignUp = document.getElementById("signUpSection");
+
+      if (mode === 'signin') {
+        tabSignIn.classList.add("active");
+        tabSignUp.classList.remove("active");
+        secSignIn.style.display = "block";
+        secSignUp.style.display = "none";
+      } else {
+        tabSignUp.classList.add("active");
+        tabSignIn.classList.remove("active");
+        secSignUp.style.display = "block";
+        secSignIn.style.display = "none";
+      }
+      lucide.createIcons();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      toastMsg.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    // 1. DigiLocker SSO Simulation
+    function authenticateDigiLocker() {
+      showToast("Connecting to DigiLocker / MeriPehchaan SSO...");
+      const citizen = {
+        name: "Sanjay Kumar",
+        mobile: "9876543210",
+        age: 28,
+        gender: "Male",
+        state: "Tamil Nadu",
+        district: "Chennai",
+        occupation: "Farmer",
+        income: 55000,
+        land: 2.5,
+        caste: "OBC",
+        kyc_level: "digilocker",
+        is_verified: true,
+        bpl: true,
+        grievance: "Verification of Pradhan Mantri Kisan Samman Nidhi registry",
+        auth_method: "DigiLocker SSO (Aadhaar Linked)",
+        is_authenticated: true
+      };
+
+      setTimeout(() => {
+        localStorage.setItem("praapti_citizen_session", JSON.stringify(citizen));
+        showToast("DigiLocker Verified! Redirecting to Civic Portal...");
+        setTimeout(() => {
+          window.location.href = "/index.html";
+        }, 700);
+      }, 800);
+    }
+
+    // 2. Request OTP simulation
+    function requestOtpDemo() {
+      const mob = document.getElementById("loginMobile").value.trim();
+      if (!mob || mob.length < 10) {
+        showToast("Please enter a valid 10-digit mobile number first.");
+        return;
+      }
+      const demoOtp = "482910";
+      showToast(`OTP Sent to +91 ${mob}: ${demoOtp}`);
+      document.getElementById("loginOtp").value = demoOtp;
+    }
+
+    // 3. Mobile Number Sign In
+    function handleMobileSignIn(e) {
+      e.preventDefault();
+      const mobile = document.getElementById("loginMobile").value.trim();
+      const otp = document.getElementById("loginOtp").value.trim();
+
+      if (!mobile || mobile.length < 10) {
+        showToast("Please enter a valid 10-digit mobile number.");
+        return;
+      }
+
+      const citizen = {
+        name: "Citizen " + mobile.slice(-4),
+        mobile: mobile,
+        age: 32,
+        gender: "Male",
+        state: "Tamil Nadu",
+        district: "Chennai",
+        occupation: "Farmer",
+        income: 60000,
+        land: 2.0,
+        caste: "General",
+        kyc_level: "aadhaar_otp",
+        is_verified: true,
+        bpl: false,
+        grievance: "Welfare scheme eligibility inquiry",
+        auth_method: "Mobile OTP Verified",
+        is_authenticated: true
+      };
+
+      localStorage.setItem("praapti_citizen_session", JSON.stringify(citizen));
+      showToast("Authentication successful! Redirecting to Dashboard...");
+      setTimeout(() => {
+        window.location.href = "/index.html";
+      }, 700);
+    }
+
+    // 4. Quick Demo Preset Citizens
+    function loadDemoCitizen(key) {
+      const demo = DEMO_CITIZENS[key];
+      if (!demo) return;
+      demo.is_authenticated = true;
+      localStorage.setItem("praapti_citizen_session", JSON.stringify(demo));
+      showToast(`Signed in as ${demo.name}! Opening Dashboard...`);
+      setTimeout(() => {
+        window.location.href = "/index.html";
+      }, 600);
+    }
+
+    // 5. New Registration
+    function handleRegistration(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const mobile = document.getElementById("regMobile").value.trim();
+      const age = parseInt(document.getElementById("regAge").value, 10);
+      const gender = document.getElementById("regGender").value;
+      const state = document.getElementById("regState").value;
+      const district = document.getElementById("regDistrict").value;
+      const occupation = document.getElementById("regOccupation").value;
+      const income = parseInt(document.getElementById("regIncome").value, 10) || 0;
+      const caste = document.getElementById("regCaste").value || "General";
+      const kyc_level = document.getElementById("regKyc").value;
+
+      const citizen = {
+        name: name,
+        mobile: mobile,
+        age: age,
+        gender: gender,
+        state: state,
+        district: district,
+        occupation: occupation,
+        income: income,
+        land: 0,
+        caste: caste,
+        kyc_level: kyc_level,
+        is_verified: kyc_level !== "unverified",
+        bpl: income < 100000,
+        grievance: "Citizen scheme intake",
+        auth_method: "Govt ID Registered (" + kyc_level + ")",
+        is_authenticated: true
+      };
+
+      localStorage.setItem("praapti_citizen_session", JSON.stringify(citizen));
+      showToast("Registration completed! Launching civic portal...");
+      setTimeout(() => {
+        window.location.href = "/index.html";
+      }, 700);
+    }
+
+    // 6. Guest Bypass
+    function handleGuestAccess(e) {
+      e.preventDefault();
+      const guest = {
+        name: "Guest Citizen",
+        mobile: "",
+        age: 30,
+        gender: "Male",
+        state: "Tamil Nadu",
+        district: "Chennai",
+        occupation: "General",
+        income: 75000,
+        land: 0,
+        caste: "General",
+        kyc_level: "unverified",
+        is_verified: false,
+        bpl: false,
+        grievance: "Public scheme discovery",
+        auth_method: "Guest Explorer",
+        is_authenticated: false
+      };
+      localStorage.setItem("praapti_citizen_session", JSON.stringify(guest));
+      window.location.href = "/index.html";
+    }
+  </script>
+</body>
+</html>

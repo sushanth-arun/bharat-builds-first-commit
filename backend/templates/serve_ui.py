@@ -14,6 +14,7 @@ import sys
 import json
 import logging
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 # Ensure backend root is in python path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +53,22 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
 
+    def _send_json(self, data: Any, status_code: int = 200):
+        if isinstance(data, (bytes, bytearray)):
+            body = bytes(data)
+        elif isinstance(data, str):
+            body = data.encode('utf-8')
+        else:
+            body = json.dumps(data).encode('utf-8')
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_OPTIONS(self):
         self._set_headers(200)
 
@@ -68,9 +85,7 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                     logger.info(f"Processing dynamic agent workflow for citizen: {data.get('name', 'Anonymous')}")
                     profile = CitizenProfile(**data)
                     result = run_praapti_agent_workflow(profile)
-                    
-                    self._set_headers(200)
-                    self.wfile.write(result.model_dump_json().encode('utf-8'))
+                    self._send_json(result.model_dump_json(), 200)
                     return
 
                 # Route 2: RTI Draft Generation
@@ -85,31 +100,27 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                     )
                     
                     if auth.get("decision") != "ALLOW":
-                        self._set_headers(403)
-                        self.wfile.write(json.dumps({
+                        self._send_json({
                             "status": "DENIED",
                             "reason": auth.get("reason"),
                             "cedar_status": auth
-                        }).encode('utf-8'))
+                        }, 403)
                         return
 
                     draft = generate_statutory_rti_text(payload)
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps({
+                    self._send_json({
                         "status": "SUCCESS",
                         "tier": payload.tier,
                         "draft_content": draft,
                         "cedar_status": auth
-                    }).encode('utf-8'))
+                    }, 200)
                     return
 
                 # Route 3: Anti-Scam Phishing Scan (Strands Agent Tool)
                 elif self.path == "/api/fraud-scan":
                     input_text = str(data.get("url_or_text", "")).strip()
                     scan_result = verify_portal_authenticity_tool(input_text)
-
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps(scan_result).encode('utf-8'))
+                    self._send_json(scan_result, 200)
                     return
 
                 # Route 4: AI Civic Chat Assistant & Dynamic Doubts Resolver (Strands SDK Agent)
@@ -124,28 +135,27 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                         context_profile=context_profile,
                         matched_schemes=matched_schemes
                     )
-
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps(chat_result).encode('utf-8'))
+                    self._send_json(chat_result, 200)
                     return
 
                 else:
-                    self._set_headers(404)
-                    self.wfile.write(json.dumps({"error": "Endpoint not found"}).encode('utf-8'))
+                    self._send_json({"error": "Endpoint not found"}, 404)
                     return
 
             except Exception as e:
                 logger.error(f"API Error: {e}", exc_info=True)
-                self._set_headers(400)
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                self._send_json({"error": str(e)}, 400)
                 return
 
         # Fallback to default
         super().do_POST()
 
     def do_GET(self):
-        """Serves UI index.html on root or static requests with zero cache."""
-        if self.path == "/" or self.path == "":
+        """Serves civic gateway login.html on root or static requests with zero cache."""
+        clean_path = self.path.split("?")[0]
+        if clean_path in ("/", "", "/login"):
+            self.path = "/login.html"
+        elif clean_path in ("/dashboard", "/dashboard.html"):
             self.path = "/index.html"
         self.send_response(200)
         if self.path.endswith(".html"):
@@ -172,6 +182,11 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
 
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
 if __name__ == "__main__":
     print("=" * 80)
     print("PRAAPTI AI - Civic Intelligence Local Web & Agent Server")
@@ -181,9 +196,7 @@ if __name__ == "__main__":
     print("Press Ctrl+C to terminate.")
     print("=" * 80)
 
-    # Allow socket address reuse
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), PraaptiHttpHandler) as httpd:
+    with ThreadedTCPServer(("", PORT), PraaptiHttpHandler) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
