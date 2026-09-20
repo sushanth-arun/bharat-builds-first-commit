@@ -1533,9 +1533,9 @@
                     <i data-lucide="user-check" style="width:18px; height:18px;"></i>
                   </div>
                   <div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <h4 id="displayCitizenName" style="font-size:15px; font-weight:800; color:var(--text-heading); margin:0;">Citizen Profile</h4>
-                      <span id="displayCitizenKycBadge" class="cat-badge" style="font-size:10.5px; padding:2px 8px; background:var(--success-subtle); color:var(--success); font-weight:700;">Verified</span>
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap;">
+                      <h4 id="displayCitizenName" style="font-size:15px; font-weight:800; color:var(--text-heading); margin:0; white-space:nowrap;">Citizen Profile</h4>
+                      <span id="displayCitizenKycBadge" class="cat-badge" style="font-size:11px; padding:2px 8px; background:var(--success-subtle); color:var(--success); font-weight:700; white-space:nowrap; flex-shrink:0;">Verified</span>
                     </div>
                     <div style="font-size:12px; color:var(--text-secondary); margin-top:3px; display:flex; flex-wrap:wrap; gap:8px;">
                       <span id="displayCitizenMobile">📱 +91 ----------</span>
@@ -2419,12 +2419,14 @@ Applicant Signature: ${p.name}` : null;
 
           const displayKyc = document.getElementById("displayCitizenKycBadge");
           if (displayKyc) {
+            displayKyc.style.whiteSpace = "nowrap";
+            displayKyc.style.flexShrink = "0";
             if (session.is_verified) {
-              displayKyc.textContent = "Verified KYC (Aadhaar & DigiLocker)";
+              displayKyc.textContent = "Verified (Aadhaar & DigiLocker)";
               displayKyc.style.background = "var(--success-subtle)";
               displayKyc.style.color = "var(--success)";
             } else {
-              displayKyc.textContent = "Unverified (No KYC Checked)";
+              displayKyc.textContent = "Unverified (No KYC)";
               displayKyc.style.background = "var(--danger-subtle)";
               displayKyc.style.color = "var(--danger)";
             }
