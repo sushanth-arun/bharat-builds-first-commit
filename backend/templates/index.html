@@ -11,12 +11,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Early Theme Setter to enforce clear plain white light mode immediately -->
+  <!-- Early Theme Setter: Strictly default to pure white light mode -->
   <script>
     (function() {
-      var saved = localStorage.getItem("theme") || localStorage.getItem("praapti_theme");
+      // Force initial load to clean white light mode
+      var saved = localStorage.getItem("praapti_user_theme");
       var theme = (saved === "dark") ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.className = theme;
     })();
   </script>
 
@@ -1800,7 +1802,7 @@
       });
     });
 
-    // 2. Standard HTML / JS Light & Dark Mode System (Option 2)
+    // 2. Standard HTML / JS Light & Dark Mode System
     const lightBtn = document.getElementById("themeLightBtn");
     const darkBtn = document.getElementById("themeDarkBtn");
 
@@ -1808,8 +1810,7 @@
       const mode = (theme === "dark") ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", mode);
       document.documentElement.className = mode;
-      localStorage.setItem("theme", mode);
-      localStorage.setItem("praapti_theme", mode);
+      localStorage.setItem("praapti_user_theme", mode);
       if (mode === "dark") {
         if (darkBtn) darkBtn.classList.add("active");
         if (lightBtn) lightBtn.classList.remove("active");
@@ -1819,8 +1820,8 @@
       }
     }
 
-    // Default strictly to clear pure white light mode unless user explicitly chose dark
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("praapti_theme") || "light";
+    // Default strictly to clean plain white light mode
+    const savedTheme = localStorage.getItem("praapti_user_theme") || "light";
     setAppTheme(savedTheme);
 
     if (lightBtn) {
