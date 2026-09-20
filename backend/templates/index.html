@@ -11,10 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Early Theme Setter to enforce clear white light mode immediately -->
+  <!-- Early Theme Setter to enforce clear plain white light mode immediately -->
   <script>
     (function() {
-      var saved = localStorage.getItem("praapti_theme");
+      var saved = localStorage.getItem("theme") || localStorage.getItem("praapti_theme");
       var theme = (saved === "dark") ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", theme);
     })();
@@ -25,35 +25,36 @@
 
   <style>
     /* ==========================================================================
-       OPTION 2 STANDARD: PURE CLEAN WHITE LIGHT MODE & DEEP OBSIDIAN DARK MODE
+       PLAIN WHITE LIGHT MODE (#ffffff) & PLAIN BLACK DARK MODE (#000000)
+       21ST.DEV & REACTBITS DESIGN SYSTEM
        ========================================================================== */
     :root,
     [data-theme="light"],
     html[data-theme="light"] {
-      /* Pure Clean White Surfaces */
+      /* 100% Plain White Light Surfaces */
       --bg-primary: #ffffff;
       --bg-page: #ffffff;
       --bg-surface: #ffffff;
-      --bg-subtle: #f8fafc;
+      --bg-subtle: #fafafa;
       --card-bg: #ffffff;
       --bg-card: #ffffff;
       --bg-card-hover: #ffffff;
       --bg-glass: rgba(255, 255, 255, 0.98);
-      --bg-modal: rgba(15, 23, 42, 0.45);
+      --bg-modal: rgba(0, 0, 0, 0.5);
 
-      /* High Contrast Clean Borders */
-      --border-color: #e2e8f0;
-      --border-light: #f1f5f9;
-      --border-main: #e2e8f0;
-      --border-strong: #cbd5e1;
+      /* Clean Crisp Borders */
+      --border-color: #e5e7eb;
+      --border-light: #f3f4f6;
+      --border-main: #e5e7eb;
+      --border-strong: #d1d5db;
 
       /* High Contrast Text */
-      --text-primary: #0f172a;
-      --text-main: #0f172a;
-      --text-secondary: #475569;
-      --text-heading: #020617;
-      --text-muted: #334155;
-      --text-subtle: #64748b;
+      --text-primary: #000000;
+      --text-main: #0a0a0a;
+      --text-secondary: #404040;
+      --text-heading: #000000;
+      --text-muted: #525252;
+      --text-subtle: #737373;
       --text-inverse: #ffffff;
 
       /* Civic Brand Accents */
@@ -61,24 +62,24 @@
       --primary: #1e3a8a;         /* Deep Ashok Navy */
       --primary-hover: #172554;
       --primary-subtle: #eff6ff;
-      --primary-glow: rgba(30, 58, 138, 0.15);
+      --primary-glow: rgba(30, 58, 138, 0.12);
       
       --accent: #d97706;          /* Saffron Accent */
       --accent-subtle: #fffbeb;
-      --accent-glow: rgba(217, 119, 6, 0.15);
+      --accent-glow: rgba(217, 119, 6, 0.12);
 
-      --success: #047857;         /* High Contrast Green */
+      --success: #059669;         /* High Contrast Green */
       --success-subtle: #ecfdf5;
-      --success-glow: rgba(4, 120, 87, 0.15);
+      --success-glow: rgba(5, 150, 105, 0.12);
 
-      --danger: #b91c1c;          /* Red Alert */
+      --danger: #dc2626;          /* Red Alert */
       --danger-subtle: #fef2f2;
-      --danger-glow: rgba(185, 28, 28, 0.15);
+      --danger-glow: rgba(220, 38, 38, 0.12);
 
       /* Shadows */
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 4px 14px -2px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 12px 28px -4px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.07);
       
       --radius-sm: 8px;
       --radius-md: 12px;
@@ -90,51 +91,53 @@
     [data-theme="dark"],
     .dark,
     html[data-theme="dark"] {
-      /* Deep Obsidian / Dark Mode Overrides */
-      --bg-primary: #090d16;
-      --bg-page: #090d16;
-      --bg-surface: #0f172a;
-      --bg-subtle: #141c2e;
-      --card-bg: #0f172a;
-      --bg-card: #0f172a;
-      --bg-card-hover: #162238;
-      --bg-glass: rgba(15, 23, 42, 0.92);
-      --bg-modal: rgba(0, 0, 0, 0.75);
+      /* 100% Plain Black Dark Surfaces */
+      --bg-primary: #000000;
+      --bg-page: #000000;
+      --bg-surface: #0a0a0a;
+      --bg-subtle: #141414;
+      --card-bg: #0a0a0a;
+      --bg-card: #0a0a0a;
+      --bg-card-hover: #171717;
+      --bg-glass: rgba(10, 10, 10, 0.95);
+      --bg-modal: rgba(0, 0, 0, 0.85);
 
-      --border-color: #1e293b;
-      --border-light: #1e293b;
-      --border-main: #334155;
-      --border-strong: #475569;
+      /* Plain Black High Contrast Borders */
+      --border-color: #262626;
+      --border-light: #1f1f1f;
+      --border-main: #262626;
+      --border-strong: #404040;
 
-      --text-primary: #f8fafc;
-      --text-main: #f8fafc;
-      --text-secondary: #94a3b8;
+      /* Plain Black High Contrast Text */
+      --text-primary: #ffffff;
+      --text-main: #f5f5f5;
+      --text-secondary: #a3a3a3;
       --text-heading: #ffffff;
-      --text-muted: #cbd5e1;
-      --text-subtle: #94a3b8;
-      --text-inverse: #090d16;
+      --text-muted: #d4d4d4;
+      --text-subtle: #a3a3a3;
+      --text-inverse: #000000;
 
       --accent-color: #3b82f6;
       --primary: #3b82f6;
       --primary-hover: #60a5fa;
       --primary-subtle: rgba(59, 130, 246, 0.15);
-      --primary-glow: rgba(59, 130, 246, 0.25);
+      --primary-glow: rgba(59, 130, 246, 0.3);
 
       --accent: #f59e0b;
       --accent-subtle: rgba(245, 158, 11, 0.15);
-      --accent-glow: rgba(245, 158, 11, 0.2);
+      --accent-glow: rgba(245, 158, 11, 0.25);
 
       --success: #10b981;
       --success-subtle: rgba(16, 185, 129, 0.15);
-      --success-glow: rgba(16, 185, 129, 0.25);
+      --success-glow: rgba(16, 185, 129, 0.3);
 
       --danger: #ef4444;
       --danger-subtle: rgba(239, 68, 68, 0.15);
-      --danger-glow: rgba(239, 68, 68, 0.25);
+      --danger-glow: rgba(239, 68, 68, 0.3);
 
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.6);
-      --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.7);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.9);
+      --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.95);
     }
 
     * {
@@ -149,7 +152,7 @@
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.6;
-      transition: background-color 0.25s ease, color 0.25s ease;
+      transition: background-color 0.2s ease, color 0.2s ease;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
