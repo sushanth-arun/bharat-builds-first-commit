@@ -129,19 +129,19 @@
     .brand-emblem {
       width: 42px;
       height: 42px;
-      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
-      border: 1.5px solid #d1d5db;
-      border-radius: 10px;
+      background: linear-gradient(135deg, #ff9933 0%, rgba(255, 153, 51, 0.45) 28%, #ffffff 50%, rgba(19, 136, 8, 0.45) 72%, #138808 100%);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 11px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 20px;
-      color: #000080;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      font-size: 21px;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       flex-shrink: 0;
-      text-shadow: 0 0 1px rgba(255,255,255,0.9);
+      text-shadow: 0 1px 2px rgba(255,255,255,0.95);
       position: relative;
     }
 
@@ -321,18 +321,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
     }
 
     .cedar-allow {
-      background: #f0fdf4;
-      border-color: #86efac;
-      color: #166534;
+      background: #f0fdf4 !important;
+      border-color: #86efac !important;
+      color: #166534 !important;
     }
 
     .cedar-deny {
-      background: #fef2f2;
-      border-color: #fca5a5;
-      color: #991b1b;
+      background: #fef2f2 !important;
+      border-color: #fca5a5 !important;
+      color: #991b1b !important;
     }
 
     .cedar-box-banner h4 {
@@ -342,11 +344,29 @@
       align-items: center;
       gap: 6px;
       margin-bottom: 4px;
+      color: inherit;
     }
 
     .cedar-box-banner p {
       font-size: 13px;
-      opacity: 0.9;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .cedar-box-banner .cat-badge {
+      background: #ffffff !important;
+      color: #166534 !important;
+      border: 1.5px solid #86efac !important;
+      font-weight: 800 !important;
+      font-size: 11px !important;
+      padding: 4px 10px !important;
+      white-space: nowrap !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    }
+
+    .cedar-deny .cat-badge {
+      color: #991b1b !important;
+      border-color: #fca5a5 !important;
     }
 
     /* Scheme Item Card (21st.dev Style) */
@@ -743,7 +763,7 @@
             <h4 id="cedarAlertTitle"><i data-lucide="shield-check"></i> Cedar Policy: ALLOW</h4>
             <p id="cedarAlertReason">Citizen identity verified for Section 6(1) and First Appeal notice generation.</p>
           </div>
-          <span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; background:#ffffff; padding:4px 8px; border-radius:4px;">ZERO-TRUST GUARD</span>
+          <span class="cat-badge">ZERO-TRUST GUARD</span>
         </div>
 
         <!-- Matched Welfare Schemes List -->

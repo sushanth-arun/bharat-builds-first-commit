@@ -151,19 +151,19 @@
     .brand-emblem {
       width: 42px;
       height: 42px;
-      background: linear-gradient(180deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
-      border: 1.5px solid #d1d5db;
-      border-radius: 10px;
+      background: linear-gradient(135deg, #ff9933 0%, rgba(255, 153, 51, 0.45) 28%, #ffffff 50%, rgba(19, 136, 8, 0.45) 72%, #138808 100%);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 11px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 20px;
-      color: #000080;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      font-size: 21px;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       flex-shrink: 0;
-      text-shadow: 0 0 1px rgba(255,255,255,0.9);
+      text-shadow: 0 1px 2px rgba(255,255,255,0.95);
       position: relative;
     }
 
@@ -973,41 +973,60 @@
 
     /* Cedar Status Banner */
     .cedar-box-banner {
-      padding: 18px 22px;
+      padding: 16px 20px;
       border-radius: var(--radius-md);
       margin-bottom: 22px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 16px;
       border-width: 1.5px;
       border-style: solid;
+      box-shadow: var(--shadow-sm);
     }
 
     .cedar-allow {
-      background: var(--success-subtle);
-      border-color: var(--success);
-      color: var(--text-main);
+      background: #f0fdf4 !important;
+      border-color: #86efac !important;
+      color: #166534 !important;
     }
 
     .cedar-deny {
-      background: var(--danger-subtle);
-      border-color: var(--danger);
-      color: var(--text-main);
+      background: #fef2f2 !important;
+      border-color: #fca5a5 !important;
+      color: #991b1b !important;
     }
 
     .cedar-box-banner h4 {
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 800;
       margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 8px;
+      color: inherit;
     }
 
     .cedar-box-banner p {
       font-size: 13px;
-      color: var(--text-muted);
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .cedar-box-banner .cat-badge {
+      background: #ffffff !important;
+      color: #166534 !important;
+      border: 1.5px solid #86efac !important;
+      font-weight: 800 !important;
+      font-size: 11px !important;
+      padding: 4px 10px !important;
+      white-space: nowrap !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    }
+
+    .cedar-deny .cat-badge {
+      color: #991b1b !important;
+      border-color: #fca5a5 !important;
     }
 
     /* Matched Schemes */
