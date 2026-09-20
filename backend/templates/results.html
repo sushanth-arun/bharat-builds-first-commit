@@ -897,12 +897,21 @@
       const casteText = summary.caste_category || "General";
       const incomeVal = summary.annual_income !== undefined ? summary.annual_income : (summary.income || 0);
 
+      const ageText = summary.age ? `${summary.age} yrs` : "";
+      const genderText = (summary.gender && summary.gender !== "All") ? summary.gender : "";
+      const landText = summary.land_holding_acres ? `${summary.land_holding_acres} Acres Land` : "";
+      const bplBadge = summary.is_bpl ? `<span class="meta-tag" style="background:#fef3c7; color:#92400e; border-color:#fde68a;"><i data-lucide="tag" style="width:12px; height:12px;"></i> BPL Household</span>` : "";
+
       const metaContainer = document.getElementById("citizenMetaTags");
       metaContainer.innerHTML = `
         <span class="meta-tag"><i data-lucide="map-pin" style="width:12px; height:12px;"></i> ${locationText}</span>
+        ${ageText ? `<span class="meta-tag"><i data-lucide="calendar" style="width:12px; height:12px;"></i> Age: ${ageText}</span>` : ""}
+        ${genderText ? `<span class="meta-tag"><i data-lucide="user" style="width:12px; height:12px;"></i> ${genderText}</span>` : ""}
         <span class="meta-tag"><i data-lucide="briefcase" style="width:12px; height:12px;"></i> ${summary.occupation || "General"}</span>
         <span class="meta-tag"><i data-lucide="users" style="width:12px; height:12px;"></i> ${casteText} Category</span>
         <span class="meta-tag"><i data-lucide="indian-rupee" style="width:12px; height:12px;"></i> ₹${Number(incomeVal).toLocaleString()} / yr</span>
+        ${landText ? `<span class="meta-tag"><i data-lucide="layers" style="width:12px; height:12px;"></i> ${landText}</span>` : ""}
+        ${bplBadge}
         <span class="meta-tag"><i data-lucide="shield" style="width:12px; height:12px;"></i> KYC: ${summary.kyc_level || "Standard"}</span>
       `;
 

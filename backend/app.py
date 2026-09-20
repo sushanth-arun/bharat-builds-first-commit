@@ -253,8 +253,22 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
     missing_docs = []
 
     el = scheme.get("eligibility", {})
-    
-    # 1. Income check (Weight: 25%)
+
+    # 1. Mandatory Eligibility Hard-Gates: Age & Gender
+    age_min = el.get("age_min", 0)
+    age_max = el.get("age_max", 120)
+    target_gender = el.get("gender", "All")
+
+    age_ok = (age_min <= profile.age <= age_max)
+    gender_ok = (target_gender == "All" or target_gender.lower() == profile.gender.lower())
+
+    if not age_ok:
+        reasons.append(f"Demographics: Age {profile.age} does not meet scheme bracket ({age_min}-{age_max} yrs)")
+    else:
+        score += 0.15
+        reasons.append(f"Demographics: Age ({profile.age} yrs) & Gender ({profile.gender}) match")
+
+    # 2. Income check (Weight: 25%)
     max_income = el.get("max_annual_income")
     if max_income is None:
         score += 0.25
@@ -263,12 +277,12 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
         score += 0.25
         reasons.append(f"Income Requirement: PASSED (Rs. {profile.annual_income:,} <= Rs. {max_income:,})")
     elif profile.annual_income <= max_income * 1.15:
-        score += 0.10
+        score += 0.08
         reasons.append(f"Income Requirement: Marginal (Close to ceiling Rs. {max_income:,})")
     else:
         reasons.append(f"Income Requirement: EXCEEDED (Limit: Rs. {max_income:,})")
 
-    # 2. Occupation & Target group match (Weight: 25%)
+    # 3. Occupation & Target group match (Weight: 25%)
     target_occupations = [o.lower() for o in el.get("occupations", ["all"])]
     target_group_desc = el.get("target_group", "").lower()
     user_occ = profile.occupation.lower()
@@ -277,13 +291,13 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
         score += 0.25
         reasons.append(f"Occupation Match: High relevance for '{profile.occupation}'")
     elif any(term in target_group_desc for term in [user_occ, profile.caste_category.lower(), "bpl" if profile.is_bpl else ""]):
-        score += 0.18
+        score += 0.15
         reasons.append(f"Target Group Match: Matches social/livelihood criteria")
     else:
-        score += 0.05
-        reasons.append(f"Occupation Match: General category eligibility")
+        score += 0.02
+        reasons.append(f"Occupation Match: Non-primary target category")
 
-    # 3. Social Category & Affirmative Welfare Match (Weight: 15%)
+    # 4. Social Category & Affirmative Welfare Match (Weight: 15%)
     caste_user = profile.caste_category.lower()
     scheme_title_desc = (scheme.get("title", "") + " " + scheme.get("description", "") + " " + target_group_desc).lower()
     if caste_user in ["sc", "st"]:
@@ -291,17 +305,17 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
             score += 0.15
             reasons.append(f"Affirmative Category Match: Specifically tailored for {profile.caste_category} citizens")
         else:
-            score += 0.10
+            score += 0.08
     elif caste_user in ["obc", "ews"]:
-        if any(term in scheme_title_desc for term in [caste_user, "backward", "weaker", "scholarship"]):
+        if any(term in scheme_title_desc for term in [caste_user, "backward", "weaker", "scholarship", "svanidhi"]):
             score += 0.15
             reasons.append(f"Affirmative Category Match: Tailored for {profile.caste_category} beneficiaries")
         else:
-            score += 0.10
+            score += 0.08
     else:
-        score += 0.10
+        score += 0.08
 
-    # 4. Grievance / Intent Semantic Alignment (Weight: 10%)
+    # 5. Grievance / Intent Semantic Alignment (Weight: 10%)
     if profile.rti_target_matter:
         grievance_lower = profile.rti_target_matter.lower()
         if any(k in scheme_title_desc for k in grievance_lower.split() if len(k) > 3):
@@ -309,23 +323,6 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
             reasons.append(f"Grievance Alignment: Closely related to your target query ('{profile.rti_target_matter}')")
         elif any(k in grievance_lower for k in ["delay", "payment", "money", "dbt", "kisan", "loan", "hospital", "health"]):
             score += 0.05
-
-    # 5. Age & Gender checks (Weight: 10%)
-    age_min = el.get("age_min", 0)
-    age_max = el.get("age_max", 120)
-    target_gender = el.get("gender", "All")
-
-    age_ok = (age_min <= profile.age <= age_max)
-    gender_ok = (target_gender == "All" or target_gender.lower() == profile.gender.lower())
-
-    if age_ok and gender_ok:
-        score += 0.10
-        reasons.append(f"Demographics: Age ({profile.age} yrs) & Gender ({profile.gender}) match")
-    elif age_ok or gender_ok:
-        score += 0.05
-        reasons.append("Demographics: Partial age/gender match")
-    else:
-        reasons.append("Demographics: Outside prescribed age/gender range")
 
     # 6. Land holding check (Weight: 10%)
     land_req = el.get("land_holding_required", False)
@@ -351,27 +348,29 @@ def compute_approval_probability(profile: CitizenProfile, scheme: Dict[str, Any]
                 missing_docs.append(rd)
         
         doc_ratio = matched / len(required_docs)
-        doc_score = 0.08 * doc_ratio
-        score += doc_score
+        score += 0.05 * doc_ratio
     else:
-        score += 0.08
+        score += 0.05
 
     # KYC Trust boost (5%)
     if profile.is_verified and profile.kyc_level in ["aadhaar_otp", "digilocker", "offline_kyc"]:
         score += 0.05
         reasons.append(f"KYC Verification: Authenticated ({profile.kyc_level})")
     elif profile.is_verified:
-        score += 0.03
-    else:
-        reasons.append("KYC Verification: Citizen unverified (Basic estimate)")
+        score += 0.02
 
-    # Normalize final score between 0.10 and 0.99
-    final_odds = round(min(max(score, 0.10), 0.98), 2)
+    # Strict hard gate penalty for unmet prerequisites
+    if not age_ok or (land_req and profile.land_holding_acres <= 0) or (max_income and profile.annual_income > max_income * 1.2):
+        is_strictly_eligible = False
+        final_odds = round(min(score * 0.45, 0.40), 2)
+    else:
+        is_strictly_eligible = score >= 0.50
+        final_odds = round(min(max(score, 0.15), 0.98), 2)
 
     return {
         "odds": final_odds,
         "match_score": int(final_odds * 100),
-        "is_eligible": final_odds >= 0.50,
+        "is_eligible": is_strictly_eligible,
         "reasons": reasons,
         "missing_docs": missing_docs
     }
@@ -477,31 +476,41 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
     audit_trail.append(f"Retrieved {len(raw_schemes)} welfare schemes from knowledge base.")
 
     # Step 2: Dynamic Eligibility & Probability Assessment
-    evaluated_schemes: List[SchemeMatchResult] = []
+    all_evaluated: List[SchemeMatchResult] = []
+    strictly_eligible: List[SchemeMatchResult] = []
+
     for s in raw_schemes:
         eval_res = compute_approval_probability(profile, s)
         odds = eval_res["odds"]
 
-        # Only retain schemes that have meaningful relevance or eligibility for this citizen
-        if eval_res["is_eligible"] or odds >= 0.40:
-            evaluated_schemes.append(SchemeMatchResult(
-                scheme_id=s.get("scheme_id", "SCHEME-UNKNOWN"),
-                title=s.get("title", "Welfare Scheme"),
-                short_code=s.get("short_code", s.get("scheme_id", "GOV")),
-                ministry=s.get("ministry", "Government of India"),
-                category=s.get("category", "General Welfare"),
-                description=s.get("description", "Government welfare assistance program."),
-                benefits=s.get("benefits", "Financial / welfare assistance."),
-                is_eligible=eval_res["is_eligible"],
-                empirical_approval_odds=odds,
-                match_score=eval_res["match_score"],
-                eligibility_reasons=eval_res["reasons"],
-                missing_documents=eval_res["missing_docs"],
-                official_portal=s.get("official_portal", "https://india.gov.in")
-            ))
+        match_obj = SchemeMatchResult(
+            scheme_id=s.get("scheme_id", "SCHEME-UNKNOWN"),
+            title=s.get("title", "Welfare Scheme"),
+            short_code=s.get("short_code", s.get("scheme_id", "GOV")),
+            ministry=s.get("ministry", "Government of India"),
+            category=s.get("category", "General Welfare"),
+            description=s.get("description", "Government welfare assistance program."),
+            benefits=s.get("benefits", "Financial / welfare assistance."),
+            is_eligible=eval_res["is_eligible"],
+            empirical_approval_odds=odds,
+            match_score=eval_res["match_score"],
+            eligibility_reasons=eval_res["reasons"],
+            missing_documents=eval_res["missing_docs"],
+            official_portal=s.get("official_portal", "https://india.gov.in")
+        )
+        all_evaluated.append(match_obj)
+        if eval_res["is_eligible"]:
+            strictly_eligible.append(match_obj)
 
-    # Sort schemes by empirical approval odds in descending order (highest relevance first)
-    evaluated_schemes.sort(key=lambda x: x.empirical_approval_odds, reverse=True)
+    # If strictly eligible schemes exist, present those sorted by highest odds
+    if strictly_eligible:
+        strictly_eligible.sort(key=lambda x: x.empirical_approval_odds, reverse=True)
+        evaluated_schemes = strictly_eligible
+    else:
+        # Closely recommended schemes based on closest demographic/livelihood fit
+        all_evaluated.sort(key=lambda x: x.empirical_approval_odds, reverse=True)
+        evaluated_schemes = all_evaluated[:4]
+
     top_scheme = evaluated_schemes[0].title if evaluated_schemes else None
 
     # Step 3: Cedar Authorization Check (Laptop 2)
