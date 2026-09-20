@@ -971,6 +971,76 @@
       color: var(--text-main);
     }
 
+    /* Mandatory Field Validation Error Highlight */
+    .input-control.field-error, .select-control.field-error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+      background-color: #fffaf0 !important;
+    }
+
+    .form-error-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      background: #fef2f2;
+      border: 1.5px solid #f87171;
+      border-radius: var(--radius-sm);
+      color: #b91c1c;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Non-editable KYC Account Status Display */
+    .kyc-status-display-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-main);
+      background: var(--bg-subtle);
+      transition: all 0.2s ease;
+    }
+    .kyc-status-display-card.verified {
+      background: #ecfdf5;
+      border-color: rgba(5, 150, 105, 0.35);
+      color: #065f46;
+    }
+    .kyc-status-display-card.unverified {
+      background: #fef2f2;
+      border-color: rgba(220, 38, 38, 0.3);
+      color: #991b1b;
+    }
+    .kyc-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .kyc-status-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .kyc-status-display-card.verified .kyc-status-pill {
+      background: #d1fae5;
+      color: #047857;
+      border: 1px solid rgba(4, 120, 87, 0.25);
+    }
+    .kyc-status-display-card.unverified .kyc-status-pill {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.25);
+    }
+
     /* Cedar Status Banner */
     .cedar-box-banner {
       padding: 16px 20px;
@@ -1552,11 +1622,11 @@
             <div class="form-grid-2">
               <div class="form-field-group">
                 <label class="field-label" for="citizenLandInput">Land Holding (Acres)</label>
-                <input type="number" id="citizenLandInput" class="input-control" min="0" step="any" placeholder="Enter land in acres (optional)" />
+                <input type="number" id="citizenLandInput" class="input-control" min="0" step="any" placeholder="Enter land in acres (enter 0 if landless)" required />
               </div>
               <div class="form-field-group">
                 <label class="field-label" for="citizenCasteSelect">Social Category</label>
-                <select id="citizenCasteSelect" class="select-control">
+                <select id="citizenCasteSelect" class="select-control" required>
                   <option value="" selected disabled>-- Select Category --</option>
                   <option value="General">General</option>
                   <option value="OBC">OBC</option>
@@ -1567,17 +1637,18 @@
               </div>
             </div>
 
-            <!-- KYC & BPL -->
+            <!-- KYC Account Status & BPL -->
             <div class="form-grid-2">
               <div class="form-field-group">
-                <label class="field-label" for="citizenKYCSelect">KYC Verification Level</label>
-                <select id="citizenKYCSelect" class="select-control">
-                  <option value="" selected disabled>-- Select KYC Status --</option>
-                  <option value="aadhaar_otp">Aadhaar OTP (Verified)</option>
-                  <option value="digilocker">DigiLocker (Verified)</option>
-                  <option value="offline_kyc">Offline Official KYC</option>
-                  <option value="unverified">Unverified Account</option>
-                </select>
+                <label class="field-label">KYC Verification Status</label>
+                <input type="hidden" id="citizenKYCSelect" name="kyc_level" value="unverified" />
+                <div id="citizenKycStatusCard" class="kyc-status-display-card unverified">
+                  <div class="kyc-status-indicator">
+                    <span id="kycStatusIcon"><i data-lucide="shield-alert" style="width:16px; height:16px; color:#dc2626;"></i></span>
+                    <span id="kycStatusText">Unverified Account</span>
+                  </div>
+                  <span id="kycStatusPill" class="kyc-status-pill">No KYC Checked</span>
+                </div>
               </div>
               <div class="form-field-group" style="justify-content:flex-end;">
                 <label class="checkbox-tile">
@@ -1590,7 +1661,13 @@
             <!-- Grievance -->
             <div class="form-field-group">
               <label class="field-label" for="citizenGrievanceInput">Grievance / RTI Inquiry Subject</label>
-              <input type="text" id="citizenGrievanceInput" class="input-control" placeholder="Enter grievance or inquiry subject" />
+              <input type="text" id="citizenGrievanceInput" class="input-control" placeholder="Enter grievance or inquiry subject (optional)" />
+            </div>
+
+            <!-- Mandatory Validation Alert Banner -->
+            <div id="intakeFormErrorAlert" class="form-error-banner" style="display:none;">
+              <i data-lucide="alert-circle" style="width:18px; height:18px; flex-shrink:0;"></i>
+              <span id="intakeFormErrorText">Please fill in all mandatory fields before running the Civic Agent.</span>
             </div>
 
             <button type="submit" id="btnRunAgent" class="btn btn-primary btn-shimmer" style="padding:13px; font-size:15px; width:100%;">
@@ -1878,10 +1955,109 @@
 
     let currentWorkflowData = null;
 
+    // Form Validation Functions
+    function clearFormErrors() {
+      const errBanner = document.getElementById("intakeFormErrorAlert");
+      if (errBanner) errBanner.style.display = "none";
+      document.querySelectorAll(".field-error").forEach(el => el.classList.remove("field-error"));
+    }
+
+    function showFieldError(element, message) {
+      clearFormErrors();
+      if (element) {
+        element.classList.add("field-error");
+        element.focus();
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      const errBanner = document.getElementById("intakeFormErrorAlert");
+      const errText = document.getElementById("intakeFormErrorText");
+      if (errBanner && errText) {
+        errText.textContent = message;
+        errBanner.style.display = "flex";
+      }
+      showToast(message, "alert-circle");
+    }
+
+    // Attach immediate error clearance on user input
+    ["stateSelect", "districtSelect", "citizenOccupationSelect", "citizenIncomeInput", "citizenLandInput", "citizenCasteSelect"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", () => {
+          el.classList.remove("field-error");
+          const errBanner = document.getElementById("intakeFormErrorAlert");
+          if (errBanner) errBanner.style.display = "none";
+        });
+        el.addEventListener("input", () => {
+          el.classList.remove("field-error");
+          const errBanner = document.getElementById("intakeFormErrorAlert");
+          if (errBanner) errBanner.style.display = "none";
+        });
+      }
+    });
+
     intakeForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      clearFormErrors();
 
-      const kyc = document.getElementById("citizenKYCSelect").value;
+      // 1. Mandatory State / UT Validation
+      const stateEl = document.getElementById("stateSelect");
+      const stateVal = stateEl ? stateEl.value : "";
+      if (!stateVal) {
+        showFieldError(stateEl, "Please select your State / UT.");
+        return;
+      }
+
+      // 2. Mandatory District Validation
+      const distEl = document.getElementById("districtSelect");
+      const distVal = distEl ? distEl.value : "";
+      if (!distVal) {
+        showFieldError(distEl, "Please select your District.");
+        return;
+      }
+
+      // 3. Mandatory Occupation / Trade Validation
+      const occEl = document.getElementById("citizenOccupationSelect");
+      const occVal = occEl ? occEl.value : "";
+      if (!occVal) {
+        showFieldError(occEl, "Please select your Occupation / Trade.");
+        return;
+      }
+
+      // 4. Mandatory Annual Family Income Validation
+      const incEl = document.getElementById("citizenIncomeInput");
+      const incomeRaw = incEl ? incEl.value.trim() : "";
+      if (incomeRaw === "") {
+        showFieldError(incEl, "Please enter your Annual Family Income (₹).");
+        return;
+      }
+      const incomeVal = parseInt(incomeRaw, 10);
+      if (isNaN(incomeVal) || incomeVal < 0 || incomeVal > 100000000) {
+        showFieldError(incEl, "Please enter a valid Annual Family Income up to ₹10 Crore.");
+        return;
+      }
+
+      // 5. Mandatory Land Holding Validation
+      const landEl = document.getElementById("citizenLandInput");
+      const landRaw = landEl ? landEl.value.trim() : "";
+      if (landRaw === "") {
+        showFieldError(landEl, "Please enter your Land Holding in acres (enter 0 if you do not own land).");
+        return;
+      }
+      const landVal = parseFloat(landRaw);
+      if (isNaN(landVal) || landVal < 0) {
+        showFieldError(landEl, "Please enter a valid Land Holding number (e.g. 0 or 2.5).");
+        return;
+      }
+
+      // 6. Mandatory Social Category Validation
+      const casteEl = document.getElementById("citizenCasteSelect");
+      const casteVal = casteEl ? casteEl.value : "";
+      if (!casteVal) {
+        showFieldError(casteEl, "Please select your Social Category (General, OBC, SC, ST, EWS).");
+        return;
+      }
+
+      const kyc = document.getElementById("citizenKYCSelect") ? document.getElementById("citizenKYCSelect").value : "unverified";
       const isVerified = (kyc !== "unverified");
 
       let ageVal = parseInt(document.getElementById("citizenAgeInput").value, 10);
@@ -1889,24 +2065,16 @@
         ageVal = 30;
       }
 
-      const incomeRaw = document.getElementById("citizenIncomeInput").value;
-      const incomeVal = parseInt(incomeRaw, 10);
-      if (isNaN(incomeVal) || incomeVal < 0 || incomeVal > 100000000) {
-        showToast("Please enter a valid annual family income up to ₹10 Crore.", "alert-circle");
-        document.getElementById("citizenIncomeInput").focus();
-        return;
-      }
-
       const payload = {
         name: document.getElementById("citizenNameInput").value.trim(),
         age: ageVal,
         gender: document.getElementById("citizenGenderSelect").value,
-        state: document.getElementById("stateSelect").value,
-        district: document.getElementById("districtSelect").value,
-        occupation: document.getElementById("citizenOccupationSelect").value,
+        state: stateVal,
+        district: distVal,
+        occupation: occVal,
         annual_income: incomeVal,
-        land_holding_acres: parseFloat(document.getElementById("citizenLandInput").value) || 0.0,
-        caste_category: document.getElementById("citizenCasteSelect").value,
+        land_holding_acres: landVal,
+        caste_category: casteVal,
         is_bpl: document.getElementById("citizenBPLCheck").checked,
         is_verified: isVerified,
         kyc_level: kyc,
@@ -2310,8 +2478,28 @@ Applicant Signature: ${p.name}` : null;
           if (casteSel) casteSel.value = "";
 
           const kycSel = document.getElementById("citizenKYCSelect");
-          if (kycSel) {
-            kycSel.value = session.kyc_level || (session.is_verified ? "digilocker" : "unverified");
+          const kycCard = document.getElementById("citizenKycStatusCard");
+          const kycIcon = document.getElementById("kycStatusIcon");
+          const kycText = document.getElementById("kycStatusText");
+          const kycPill = document.getElementById("kycStatusPill");
+
+          const isVerified = Boolean(session.is_verified || session.aadhaar_verified || session.digilocker_verified || session.kyc_level === "digilocker" || session.kyc_level === "aadhaar_otp");
+          const kycLevel = session.kyc_level || (isVerified ? "digilocker" : "unverified");
+
+          if (kycSel) kycSel.value = kycLevel;
+
+          if (kycCard && kycText && kycPill && kycIcon) {
+            if (isVerified) {
+              kycCard.className = "kyc-status-display-card verified";
+              kycIcon.innerHTML = '<i data-lucide="shield-check" style="width:16px; height:16px; color:#059669;"></i>';
+              kycText.textContent = "Verified Account";
+              kycPill.textContent = (session.kyc_level === "aadhaar_otp" ? "Aadhaar e-KYC" : "DigiLocker Verified");
+            } else {
+              kycCard.className = "kyc-status-display-card unverified";
+              kycIcon.innerHTML = '<i data-lucide="shield-alert" style="width:16px; height:16px; color:#dc2626;"></i>';
+              kycText.textContent = "Unverified Account";
+              kycPill.textContent = "No KYC Checked";
+            }
           }
 
           const bplCheck = document.getElementById("citizenBPLCheck");
