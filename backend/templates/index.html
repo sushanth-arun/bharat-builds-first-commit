@@ -2286,42 +2286,39 @@ Applicant Signature: ${p.name}` : null;
             }
           }
 
+          // Ensure intake fields remain as unselected / prompt options for citizen to choose
           const stateSel = document.getElementById("stateSelect");
-          if (stateSel) {
-            stateSel.value = session.state || "";
-            if (session.state) {
-              stateSel.dispatchEvent(new Event("change"));
-              const distSel = document.getElementById("districtSelect");
-              if (distSel) distSel.value = session.district || "";
-            } else {
-              const distSel = document.getElementById("districtSelect");
-              if (distSel) {
-                distSel.disabled = true;
-                distSel.value = "";
-              }
-            }
+          if (stateSel) stateSel.value = "";
+
+          const distSel = document.getElementById("districtSelect");
+          if (distSel) {
+            distSel.innerHTML = '<option value="" selected disabled>-- Select State First --</option>';
+            distSel.disabled = true;
+            distSel.value = "";
           }
 
           const occSel = document.getElementById("citizenOccupationSelect");
-          if (occSel) occSel.value = session.occupation || "";
+          if (occSel) occSel.value = "";
 
           const incInput = document.getElementById("citizenIncomeInput");
-          if (incInput) incInput.value = (session.income !== undefined && session.income !== "") ? session.income : "";
+          if (incInput) incInput.value = "";
 
           const landInput = document.getElementById("citizenLandInput");
-          if (landInput) landInput.value = (session.land !== undefined && session.land !== "") ? session.land : "";
+          if (landInput) landInput.value = "";
 
           const casteSel = document.getElementById("citizenCasteSelect");
-          if (casteSel) casteSel.value = session.caste || "";
+          if (casteSel) casteSel.value = "";
 
           const kycSel = document.getElementById("citizenKYCSelect");
-          if (kycSel) kycSel.value = session.kyc_level || (session.is_verified ? "digilocker" : "unverified");
+          if (kycSel) {
+            kycSel.value = session.kyc_level || (session.is_verified ? "digilocker" : "unverified");
+          }
 
           const bplCheck = document.getElementById("citizenBPLCheck");
-          if (bplCheck) bplCheck.checked = Boolean(session.bpl);
+          if (bplCheck) bplCheck.checked = false;
 
           const griInput = document.getElementById("citizenGrievanceInput");
-          if (griInput) griInput.value = session.grievance || "";
+          if (griInput) griInput.value = "";
         }
       } catch (e) {
         console.error("Error reading citizen session:", e);

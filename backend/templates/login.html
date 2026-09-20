@@ -757,7 +757,7 @@
             <div class="demo-chip" onclick="loadDemoCitizen('ratheeswar')">
               <div>
                 <div class="demo-chip-name">🛡️ Ratheeswar (Full Statutory Clearance)</div>
-                <div class="demo-chip-sub">Tamil Nadu • Income ₹52,000 • Phone: +91 9840123456</div>
+                <div class="demo-chip-sub">Age: 32 • Male • Phone: +91 9840123456 • Fully KYC Verified</div>
               </div>
               <span class="demo-badge" style="background:#ecfdf5; color:#059669; border:1px solid rgba(5,150,105,0.2);">Aadhaar & DigiLocker Verified</span>
             </div>
@@ -766,31 +766,31 @@
             <div class="demo-chip" onclick="loadDemoCitizen('suriya')">
               <div>
                 <div class="demo-chip-name">📱 Suriya (Basic Unverified Citizen)</div>
-                <div class="demo-chip-sub">Phone: +91 9876501234 • Name & Mobile only, No KYC checked</div>
+                <div class="demo-chip-sub">Age: 26 • Male • Phone: +91 9876501234 • No KYC Checked (Unverified)</div>
               </div>
               <span class="demo-badge" style="background:#fef2f2; color:#dc2626; border:1px solid rgba(220,38,38,0.2);">Unverified (No KYC)</span>
             </div>
 
             <div class="demo-chip" onclick="loadDemoCitizen('ramesh')">
               <div>
-                <div class="demo-chip-name">🌾 Ramesh Kumar (Small Farmer)</div>
-                <div class="demo-chip-sub">Uttar Pradesh • Income ₹48,000 • 3.5 Acres</div>
+                <div class="demo-chip-name">🌾 Ramesh Kumar (Farmer)</div>
+                <div class="demo-chip-sub">Age: 42 • Male • Phone: +91 9876543211 • Aadhaar Verified</div>
               </div>
               <span class="demo-badge">Aadhaar Verified</span>
             </div>
 
             <div class="demo-chip" onclick="loadDemoCitizen('sunita')">
               <div>
-                <div class="demo-chip-name">🧵 Sunita Devi (Handloom Artisan)</div>
-                <div class="demo-chip-sub">Madhya Pradesh • Income ₹90,000 • Artisan</div>
+                <div class="demo-chip-name">🧵 Sunita Devi (Artisan)</div>
+                <div class="demo-chip-sub">Age: 36 • Female • Phone: +91 9876543212 • DigiLocker Verified</div>
               </div>
               <span class="demo-badge">DigiLocker Verified</span>
             </div>
 
             <div class="demo-chip" onclick="loadDemoCitizen('aakash')">
               <div>
-                <div class="demo-chip-name">🎓 Aakash Verma (Higher Ed Student)</div>
-                <div class="demo-chip-sub">Bihar • Income ₹65,000 • Student</div>
+                <div class="demo-chip-name">🎓 Aakash Verma (Student)</div>
+                <div class="demo-chip-sub">Age: 21 • Male • Phone: +91 9876543213 • NSP e-KYC Verified</div>
               </div>
               <span class="demo-badge">Student KYC</span>
             </div>
@@ -900,26 +900,26 @@
         mobile: "9840123456",
         age: 32,
         gender: "Male",
-        state: "Tamil Nadu",
-        district: "Chennai",
-        occupation: "Farmer",
-        income: 52000,
-        land: 2.5,
-        caste: "OBC",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "digilocker",
         is_verified: true,
         aadhaar_verified: true,
         digilocker_verified: true,
-        bpl: true,
-        grievance: "PM-Kisan installment & agricultural subsidy verification",
+        bpl: false,
+        grievance: "",
         auth_method: "Aadhaar & DigiLocker Verified (Full Statutory Clearance)",
         is_authenticated: true
       },
       suriya: {
         name: "Suriya",
         mobile: "9876501234",
-        age: "",
-        gender: "",
+        age: 26,
+        gender: "Male",
         state: "",
         district: "",
         occupation: "",
@@ -940,16 +940,16 @@
         mobile: "9876543211",
         age: 42,
         gender: "Male",
-        state: "Uttar Pradesh",
-        district: "Varanasi",
-        occupation: "Farmer",
-        income: 48000,
-        land: 3.5,
-        caste: "OBC",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "aadhaar_otp",
         is_verified: true,
-        bpl: true,
-        grievance: "PM-Kisan installment pending for Kharif season",
+        bpl: false,
+        grievance: "",
         auth_method: "Aadhaar e-KYC"
       },
       sunita: {
@@ -957,16 +957,16 @@
         mobile: "9876543212",
         age: 36,
         gender: "Female",
-        state: "Madhya Pradesh",
-        district: "Bhopal",
-        occupation: "Artisan",
-        income: 90000,
-        land: 0,
-        caste: "SC",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "digilocker",
         is_verified: true,
-        bpl: true,
-        grievance: "Collateral-free toolkit loan for Chanderi handloom",
+        bpl: false,
+        grievance: "",
         auth_method: "DigiLocker SSO"
       },
       aakash: {
@@ -974,16 +974,16 @@
         mobile: "9876543213",
         age: 21,
         gender: "Male",
-        state: "Bihar",
-        district: "Patna",
-        occupation: "Student",
-        income: 65000,
-        land: 0,
-        caste: "SC",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "aadhaar_otp",
         is_verified: true,
         bpl: false,
-        grievance: "Post-matric scholarship disbursement tracking",
+        grievance: "",
         auth_method: "National Scholarship Portal KYC"
       }
     };
@@ -1088,16 +1088,16 @@
         mobile: "9876543210",
         age: 28,
         gender: "Male",
-        state: "Tamil Nadu",
-        district: "Chennai",
-        occupation: "Farmer",
-        income: 55000,
-        land: 2.5,
-        caste: "OBC",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "digilocker",
         is_verified: true,
-        bpl: true,
-        grievance: "Verification of Pradhan Mantri Kisan Samman Nidhi registry",
+        bpl: false,
+        grievance: "",
         auth_method: "DigiLocker SSO (Aadhaar Linked)",
         is_authenticated: true
       };
@@ -1139,16 +1139,16 @@
         mobile: mobile,
         age: 32,
         gender: "Male",
-        state: "Tamil Nadu",
-        district: "Chennai",
-        occupation: "Farmer",
-        income: 60000,
-        land: 2.0,
-        caste: "General",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "aadhaar_otp",
         is_verified: true,
         bpl: false,
-        grievance: "Welfare scheme eligibility inquiry",
+        grievance: "",
         auth_method: "Mobile OTP Verified",
         is_authenticated: true
       };
@@ -1214,16 +1214,16 @@
         mobile: "",
         age: 30,
         gender: "Male",
-        state: "Tamil Nadu",
-        district: "Chennai",
-        occupation: "General",
-        income: 75000,
-        land: 0,
-        caste: "General",
+        state: "",
+        district: "",
+        occupation: "",
+        income: "",
+        land: "",
+        caste: "",
         kyc_level: "unverified",
         is_verified: false,
         bpl: false,
-        grievance: "Public scheme discovery",
+        grievance: "",
         auth_method: "Guest Explorer",
         is_authenticated: false
       };
