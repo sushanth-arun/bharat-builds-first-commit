@@ -11,6 +11,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Early Theme Setter to enforce clear white light mode immediately -->
+  <script>
+    (function() {
+      var saved = localStorage.getItem("praapti_theme");
+      var theme = (saved === "dark") ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
   <!-- Lucide Icons via official CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
