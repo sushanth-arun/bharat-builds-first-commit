@@ -129,14 +129,28 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Standard Universal Centered Content Wrapper: max-w-7xl (1280px) */
     .container {
-      max-width: 1240px;
+      max-width: 1280px;
+      width: 100%;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 16px;
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding: 0 24px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        padding: 0 32px;
+      }
     }
 
     /* ==========================================================================
-       TOP NAVIGATION
+       UNIVERSAL NAVIGATION BAR (Standard Fixed Height h-16 / h-20, Flexbox Aligned)
        ========================================================================== */
     .navbar {
       background: var(--bg-surface);
@@ -145,37 +159,50 @@
       top: 0;
       z-index: 1000;
       box-shadow: var(--shadow-sm);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      width: 100%;
     }
 
     .nav-inner {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 74px;
+      width: 100%;
+      height: 100%;
     }
 
+    /* Left Section: Brand & Logo */
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
       color: inherit;
+      flex-shrink: 0;
     }
 
     .brand-emblem {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
       border: 1.5px solid var(--border-main);
       border-radius: 10px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 19px;
       color: #1e3a8a;
       box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
     }
 
     .brand-title h1 {
@@ -185,6 +212,7 @@
       letter-spacing: -0.5px;
       color: var(--text-heading);
       line-height: 1.1;
+      white-space: nowrap;
     }
 
     .brand-title span {
@@ -193,12 +221,20 @@
       color: var(--text-subtle);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
+    /* Center Section: Nav Links */
     .nav-links {
-      display: flex;
+      display: none;
       align-items: center;
       gap: 28px;
+    }
+
+    @media (min-width: 1024px) {
+      .nav-links {
+        display: flex;
+      }
     }
 
     .nav-link {
@@ -210,25 +246,112 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
 
     .nav-link:hover {
       color: var(--primary);
     }
 
+    /* Right Section: Actions & Controls */
     .nav-actions {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-shrink: 0;
     }
 
-    /* 21st.dev Shimmer Button */
+    .nav-launch-btn {
+      display: none;
+    }
+
+    @media (min-width: 640px) {
+      .nav-launch-btn {
+        display: inline-flex;
+      }
+    }
+
+    /* Mobile Hamburger Menu Toggle Button */
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border: 1.5px solid var(--border-main);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--primary);
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    /* Mobile Drawer Menu */
+    .mobile-drawer {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-bottom: 1.5px solid var(--border-main);
+      box-shadow: var(--shadow-lg);
+      padding: 20px 24px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 999;
+      animation: slideDown 0.2s ease-out;
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-nav-link {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      transition: all 0.15s ease;
+    }
+
+    .mobile-nav-link:hover {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Standard Height & Alignments for Buttons & Inputs (h-10 / 40px, h-11 / 44px) */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 20px;
+      height: 42px;
+      padding: 0 20px;
       border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 700;
@@ -239,6 +362,7 @@
       user-select: none;
       position: relative;
       overflow: hidden;
+      white-space: nowrap;
     }
 
     .btn:active {
@@ -293,27 +417,33 @@
 
     /* Theme Switcher Segmented Button */
     .theme-toggle-wrap {
-      display: flex;
+      display: inline-flex;
+      align-items: center;
       background: var(--bg-subtle);
       border: 1.5px solid var(--border-main);
       border-radius: var(--radius-full);
       padding: 3px;
       gap: 2px;
+      height: 42px;
+      flex-shrink: 0;
     }
 
     .theme-mode-btn {
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 6px 12px;
+      padding: 0 12px;
+      height: 34px;
       border-radius: var(--radius-full);
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 5px;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .theme-mode-btn.active {
@@ -327,9 +457,15 @@
        ========================================================================== */
     .hero-wrapper {
       background: var(--bg-page);
-      padding: 64px 0 54px;
+      padding: 56px 0 64px;
       border-bottom: 1px solid var(--border-light);
       position: relative;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-wrapper {
+        padding: 72px 0 80px;
+      }
     }
 
     .hero-badge-pill {
@@ -379,8 +515,22 @@
     /* ReactBits Spotlight Card Effect */
     .spotlight-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .spotlight-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .spotlight-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
     }
 
     .spotlight-card {
@@ -515,16 +665,22 @@
     }
 
     /* ==========================================================================
-       SCHEME DIRECTORY CATALOG
+       SCHEME DIRECTORY CATALOG (Standard Section Spacing py-12 lg:py-16)
        ========================================================================== */
     .section-pad {
-      padding: 70px 0;
+      padding: 56px 0;
+    }
+
+    @media (min-width: 1024px) {
+      .section-pad {
+        padding: 72px 0;
+      }
     }
 
     .section-header-wrap {
       text-align: center;
       max-width: 760px;
-      margin: 0 auto 40px;
+      margin: 0 auto 36px;
     }
 
     .section-subtag {
@@ -539,11 +695,17 @@
 
     .section-main-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       color: var(--text-heading);
       letter-spacing: -0.5px;
       margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .section-main-title {
+        font-size: 36px;
+      }
     }
 
     .section-desc {
@@ -557,22 +719,25 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
 
     .tab-pill-btn {
       background: var(--bg-surface);
       border: 1.5px solid var(--border-main);
       color: var(--text-main);
-      padding: 8px 18px;
+      padding: 0 18px;
+      height: 38px;
       border-radius: var(--radius-full);
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .tab-pill-btn.active, .tab-pill-btn:hover {
@@ -583,8 +748,22 @@
 
     .schemes-catalog-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .schemes-catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .schemes-catalog-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
     }
 
     .scheme-catalog-card {
@@ -667,17 +846,25 @@
     .workspace-section {
       background: var(--bg-page);
       border-top: 1px solid var(--border-main);
-      padding: 70px 0 90px;
-      scroll-margin-top: 80px;
+      padding: 56px 0 80px;
+      scroll-margin-top: 72px;
+    }
+
+    @media (min-width: 1024px) {
+      .workspace-section {
+        padding: 72px 0 96px;
+      }
     }
 
     .workspace-header-card {
       background: var(--primary);
       color: #ffffff;
       border-radius: var(--radius-lg);
-      padding: 30px 36px;
+      padding: 28px 32px;
       margin-bottom: 36px;
       display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
       justify-content: space-between;
       align-items: center;
       box-shadow: var(--shadow-sm);
@@ -685,9 +872,15 @@
 
     .workspace-header-card h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       margin-bottom: 4px;
+    }
+
+    @media (min-width: 768px) {
+      .workspace-header-card h2 {
+        font-size: 26px;
+      }
     }
 
     .workspace-header-card p {
@@ -697,17 +890,30 @@
 
     .workspace-grid {
       display: grid;
-      grid-template-columns: 460px 1fr;
+      grid-template-columns: 1fr;
       gap: 32px;
       align-items: flex-start;
+    }
+
+    @media (min-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 460px 1fr;
+        gap: 36px;
+      }
     }
 
     .modern-panel {
       background: var(--bg-surface);
       border: 1.5px solid var(--border-main);
       border-radius: var(--radius-lg);
-      padding: 28px;
+      padding: 24px;
       box-shadow: var(--shadow-sm);
+    }
+
+    @media (min-width: 640px) {
+      .modern-panel {
+        padding: 28px;
+      }
     }
 
     .panel-header-row {
@@ -717,14 +923,16 @@
       margin-bottom: 22px;
       padding-bottom: 14px;
       border-bottom: 1.5px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .panel-header-row h3 {
       font-family: 'Outfit', sans-serif;
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--text-heading);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
     }
@@ -736,8 +944,14 @@
 
     .form-grid-2 {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     .form-field-group {
@@ -754,9 +968,11 @@
       letter-spacing: 0.5px;
     }
 
+    /* Standardized Form Inputs & Select Controls (Uniform Height 44px) */
     .input-control, .select-control {
       width: 100%;
-      padding: 11px 14px;
+      height: 44px;
+      padding: 0 14px;
       border-radius: var(--radius-sm);
       border: 1.5px solid var(--border-main);
       background: var(--bg-surface);
@@ -765,6 +981,8 @@
       font-weight: 600;
       outline: none;
       transition: border-color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
     }
 
     .input-control:focus, .select-control:focus {
@@ -773,15 +991,17 @@
     }
 
     .checkbox-tile {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 14px;
+      height: 44px;
+      padding: 0 14px;
       background: var(--bg-subtle);
       border: 1.5px solid var(--border-main);
       border-radius: var(--radius-sm);
       cursor: pointer;
       user-select: none;
+      width: 100%;
     }
 
     .checkbox-tile input {
@@ -1106,14 +1326,16 @@
   <!-- Top Navbar -->
   <header class="navbar">
     <div class="container nav-inner">
+      <!-- Left: Brand & Logo -->
       <a href="#" class="brand">
         <div class="brand-emblem">प्र</div>
         <div class="brand-title">
           <h1>PRAAPTI AI</h1>
-          <span>Civic Intelligence & Statutory RTI Platform</span>
+          <span class="brand-subtitle">Civic Intelligence & Statutory RTI Platform</span>
         </div>
       </a>
 
+      <!-- Center: Nav Links -->
       <nav class="nav-links">
         <a href="#schemesLibrary" class="nav-link"><i data-lucide="layers" style="width:16px; height:16px;"></i> Scheme Library</a>
         <a href="#architecture" class="nav-link"><i data-lucide="shield-check" style="width:16px; height:16px;"></i> Policy Engine</a>
@@ -1121,8 +1343,9 @@
         <a href="#scamGuard" class="nav-link"><i data-lucide="shield-alert" style="width:16px; height:16px;"></i> Fraud Guard</a>
       </nav>
 
+      <!-- Right: Actions & Controls -->
       <div class="nav-actions">
-        <a href="#workspace" class="btn btn-primary btn-shimmer">
+        <a href="#workspace" class="btn btn-primary btn-shimmer nav-launch-btn">
           <i data-lucide="sparkles" style="width:16px; height:16px;"></i> Launch Engine
         </a>
 
@@ -1135,9 +1358,25 @@
             <i data-lucide="moon" style="width:14px; height:14px;"></i> Dark
           </button>
         </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" class="mobile-menu-btn" title="Toggle Navigation Menu">
+          <i data-lucide="menu" id="mobileMenuIcon" style="width:20px; height:20px;"></i>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div id="mobileDrawer" class="mobile-drawer">
+    <a href="#schemesLibrary" class="mobile-nav-link" onclick="closeMobileDrawer()"><i data-lucide="layers" style="width:18px; height:18px;"></i> Scheme Library</a>
+    <a href="#architecture" class="mobile-nav-link" onclick="closeMobileDrawer()"><i data-lucide="shield-check" style="width:18px; height:18px;"></i> Policy Engine</a>
+    <a href="#workspace" class="mobile-nav-link" onclick="closeMobileDrawer()"><i data-lucide="file-text" style="width:18px; height:18px;"></i> RTI Drafter</a>
+    <a href="#scamGuard" class="mobile-nav-link" onclick="closeMobileDrawer()"><i data-lucide="shield-alert" style="width:18px; height:18px;"></i> Fraud Guard</a>
+    <a href="#workspace" class="btn btn-primary btn-shimmer" onclick="closeMobileDrawer()" style="width:100%; margin-top:6px;">
+      <i data-lucide="sparkles" style="width:16px; height:16px;"></i> Launch Engine
+    </a>
+  </div>
 
   <!-- Hero Section with ReactBits Spotlight Bento Grid -->
   <section class="hero-wrapper">
@@ -1949,6 +2188,20 @@ Applicant Signature: ${p.name}` : null;
         }
       }
     });
+
+    // Mobile Drawer Toggle
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+
+    function closeMobileDrawer() {
+      if (mobileDrawer) mobileDrawer.classList.remove("open");
+    }
+
+    if (mobileMenuBtn && mobileDrawer) {
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileDrawer.classList.toggle("open");
+      });
+    }
 
     // Initialize Lucide Icons
     lucide.createIcons();
