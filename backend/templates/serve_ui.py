@@ -91,12 +91,20 @@ class PraaptiHttpHandler(http.server.SimpleHTTPRequestHandler):
                 # Route 2: RTI Draft Generation
                 elif self.path == "/api/rti/generate":
                     payload = RTIApplicationPayload(**data)
+                    action_name = "DraftUrgentLifeLibertyRTI" if payload.tier == "urgent" else f"Draft{payload.tier.capitalize()}RTI"
                     auth = check_cedar_policy(
                         user_role="Citizen",
-                        action=f"Draft{payload.tier.upper()}RTI",
+                        action=action_name,
                         resource_tier=payload.tier,
                         is_verified=payload.is_verified,
-                        kyc_level=payload.kyc_level
+                        kyc_level=payload.kyc_level,
+                        is_bpl=payload.is_bpl,
+                        age=payload.age,
+                        disability_status=payload.disability_status,
+                        account_status=payload.account_status,
+                        roles=payload.roles,
+                        is_emergency=payload.is_emergency,
+                        is_life_or_liberty=payload.is_life_or_liberty
                     )
                     
                     if auth.get("decision") != "ALLOW":

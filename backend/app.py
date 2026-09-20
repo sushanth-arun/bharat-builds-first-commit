@@ -59,6 +59,9 @@ class CitizenProfile(BaseModel):
     is_bpl: bool = Field(False, description="Whether the household holds BPL / Ration / Antyodaya status")
     is_verified: bool = Field(False, description="Whether citizen identity is authenticated")
     kyc_level: str = Field("unverified", description="KYC trust level: 'unverified', 'aadhaar_otp', 'digilocker', 'offline_kyc'")
+    disability_status: bool = Field(False, description="Whether citizen holds Divyangjan / PwD status")
+    account_status: str = Field("active", description="Account status: 'active', 'suspended', 'blacklisted'")
+    roles: List[str] = Field(default_factory=lambda: ["Citizen"], description="System user roles")
     available_documents: List[str] = Field(
         default_factory=lambda: ["Aadhaar Card"]
     )
@@ -83,7 +86,7 @@ class SchemeMatchResult(BaseModel):
 
 
 class RTIApplicationPayload(BaseModel):
-    tier: str = Field("tier1", description="'tier1' (PIO Sec 6(1)), 'tier2' (FAA Sec 19(1)), 'tier3' (CIC Sec 19(3))")
+    tier: str = Field("tier1", description="'tier1' (PIO Sec 6(1)), 'tier2' (FAA Sec 19(1)), 'tier3' (CIC Sec 19(3)), 'urgent' (Sec 7(1) Life/Liberty)")
     applicant_name: str
     applicant_address: str
     public_authority: str
@@ -92,6 +95,14 @@ class RTIApplicationPayload(BaseModel):
     specific_queries: List[str]
     is_verified: bool = False
     kyc_level: str = "unverified"
+    is_bpl: bool = False
+    age: int = 30
+    disability_status: bool = False
+    account_status: str = "active"
+    roles: List[str] = Field(default_factory=lambda: ["Citizen"])
+    is_emergency: bool = False
+    is_life_or_liberty: bool = False
+    claim_fee_waiver: bool = False
 
 
 class PraaptiWorkflowResponse(BaseModel):
@@ -538,9 +549,14 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
         action=cedar_action,
         resource_tier=rti_tier,
         is_verified=profile.is_verified,
-        kyc_level=profile.kyc_level
+        kyc_level=profile.kyc_level,
+        is_bpl=profile.is_bpl,
+        age=profile.age,
+        disability_status=profile.disability_status,
+        account_status=profile.account_status,
+        roles=profile.roles
     )
-    audit_trail.append(f"Cedar Zero-Trust Policy [{cedar_action}]: {cedar_auth.get('decision')} - {cedar_auth.get('reason')}")
+    audit_trail.append(f"Cedar Zero-Trust Policy [{cedar_action}]: {cedar_auth.get('decision')} ({cedar_auth.get('rule_id')}) - {cedar_auth.get('reason')}")
 
     # Step 4: RTI Notice Drafting if authorized
     rti_draft = None
@@ -561,7 +577,12 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
                 "Name, designation and official contact of the dealing Public Information Officer."
             ],
             is_verified=profile.is_verified,
-            kyc_level=profile.kyc_level
+            kyc_level=profile.kyc_level,
+            is_bpl=profile.is_bpl,
+            age=profile.age,
+            disability_status=profile.disability_status,
+            account_status=profile.account_status,
+            roles=profile.roles
         )
         rti_draft = generate_statutory_rti_text(rti_payload)
         audit_trail.append("Generated statutory Form 'A' Section 6(1) RTI Application draft.")
@@ -586,7 +607,8 @@ def run_praapti_agent_workflow(profile: CitizenProfile) -> PraaptiWorkflowRespon
             "location": location_str,
             "is_verified": profile.is_verified,
             "kyc_level": profile.kyc_level,
-            "rti_target_matter": profile.rti_target_matter
+            "disability_status": getattr(profile, "disability_status", False),
+            "rti_target_matter": getattr(profile, "rti_target_matter", "")
         },
         total_schemes_evaluated=len(evaluated_schemes),
         matched_schemes=evaluated_schemes,
@@ -878,82 +900,74 @@ def process_strands_chatbot_query(
 # ======================================================================================
 
 def check_cedar_policy(
-    user_role: str,
-    action: str,
-    resource_tier: str,
+    user_role: str = "Citizen",
+    action: str = "DraftTier1RTI",
+    resource_tier: str = "tier1",
     is_verified: bool = False,
     kyc_level: str = "unverified",
+    is_bpl: bool = False,
+    age: int = 30,
+    disability_status: bool = False,
+    account_status: str = "active",
+    roles: Optional[List[str]] = None,
+    department: str = "",
+    resource_dept: str = "",
+    is_life_or_liberty: bool = False,
+    contains_pii: bool = False,
+    is_emergency: bool = False,
+    daily_rti_count: int = 0,
     policy_path: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Evaluates Cedar Policies (defined in backend/policies/auth.cedar).
-    - Tier 1 & 2 RTI: Permitted for verified citizens.
-    - Tier 3 CIC Second Appeals: Explicitly FORBIDDEN for unverified accounts.
-    - Public Scheme Search: Permitted to all citizens.
+    Evaluates Cedar Policies (defined in backend/policies/auth.cedar) using CedarEngine.
+    Supports 14 statutory fine-grained authorization rules including scheme search,
+    Tier 1/2/3 RTI, Sec 7(5) fee waivers, Sec 7(1) emergency RTIs, and zero-trust bot forbids.
     """
-    clean_action = action.replace("Action::", "").strip('"')
-    
-    # 1. Public Scheme Search & Discovery is always open
-    if clean_action in ["SearchSchemes", "ViewSchemeDetails", "CheckEligibility"]:
-        return {
-            "decision": "ALLOW",
-            "action": clean_action,
-            "resource": resource_tier,
-            "reason": "Permitted: Public welfare scheme discovery is open to all citizens.",
-            "rule_id": "Rule 1"
-        }
+    try:
+        from policies.cedar_engine import CedarEngine
+    except ImportError:
+        from backend.policies.cedar_engine import CedarEngine
 
-    # 2. Tier 3 CIC Second Appeal (Explicit Forbid for unverified accounts)
-    if clean_action in ["DraftTier3CICAppeal", "DraftTIER3CICAppeal", "DraftTIER3RTI", "DraftTier3RTI", "tier3", "TIER3"]:
-        if not is_verified:
-            return {
-                "decision": "DENY",
-                "action": clean_action,
-                "resource": resource_tier,
-                "reason": "FORBIDDEN: Tier 3 CIC Appeals require authenticated KYC (Aadhaar OTP / DigiLocker).",
-                "rule_id": "Rule 4 (Forbid)"
-            }
-        if kyc_level in ["aadhaar_otp", "digilocker", "offline_kyc"]:
-            return {
-                "decision": "ALLOW",
-                "action": clean_action,
-                "resource": resource_tier,
-                "reason": f"Permitted: Verified citizen with authenticated KYC level ({kyc_level}).",
-                "rule_id": "Rule 3"
-            }
-        return {
-            "decision": "DENY",
-            "action": clean_action,
-            "resource": resource_tier,
-            "reason": "Denied: Insufficient KYC tier for statutory CIC Second Appeal drafting.",
-            "rule_id": "Rule 4"
-        }
+    engine = CedarEngine(policy_path=policy_path)
 
-    # 3. Tier 1 (PIO) & Tier 2 (FAA) RTIs
-    if clean_action in ["DraftTier1RTI", "DraftTier2RTI", "DraftTIER1RTI", "DraftTIER2RTI", "tier1", "tier2", "TIER1", "TIER2"]:
-        if is_verified:
-            return {
-                "decision": "ALLOW",
-                "action": clean_action,
-                "resource": resource_tier,
-                "reason": f"Permitted: Verified citizen authorized to draft {clean_action}.",
-                "rule_id": "Rule 2"
-            }
-        return {
-            "decision": "DENY",
-            "action": clean_action,
-            "resource": resource_tier,
-            "reason": "Denied: Citizen identity verification required for generating statutory RTI notices.",
-            "rule_id": "Rule 2 (Requirement Not Met)"
-        }
+    user_roles = roles or [user_role]
+    principal = {
+        "id": f"Citizen::{user_role.lower()}",
+        "is_verified": is_verified,
+        "kyc_level": kyc_level,
+        "is_bpl": is_bpl,
+        "age": age,
+        "disability_status": disability_status,
+        "account_status": account_status,
+        "roles": user_roles,
+        "department": department
+    }
+    resource = {
+        "id": f"Resource::{resource_tier}",
+        "tier": resource_tier,
+        "department": resource_dept,
+        "is_life_or_liberty": is_life_or_liberty,
+        "contains_pii": contains_pii
+    }
+    context = {
+        "is_emergency": is_emergency,
+        "daily_rti_count": daily_rti_count
+    }
 
-    # 4. Default Deny
+    decision_obj = engine.evaluate(
+        principal=principal,
+        action=action,
+        resource=resource,
+        context=context
+    )
+
     return {
-        "decision": "DENY",
-        "action": clean_action,
-        "resource": resource_tier,
-        "reason": "Denied: No matching permit policy found in Cedar ruleset.",
-        "rule_id": "Default Deny"
+        "decision": decision_obj.decision,
+        "action": decision_obj.action,
+        "resource": decision_obj.resource,
+        "reason": decision_obj.reason,
+        "rule_id": decision_obj.diagnostics.get("policy_rule", "Cedar Rule"),
+        "diagnostics": decision_obj.diagnostics
     }
 
 
@@ -1032,12 +1046,20 @@ def process_api_request(endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any
 
     elif endpoint == "/api/rti/generate":
         rti_payload = RTIApplicationPayload(**payload)
+        action_name = "DraftUrgentLifeLibertyRTI" if rti_payload.tier == "urgent" else f"Draft{rti_payload.tier.capitalize()}RTI"
         auth = check_cedar_policy(
             user_role="Citizen",
-            action=f"Draft{rti_payload.tier.upper()}RTI",
+            action=action_name,
             resource_tier=rti_payload.tier,
             is_verified=rti_payload.is_verified,
-            kyc_level=rti_payload.kyc_level
+            kyc_level=rti_payload.kyc_level,
+            is_bpl=getattr(rti_payload, "is_bpl", False),
+            age=getattr(rti_payload, "age", None),
+            disability_status=getattr(rti_payload, "disability_status", False),
+            account_status=getattr(rti_payload, "account_status", "active"),
+            roles=getattr(rti_payload, "roles", None),
+            is_emergency=getattr(rti_payload, "is_emergency", False),
+            is_life_or_liberty=getattr(rti_payload, "is_life_or_liberty", False)
         )
         if auth.get("decision") != "ALLOW":
             return {
