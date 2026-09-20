@@ -36,7 +36,6 @@ praapti-ai/
 │   └── data/
 │       ├── schemes.json           # Master DB (Central & State Welfare Schemes)
 │       └── districts.json         # 700+ Mapped Indian Districts
-├── docker-compose.yml             # Local OpenSearch Single-Node Container
 ├── .env.example                   # Local environment variable blueprint
 └── README.md
 ```
